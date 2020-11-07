@@ -1,0 +1,22 @@
+overwrite: true
+schema: './src/schema/*.ts'
+documents: null
+generates:
+  src/generated/graphql.ts:
+    plugins:
+      - 'typescript'
+      - 'typescript-resolvers'
+    config:
+      useIndexSignature: true
+      defaultMapper: Partial<{T}>
+      mappers:
+        User: ./src/models/user.ts#IUser
+        Ad: ./src/models/ad.ts#IAd
+        Message: ./src/models/message.ts#IMessage
+        Negotiation: ./src/models/negotiation.ts#INegotiation
+        Review: ./src/models/review.ts#IReview
+        Vineyard: ./src/models/vineyard.ts#IVineyard
+        Wine: ./src/models/wine.ts#IWine
+  ./graphql.schema.json:
+    plugins:
+      - 'introspection'
