@@ -80,7 +80,10 @@ const server = new ApolloServer({
 const app = express();
 server.applyMiddleware({ app });
 
-app.listen(PORT, () =>
+const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
+
+httpServer.listen(PORT, () =>
   console.log(
     `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
   )

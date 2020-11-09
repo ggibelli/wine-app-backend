@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import mongoose, { Schema, Document } from 'mongoose';
-import { IUser } from './user';
-import { INegotiation } from './negotiation';
+import { IUserDoc } from './user';
+import { INegotiationDoc } from './negotiation';
 import { TypeAd } from '../types';
 
 enum Rating {
@@ -14,17 +14,19 @@ enum Rating {
   PERFECT = 5,
 }
 
-export interface IReview extends Document {
-  createdBy: IUser['_id'] | IUser;
-  negotiation: INegotiation['_id'] | INegotiation;
-  forUserAd: IUser['_id'] | IUser;
+export interface IReview {
+  createdBy: IUserDoc['_id'] | IUserDoc;
+  negotiation: INegotiationDoc['_id'] | INegotiationDoc;
+  forUserAd: IUserDoc['_id'] | IUserDoc;
   rating: Rating;
   dateCreated: Date;
   content: string;
   type: TypeAd;
 }
 
-const reviewSchema = new Schema({
+export interface IReviewDoc extends Document {}
+
+const reviewSchemaFields: Record<keyof IReview, any> = {
   createdBy: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -58,14 +60,10 @@ const reviewSchema = new Schema({
     type: String,
     enum: ['Sell', 'Buy'],
   },
-});
+};
 
-reviewSchema.set('toJSON', {
-  transform: (_document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
-    delete returnedObject._id;
-    delete returnedObject.__v;
-  },
-});
+const reviewSchema = new Schema(reviewSchemaFields);
 
-export const Review = mongoose.model<IReview>('Review', reviewSchema);
+reviewSchema.index({ createdBy: 1, negotiation: 1 }, { unique: true });
+
+export const Review = mongoose.model<IReviewDoc>('Review', reviewSchema);

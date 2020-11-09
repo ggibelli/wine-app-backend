@@ -18,7 +18,6 @@ export const typeDef = gql`
   input AdInput {
     wine: ID
     sottoZona: String
-    menzioneGeograficaAggiuntiva: String
     menzione: Menzione
     metodoProduttivo: MetodoProduttivo
     vineyard: ID

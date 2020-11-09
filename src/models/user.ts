@@ -5,28 +5,27 @@ import mongoose, { Schema, Document } from 'mongoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { Address } from '../types';
 import { Province, Regioni } from '../utils/enumMongooseHelper';
-import { IAd } from './ad';
-import { INegotiation } from './negotiation';
-import { IWine } from './wine';
-import { IReview } from './review';
-import { IVineyard } from './vineyard';
+import { IAdDoc } from './ad';
+import { INegotiationDoc } from './negotiation';
+import { IWineDoc } from './wine';
+import { IReviewDoc } from './review';
+import { IVineyardDoc } from './vineyard';
 import { MetodoProduttivo } from '../types';
 import { METODOPRODUTTIVO } from '../utils/enumMongooseHelper';
 
 interface ProducedWines {
-  wine: IWine['_id'] | IWine;
+  wine: IWineDoc['_id'] | IWineDoc;
   bottlesProduced: number;
   metodoProduttivo: MetodoProduttivo;
 }
 
 interface OwnedVineyards {
-  vineyard: IVineyard['_id'] | IVineyard;
+  vineyard: IVineyardDoc['_id'] | IVineyardDoc;
   tonsProduced: number;
   metodoProduttivo: MetodoProduttivo;
 }
 
-export interface IUser extends Document {
-  username: string;
+export interface IUser {
   email: string;
   firstName: string;
   lastName: string;
@@ -36,22 +35,18 @@ export interface IUser extends Document {
   address: Address;
   verified: boolean;
   premium?: boolean;
-  ads?: Array<IAd['_id'] | IAd>; // annunci postati dall'utente
-  negotiations?: Array<INegotiation['_id'] | INegotiation>; // trattative dell'utente, attive e non, concluse e non
-  reviews?: Array<IReview['_id'] | IReview>; // recensioni fatte e ricevute dall'utente
+  ads?: Array<IAdDoc['_id'] | IAdDoc>; // annunci postati dall'utente
+  negotiations?: Array<INegotiationDoc['_id'] | INegotiationDoc>; // trattative dell'utente, attive e non, concluse e non
+  reviews?: Array<IReviewDoc['_id'] | IReviewDoc>; // recensioni fatte e ricevute dall'utente
   adsRemaining?: number;
   dateCreated: Date;
   producedWines?: Array<ProducedWines>;
   ownedVineyards?: Array<OwnedVineyards>;
 }
 
-const userSchema = new Schema({
-  username: {
-    type: String,
-    unique: true,
-    minlength: 3,
-    required: true,
-  },
+export interface IUserDoc extends Document {}
+
+const userSchemaFields: Record<keyof IUser, any> = {
   email: {
     type: String,
     unique: true,
@@ -154,7 +149,9 @@ const userSchema = new Schema({
       },
     },
   ],
-});
+};
+
+const userSchema = new Schema(userSchemaFields);
 
 userSchema.set('toJSON', {
   transform: (_document, returnedObject) => {
@@ -167,4 +164,4 @@ userSchema.set('toJSON', {
 
 userSchema.plugin(mongooseUniqueValidator);
 
-export const User = mongoose.model<IUser>('User', userSchema);
+export const User = mongoose.model<IUserDoc>('User', userSchema);

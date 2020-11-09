@@ -1,11 +1,11 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { IUser } from './src/models/user.ts';
-import { IAd } from './src/models/ad.ts';
-import { IMessage } from './src/models/message.ts';
-import { INegotiation } from './src/models/negotiation.ts';
-import { IReview } from './src/models/review.ts';
-import { IVineyard } from './src/models/vineyard.ts';
-import { IWine } from './src/models/wine.ts';
+import { IUser } from '../models/user';
+import { IAd } from '../models/ad';
+import { IMessage } from '../models/message';
+import { INegotiation } from '../models/negotiation';
+import { IReview } from '../models/review';
+import { IVineyard } from '../models/vineyard';
+import { IWine } from '../models/wine'
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;

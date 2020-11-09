@@ -8,11 +8,11 @@ import {
   Regioni,
   METODOPRODUTTIVO,
 } from '../utils/enumMongooseHelper';
-import { IUser } from './user';
-import { INegotiation } from './negotiation';
-import { IWine } from './wine';
+import { IUserDoc } from './user';
+import { INegotiationDoc } from './negotiation';
+import { IWineDoc } from './wine';
 import { TypeAd } from '../types';
-import { IVineyard } from './vineyard';
+import { IVineyardDoc } from './vineyard';
 import { MetodoProduttivo } from '../types';
 
 enum Menzione {
@@ -22,16 +22,20 @@ enum Menzione {
   VIGNA = 'Vigna',
 }
 
-export interface IAd extends Document {
-  postedBy: IUser['_id'] | IUser;
+enum typeProduct {
+  WINE = 'Wine',
+  GRAPE = 'Grape',
+}
+
+export interface IAd {
+  postedBy: IUserDoc['_id'];
   wineName?: string;
-  wine?: IWine['_id'] | IWine;
+  wine?: IWineDoc['_id'] | IWineDoc;
   sottoZona?: string;
-  menzioneGeograficaAggiuntiva?: string;
   menzione?: Menzione;
   metodoProduttivo?: MetodoProduttivo;
   vineyardName?: string;
-  vineyard?: IVineyard['_id'] | IVineyard;
+  vineyard?: IVineyardDoc['_id'] | IVineyardDoc;
   harvest: number;
   abv?: number;
   priceFrom: number; //se vendita priceFrom e priceTo settati a stesso numero
@@ -42,33 +46,49 @@ export interface IAd extends Document {
   kgTo?: number;
   content?: string;
   address: Address;
-  negotiations?: Array<INegotiation['_id'] | INegotiation>; // trattative dell'annuncio, solo attive, solo graphql??
-  viewedBy?: Array<IUser['_id'] | IUser>;
-  type: TypeAd;
+  negotiations?: Array<INegotiationDoc['_id'] | INegotiationDoc>; // trattative dell'annuncio, solo attive, solo graphql??
+  viewedBy?: Array<IUserDoc['_id'] | IUserDoc>;
+  typeAd: TypeAd;
+  typeProduct: typeProduct;
   isActive: boolean;
   datePosted: Date;
 }
 
-const adSchema = new Schema({
+const adSchemaFields: Record<keyof IAd, any> = {
   postedBy: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
   },
+  typeAd: {
+    type: String,
+    enum: ['Sell', 'Buy'],
+    required: true,
+  },
+  typeProduct: {
+    type: String,
+    enum: ['Wine', 'Grape'],
+    required: true,
+  },
   wineName: {
     type: String,
     minlength: 3,
+    required() {
+      return this.typeProduct === 'Wine';
+    },
   },
   wine: {
     type: Schema.Types.ObjectId,
     ref: 'Wine',
+    required() {
+      return this.typeProduct === 'Wine';
+    },
   },
   sottoZona: {
     type: String,
-    required: true,
-  },
-  menzioneGeograficaAggiuntiva: {
-    type: String,
+    required() {
+      return this.typeProduct === 'Wine';
+    },
   },
   menzione: {
     type: String,
@@ -77,14 +97,22 @@ const adSchema = new Schema({
   metodoProduttivo: {
     type: String,
     enum: Object.values(METODOPRODUTTIVO),
+    required: true,
+    default: 'Convenzionale',
   },
   vineyardName: {
     type: String,
     minlength: 3,
+    required() {
+      return this.typeProduct === 'Grape';
+    },
   },
   vineyard: {
     type: Schema.Types.ObjectId,
     ref: 'Vineyard',
+    required() {
+      return this.typeProduct === 'Grape';
+    },
   },
   abv: Number,
   harvest: {
@@ -99,10 +127,30 @@ const adSchema = new Schema({
     type: Number,
     required: true,
   },
-  litersFrom: Number,
-  litersTo: Number,
-  kgFrom: Number,
-  kgTo: Number,
+  litersFrom: {
+    type: Number,
+    required() {
+      return this.typeProduct === 'Wine';
+    },
+  },
+  litersTo: {
+    type: Number,
+    required() {
+      return this.typeProduct === 'Wine';
+    },
+  },
+  kgFrom: {
+    type: Number,
+    required() {
+      return this.typeProduct === 'Grape';
+    },
+  },
+  kgTo: {
+    type: Number,
+    required() {
+      return this.typeProduct === 'Grape';
+    },
+  },
   address: {
     via: {
       type: String,
@@ -135,9 +183,8 @@ const adSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
   },
-  type: {
+  content: {
     type: String,
-    enum: ['Sell', 'Buy'],
     required: true,
   },
   isActive: Boolean,
@@ -146,14 +193,12 @@ const adSchema = new Schema({
     // `Date.now()` returns the current unix timestamp as a number
     default: Date.now,
   },
-});
+};
 
-adSchema.set('toJSON', {
-  transform: (_document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
-    delete returnedObject._id;
-    delete returnedObject.__v;
-  },
-});
+export interface IAdDoc extends Document, IAd {}
 
-export const Ad = mongoose.model<IAd>('Ad', adSchema);
+const adSchema = new Schema(adSchemaFields);
+
+//adSchema.index({ 'createdBy': 1, 'typeAd': 1 }, { 'unique': true })
+
+export const Ad = mongoose.model<IAdDoc>('Ad', adSchema);

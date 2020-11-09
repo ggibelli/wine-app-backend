@@ -2,23 +2,32 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import mongoose, { Schema, Document } from 'mongoose';
-import { IUser } from './user';
-import { IAd } from './ad';
-import { IMessage } from './message';
+import { IUserDoc } from './user';
+import { IAdDoc } from './ad';
+import { IMessageDoc } from './message';
+import { TypeAd } from '../types';
 
-export interface INegotiation extends Document {
-  createdBy: IUser['_id'];
-  ad: IAd['_id'];
-  forUserAd: IUser['_id'] | IUser;
-  messages?: Array<IMessage['_id'] | IMessage>;
+export interface INegotiation {
+  createdBy: IUserDoc['_id'];
+  ad: IAdDoc['_id'];
+  forUserAd: IUserDoc['_id'] | IUserDoc;
+  messages?: Array<IMessageDoc['_id'] | IMessageDoc>;
   isConcluded: boolean;
   dateCreated: Date;
+  type: TypeAd;
 }
 
-const negotiationSchema = new Schema({
+export interface INegotiationDoc extends Document {}
+
+const negotiationSchemaFields: Record<keyof INegotiation, any> = {
   createdBy: {
     type: Schema.Types.ObjectId,
     ref: 'User',
+    required: true,
+  },
+  type: {
+    type: String,
+    enum: ['Sell', 'Buy'],
     required: true,
   },
   ad: {
@@ -46,17 +55,13 @@ const negotiationSchema = new Schema({
     // `Date.now()` returns the current unix timestamp as a number
     default: Date.now,
   },
-});
+};
 
-negotiationSchema.set('toJSON', {
-  transform: (_document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
-    delete returnedObject._id;
-    delete returnedObject.__v;
-  },
-});
+const negotiationSchema = new Schema(negotiationSchemaFields);
 
-export const Negotiation = mongoose.model<INegotiation>(
+negotiationSchema.index({ createdBy: 1, ad: 1 }, { unique: true });
+
+export const Negotiation = mongoose.model<INegotiationDoc>(
   'Negotiation',
   negotiationSchema
 );

@@ -20,7 +20,7 @@ enum DenomZona {
   VINO = 'Vino generico',
 }
 
-export interface IWine extends Document {
+export interface IWine {
   denominazioneVino: string;
   aka?: string;
   espressioneComunitaria: EspressioneComunitaria;
@@ -28,7 +28,9 @@ export interface IWine extends Document {
   regione: Regioni;
 }
 
-const wineSchema = new Schema({
+export interface IWineDoc extends Document {}
+
+const wineSchemaFields: Record<keyof IWine, any> = {
   denominazioneVino: {
     type: String,
     required: true,
@@ -49,16 +51,10 @@ const wineSchema = new Schema({
     enum: Object.values(MongooseRegioni),
     required: true,
   },
-});
+};
 
-wineSchema.set('toJSON', {
-  transform: (_document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
-    delete returnedObject._id;
-    delete returnedObject.__v;
-  },
-});
+const wineSchema = new Schema(wineSchemaFields);
 
 wineSchema.plugin(mongooseUniqueValidator);
 
-export const Wine = mongoose.model<IWine>('Wine', wineSchema);
+export const Wine = mongoose.model<IWineDoc>('Wine', wineSchema);

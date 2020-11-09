@@ -2,19 +2,20 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import mongoose, { Schema, Document } from 'mongoose';
-import { IUser } from './user';
-import { IAd } from './ad';
-import { INegotiation } from './negotiation';
+import { IUserDoc } from './user';
+import { INegotiationDoc } from './negotiation';
 
-export interface IMessage extends Document {
-  negotiation: INegotiation['_id'] | INegotiation;
+export interface IMessage {
+  negotiation: INegotiationDoc['_id'] | INegotiationDoc;
   content: string;
-  sentBy: IUser['_id'] | IUser;
-  sentTo: IUser['_id'] | IUser;
+  sentBy: IUserDoc['_id'] | IUserDoc;
+  sentTo: IUserDoc['_id'] | IUserDoc;
   dateSent: Date;
 }
 
-const messageSchema = new Schema({
+export interface IMessageDoc extends Document {}
+
+const messageSchemaFields: Record<keyof IMessage, any> = {
   negotiation: {
     type: Schema.Types.ObjectId,
     ref: 'Negotiation',
@@ -40,14 +41,8 @@ const messageSchema = new Schema({
     // `Date.now()` returns the current unix timestamp as a number
     default: Date.now,
   },
-});
+};
 
-messageSchema.set('toJSON', {
-  transform: (_document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
-    delete returnedObject._id;
-    delete returnedObject.__v;
-  },
-});
+const messageSchema = new Schema(messageSchemaFields);
 
-export const Message = mongoose.model<IAd>('Message', messageSchema);
+export const Message = mongoose.model<IMessageDoc>('Message', messageSchema);

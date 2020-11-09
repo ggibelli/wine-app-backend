@@ -2,18 +2,21 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import mongoose, { Schema, Document } from 'mongoose';
+import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 enum Colore {
   BIANCA = 'Bianca',
   ROSSA = 'Rossa',
 }
 
-export interface IVineyard extends Document {
+export interface IVineyard {
   name: string;
   colore: Colore;
 }
 
-const vineyardSchema = new Schema({
+export interface IVineyardDoc extends Document {}
+
+const vineyardSchemaFields: Record<keyof IVineyard, any> = {
   name: {
     type: String,
     required: true,
@@ -22,14 +25,13 @@ const vineyardSchema = new Schema({
     type: String,
     enum: ['Bianca', 'Rossa'],
   },
-});
+};
 
-vineyardSchema.set('toJSON', {
-  transform: (_document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString();
-    delete returnedObject._id;
-    delete returnedObject.__v;
-  },
-});
+const vineyardSchema = new Schema(vineyardSchemaFields);
 
-export const Vineyard = mongoose.model<IVineyard>('Vineyard', vineyardSchema);
+vineyardSchema.plugin(mongooseUniqueValidator);
+
+export const Vineyard = mongoose.model<IVineyardDoc>(
+  'Vineyard',
+  vineyardSchema
+);
