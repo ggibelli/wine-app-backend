@@ -135,9 +135,14 @@ export const typeDefs = gql`
     VENETO
   }
 
-  enum Type {
+  enum TypeAd {
     SELL
     BUY
+  }
+
+  enum TypeProduct {
+    WINE
+    GRAPE
   }
 
   enum Menzione {

@@ -6,6 +6,13 @@ export const typeDefs = gql`
     sentTo: ID!
   }
 
+  type MessageResponse implements MutationResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    messageSent: Message
+  }
+
   type Message {
     _id: ID!
     content: String!
@@ -13,5 +20,13 @@ export const typeDefs = gql`
     sentTo: User!
     "dateSent: Date!"
     dateFormatted: Date
+  }
+
+  extend type Mutation {
+    createMessage(message: MessageInput): MessageResponse
+  }
+
+  extend type Subscription {
+    messageSent: Message!
   }
 `;

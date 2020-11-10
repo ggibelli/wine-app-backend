@@ -33,6 +33,24 @@ export const typeDefs = gql`
     pIva: String!
     phoneNumber: String!
     address: AddressInput!
+    #verified: Boolean
+    #premium: Boolean
+    #ads: [ID!]
+    #negotiations: [ID!]
+    #reviews: [ID!]
+    #adsRemaining: Int
+    producedWines: ProducedWinesInput
+    ownedVineyards: OwnedVineyardsInput
+  }
+
+  input UserInputUpdate {
+    username: String
+    email: String
+    firstName: String
+    lastName: String
+    pIva: String
+    phoneNumber: String
+    address: AddressInput
     verified: Boolean
     premium: Boolean
     ads: [ID!]
@@ -62,5 +80,39 @@ export const typeDefs = gql`
     dateFormatted: Date
     producedWines: ProducedWines
     ownedVineyards: OwnedVineyards
+  }
+
+  type UserResponse implements MutationResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    user: User
+  }
+
+  type Token {
+    value: String!
+  }
+
+  type LoginResponse implements MutationResponse {
+    code: String!
+    success: Boolean!
+    message: String!
+    token: Token
+  }
+
+  extends type Query {
+    users(
+      premium: Boolean 
+      verified: Boolean
+      ): [User!]
+    user(id: ID!): User
+    me: User
+  }
+
+  extends type Mutation {
+    createUser(user: UserInput): UserResponse
+    updateUser(user: UserInputUpdate, id: ID!): UserResponse
+    deleteUser(id: ID!): UserResponse
+    login(mail: String!, password: String!): LoginResponse
   }
 `;
