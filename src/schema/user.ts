@@ -100,16 +100,13 @@ export const typeDefs = gql`
     token: Token
   }
 
-  extends type Query {
-    users(
-      premium: Boolean 
-      verified: Boolean
-      ): [User!]
+  extend type Query {
+    users(premium: Boolean, verified: Boolean): [User!]
     user(id: ID!): User
     me: User
   }
 
-  extends type Mutation {
+  extend type Mutation {
     createUser(user: UserInput): UserResponse
     updateUser(user: UserInputUpdate, id: ID!): UserResponse
     deleteUser(id: ID!): UserResponse

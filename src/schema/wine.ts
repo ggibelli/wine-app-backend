@@ -33,7 +33,7 @@ export const typeDefs = gql`
     wine: Wine
   }
 
-  extends type Query {
+  extend type Query {
     wines(
       name: String
       espressioneComunitaria: String
@@ -43,7 +43,7 @@ export const typeDefs = gql`
     wine(_id: ID!): Wine
   }
 
-  extends type Mutation {
+  extend type Mutation {
     createWine(wine: WineInput): WineResponse
     updateWine(wine: WineInputUpdate, id: ID!): WineResponse
     deleteWine(id: ID!): WineResponse

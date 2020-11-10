@@ -6,7 +6,4 @@ export const typeDefs = gql`
     success: Boolean!
     message: String!
   }
-
-  type Mutation { 
-  }
 `;

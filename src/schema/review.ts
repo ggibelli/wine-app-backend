@@ -6,7 +6,7 @@ export const typeDefs = gql`
     forUserAd: ID!
     rating: ID!
     content: String!
-    type: Type!
+    type: TypeAd!
   }
 
   input ReviewInputUpdate {
@@ -36,12 +36,12 @@ export const typeDefs = gql`
     type: TypeAd!
   }
 
-  extends type Query {
+  extend type Query {
     review(id: ID!): Review
     reviews(forUser: ID, type: TypeAd): [Review!]
   }
 
-  extends type Mutation {
+  extend type Mutation {
     createReview(review: ReviewInput): ReviewResponse
     updateReview(review: ReviewInputUpdate, id: ID!): ReviewResponse
     deleteReview(id: ID!): ReviewResponse

@@ -10,13 +10,13 @@ generates:
       useIndexSignature: true
       defaultMapper: Partial<{T}>
       mappers:
-        User: ./src/models/user.ts#IUser
-        Ad: ./src/models/ad.ts#IAd
-        Message: ./src/models/message.ts#IMessage
-        Negotiation: ./src/models/negotiation.ts#INegotiation
-        Review: ./src/models/review.ts#IReview
-        Vineyard: ./src/models/vineyard.ts#IVineyard
-        Wine: ./src/models/wine.ts#IWine
+        User: ./src/models/user.ts#IUserDoc
+        Ad: ./src/models/ad.ts#IAdDoc
+        Message: ./src/models/message.ts#IMessageDoc
+        Negotiation: ./src/models/negotiation.ts#INegotiationDoc
+        Review: ./src/models/review.ts#IReviewDoc
+        Vineyard: ./src/models/vineyard.ts#IVineyardDoc
+        Wine: ./src/models/wine.ts#IWineDoc
   ./graphql.schema.json:
     plugins:
       - 'introspection'

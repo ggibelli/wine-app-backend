@@ -34,12 +34,12 @@ export const typeDefs = gql`
     review: [Review]
   }
 
-  extends type Query {
+  extend type Query {
     negotiation(_id: ID!): Negotiation
     negotiations: [Negotiation!]
   }
 
-  extends type Mutation {
+  extend type Mutation {
     createNegotiation(negotiation: NegotiationInput): NegotiationResponse
     updateNegotiation(
       negotiation: NegotiationInputUpdate

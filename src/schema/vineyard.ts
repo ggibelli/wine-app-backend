@@ -24,12 +24,12 @@ export const typeDefs = gql`
     vineyard: Vineyard
   }
 
-  extends type Query {
+  extend type Query {
     vineyards(name: String, colore: String): [Vineyard!]
     vineyard(id: ID!): Vineyard
   }
 
-  extends type Mutation {
+  extend type Mutation {
     createVineyard(vineyard: VineyardInput): VineyardResponse
     updateVineyard(vineyard: VineyardInputUpdate, id: ID!): VineyardResponse
     deleteVineyard(id: ID!): VineyardResponse

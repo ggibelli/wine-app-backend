@@ -142,7 +142,7 @@ export const typeDef = gql`
     menzione: Menzione
     metodoProduttivo: MetodoProduttivo
     harvest: Int!
-    abv: Float
+    abv: Float!
     priceFrom: Float!
     priceTo: Float!
     litersFrom: Int
@@ -153,7 +153,8 @@ export const typeDef = gql`
     activeNegotiations: Int
     "viewedBy: [User]"
     numberViews: Int
-    type: Type!
+    typeAd: TypeAd!
+    typeProduct: TypeProduct!
     isActive: Boolean!
     "datePosted: Date!"
     dateFormatted: Date
