@@ -1,5 +1,5 @@
-import { QueryResolvers, User } from '../generated/graphql';
-import { User as UserModel } from '../models/user';
+import { QueryResolvers } from '../generated/graphql';
+import { User } from '../models/user';
 
 interface Resolvers {
   Query: QueryResolvers;
@@ -7,13 +7,13 @@ interface Resolvers {
 
 export const resolver: Resolvers = {
   Query: {
-    users: async (): Promise<User[]> => {
+    users: async () => {
       //
-      return users;
+      return await User.find({});
     },
 
-    user: async (_root, { _id }): Promise<User | null> => {
-      const user = await UserModel.findById(_id);
+    user: async (_root, { id }) => {
+      const user = await User.findById(id);
       //
       if (!user) return null;
       return user;

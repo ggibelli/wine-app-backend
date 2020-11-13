@@ -9,6 +9,15 @@ generates:
     config:
       useIndexSignature: true
       defaultMapper: Partial<{T}>
+      enumValues:
+        TypeProduct: ./src/types.ts#TypeProduct
+        TypeAd: ./src/types.ts#TypeAd
+        MetodoProduttivo: ./src/types.ts#MetodoProduttivo
+        Province: ./src/types.ts#Province
+        Regioni: ./src/types.ts#Regioni
+        EspressioneComunitaria: ./src/types.ts#EspressioneComunitaria
+        DenomZona: ./src/types.ts#DenomZona
+        Menzione: ./src/types.ts#Menzione
       mappers:
         User: ./src/models/user.ts#IUserDoc
         Ad: ./src/models/ad.ts#IAdDoc

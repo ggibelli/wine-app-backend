@@ -51,8 +51,8 @@ export const typeDefs = gql`
     pIva: String
     phoneNumber: String
     address: AddressInput
-    verified: Boolean
-    premium: Boolean
+    isVerified: Boolean
+    isPremium: Boolean
     ads: [ID!]
     negotiations: [ID!]
     reviews: [ID!]
@@ -70,8 +70,8 @@ export const typeDefs = gql`
     pIva: String!
     phoneNumber: String!
     address: Address!
-    verified: Boolean!
-    premium: Boolean!
+    isVerified: Boolean!
+    isPremium: Boolean!
     ads: [Ad!]
     negotiations: [Negotiation!]
     reviews: [Review!]
@@ -101,7 +101,7 @@ export const typeDefs = gql`
   }
 
   extend type Query {
-    users(premium: Boolean, verified: Boolean): [User!]
+    users(): [User!]
     user(id: ID!): User
     me: User
   }

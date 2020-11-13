@@ -33,8 +33,8 @@ export interface IUser {
   pIva: string;
   phoneNumber: string;
   address: Address;
-  verified: boolean;
-  premium?: boolean;
+  isVerified: boolean;
+  isPremium?: boolean;
   ads?: Array<IAdDoc['_id'] | IAdDoc>; // annunci postati dall'utente
   negotiations?: Array<INegotiationDoc['_id'] | INegotiationDoc>; // trattative dell'utente, attive e non, concluse e non
   reviews?: Array<IReviewDoc['_id'] | IReviewDoc>; // recensioni fatte e ricevute dall'utente
@@ -90,12 +90,12 @@ const userSchemaFields: Record<keyof IUser, any> = {
       required: true,
     },
   },
-  verified: {
+  isVerified: {
     type: Boolean,
     required: true,
     default: false,
   },
-  premium: {
+  isPremium: {
     type: Boolean,
     default: false,
   },

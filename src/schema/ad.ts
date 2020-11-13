@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server-express';
 
-export const typeDef = gql`
+export const typeDefs = gql`
   type Address {
     via: String!
     CAP: Int!
@@ -32,7 +32,7 @@ export const typeDef = gql`
     content: String!
     address: AddressInput!
     typeAd: TypeAd!
-    typeProduct: TypeProduct!
+    #typeProduct: TypeProduct!
     #isActive: Boolean!
   }
 
@@ -130,7 +130,7 @@ export const typeDef = gql`
     typeProduct: TypeProduct!
     isActive: Boolean!
     "datePosted: Date!"
-    dateFormatted: Date
+    dateFormatted: String
   }
 
   type AdWine implements Ad {
@@ -157,7 +157,7 @@ export const typeDef = gql`
     typeProduct: TypeProduct!
     isActive: Boolean!
     "datePosted: Date!"
-    dateFormatted: Date
+    dateFormatted: String
   }
 
   type AdVineyard implements Ad {
@@ -181,10 +181,10 @@ export const typeDef = gql`
     typeProduct: TypeProduct!
     isActive: Boolean!
     "datePosted: Date!"
-    dateFormatted: Date
+    dateFormatted: String
   }
 
-  extend type Query {
+  type Query {
     ad(_id: ID!): Ad!
     adsWine(
       wineName: String!
@@ -193,11 +193,13 @@ export const typeDef = gql`
       metodoProduttivo: String
       harvest: Int
       abv: Float
-      price: Float
-      liters: Int
+      priceFrom: Float
+      priceTo: Float
+      litersFrom: Int
+      litersTo: Int
       date: Date
       isNew: Boolean
-    ): AdWine
+    ): [Ad]
     adsVineyard(
       vineyardName: String!
       harvest: Int
@@ -207,10 +209,10 @@ export const typeDef = gql`
       kgs: Int
       date: Date
       isNew: Boolean
-    ): AdVineyard
+    ): [Ad]
   }
 
-  extend type Mutation {
+  type Mutation {
     createAdWine(ad: AdInputWine!): AdWineResponse
     updateAdWine(ad: AdInputWineUpdate!, id: ID!): AdWineResponse
     deleteAdWine(id: ID!): AdWineResponse
@@ -219,7 +221,7 @@ export const typeDef = gql`
     deleteAdVineyard(id: ID!): AdVineyardResponse
   }
 
-  extend type Subscription {
+  type Subscription {
     adPosted: Ad!
   }
 `;

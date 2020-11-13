@@ -141,8 +141,8 @@ export const typeDefs = gql`
   }
 
   enum TypeProduct {
-    WINE
-    GRAPE
+    ADWINE
+    ADVINEYARD
   }
 
   enum Menzione {

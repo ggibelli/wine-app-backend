@@ -11,21 +11,9 @@ import {
 import { IUserDoc } from './user';
 import { INegotiationDoc } from './negotiation';
 import { IWineDoc } from './wine';
-import { TypeAd } from '../types';
+import { TypeAd, TypeProduct, Menzione } from '../types';
 import { IVineyardDoc } from './vineyard';
 import { MetodoProduttivo } from '../types';
-
-enum Menzione {
-  CLASSICO = 'Classico',
-  RISERVA = 'Riserva',
-  SUPERIORE = 'Superiore',
-  VIGNA = 'Vigna',
-}
-
-enum typeProduct {
-  WINE = 'Wine',
-  GRAPE = 'Grape',
-}
 
 export interface IAd {
   postedBy: IUserDoc['_id'];
@@ -49,7 +37,7 @@ export interface IAd {
   negotiations?: Array<INegotiationDoc['_id'] | INegotiationDoc>; // trattative dell'annuncio, solo attive, solo graphql??
   viewedBy?: Array<IUserDoc['_id'] | IUserDoc>;
   typeAd: TypeAd;
-  typeProduct: typeProduct;
+  typeProduct: TypeProduct;
   isActive: boolean;
   datePosted: Date;
 }
@@ -76,6 +64,7 @@ const adSchemaFields: Record<keyof IAd, any> = {
     required() {
       return this.typeProduct === 'Wine';
     },
+    index: true,
   },
   wine: {
     type: Schema.Types.ObjectId,
@@ -106,6 +95,7 @@ const adSchemaFields: Record<keyof IAd, any> = {
     required() {
       return this.typeProduct === 'Grape';
     },
+    index: true,
   },
   vineyard: {
     type: Schema.Types.ObjectId,
@@ -158,7 +148,7 @@ const adSchemaFields: Record<keyof IAd, any> = {
       minlength: 5,
     },
     CAP: {
-      type: String,
+      type: Number,
       required: true,
       minlength: 5,
     },

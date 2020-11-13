@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node-dev ./src/index.ts",
     "codegen-graphql": "graphql-codegen --config codegen.yml"
   },
   "author": "Giovanni Gibelli",
@@ -24,6 +25,7 @@
     "@graphql-codegen/introspection": "1.18.0"
   },
   "dependencies": {
+    "apollo-datasource-mongodb": "^0.2.8",
     "apollo-server-express": "^2.19.0",
     "bcrypt": "^5.0.0",
     "dotenv": "^8.2.0",

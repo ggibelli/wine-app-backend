@@ -134,7 +134,7 @@ export enum Regioni {
 
 export interface Address {
   via: string;
-  CAP: string;
+  CAP: number;
   comune: string;
   provincia: Province;
   regione: Regioni;
@@ -150,4 +150,30 @@ export enum MetodoProduttivo {
   BIOLOGICO = 'Biologico',
   BIODINAMICO = 'Biodinamico',
   NATURALE = 'Naturale',
+}
+
+export enum TypeProduct {
+  ADWINE = 'AdWine',
+  ADGRAPE = 'AdVineyard',
+}
+
+export enum EspressioneComunitaria {
+  DOP = 'DOP',
+  IGP = 'IGP',
+  ND = 'ND',
+}
+
+export enum DenomZona {
+  DOC = 'DOC',
+  DOCG = 'DOCG',
+  IGT = 'IGT',
+  VARIETALE = 'Vino varietale',
+  VINO = 'Vino generico',
+}
+
+export enum Menzione {
+  CLASSICO = 'Classico',
+  RISERVA = 'Riserva',
+  SUPERIORE = 'Superiore',
+  VIGNA = 'Vigna',
 }

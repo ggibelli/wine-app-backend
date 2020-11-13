@@ -1181,7 +1181,7 @@
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "Date",
+              "name": "String",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1517,7 +1517,7 @@
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "Date",
+              "name": "String",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1810,7 +1810,7 @@
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "Date",
+              "name": "String",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1954,9 +1954,13 @@
               }
             ],
             "type": {
-              "kind": "OBJECT",
-              "name": "AdVineyard",
-              "ofType": null
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "INTERFACE",
+                "name": "Ad",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1969,13 +1973,9 @@
                 "name": "wineName",
                 "description": null,
                 "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
                 },
                 "defaultValue": null
               },
@@ -2071,9 +2071,13 @@
               }
             ],
             "type": {
-              "kind": "OBJECT",
-              "name": "AdWine",
-              "ofType": null
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "INTERFACE",
+                "name": "Ad",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -4000,13 +4004,13 @@
         "interfaces": null,
         "enumValues": [
           {
-            "name": "WINE",
+            "name": "ADWINE",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "GRAPE",
+            "name": "ADVINEYARD",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
