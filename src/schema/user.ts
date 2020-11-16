@@ -26,7 +26,6 @@ export const typeDefs = gql`
   }
 
   input UserInput {
-    username: String!
     email: String!
     firstName: String!
     lastName: String!
@@ -44,7 +43,6 @@ export const typeDefs = gql`
   }
 
   input UserInputUpdate {
-    username: String
     email: String
     firstName: String
     lastName: String
@@ -63,7 +61,6 @@ export const typeDefs = gql`
 
   type User {
     _id: ID!
-    username: String!
     email: String!
     firstName: String!
     lastName: String!
@@ -83,7 +80,6 @@ export const typeDefs = gql`
   }
 
   type UserResponse implements MutationResponse {
-    code: String!
     success: Boolean!
     message: String!
     user: User
@@ -94,14 +90,13 @@ export const typeDefs = gql`
   }
 
   type LoginResponse implements MutationResponse {
-    code: String!
     success: Boolean!
     message: String!
     token: Token
   }
 
   extend type Query {
-    users(): [User!]
+    users: [User!]
     user(id: ID!): User
     me: User
   }

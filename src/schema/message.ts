@@ -7,7 +7,6 @@ export const typeDefs = gql`
   }
 
   type MessageResponse implements MutationResponse {
-    code: String!
     success: Boolean!
     message: String!
     messageSent: Message

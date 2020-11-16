@@ -18,7 +18,6 @@ export const typeDefs = gql`
   }
 
   type VineyardResponse implements MutationResponse {
-    code: String!
     success: Boolean!
     message: String!
     vineyard: Vineyard

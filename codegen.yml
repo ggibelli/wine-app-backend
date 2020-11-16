@@ -9,23 +9,25 @@ generates:
     config:
       useIndexSignature: true
       defaultMapper: Partial<{T}>
+      #maybeValue: T | null | undefined
+      maybeValue: 'T extends PromiseLike<infer U> ? Promise<U | null> : T | null'
       enumValues:
-        TypeProduct: ./src/types.ts#TypeProduct
-        TypeAd: ./src/types.ts#TypeAd
-        MetodoProduttivo: ./src/types.ts#MetodoProduttivo
-        Province: ./src/types.ts#Province
-        Regioni: ./src/types.ts#Regioni
-        EspressioneComunitaria: ./src/types.ts#EspressioneComunitaria
-        DenomZona: ./src/types.ts#DenomZona
-        Menzione: ./src/types.ts#Menzione
+        TypeProduct: ../types#TypeProduct
+        TypeAd: ../types#TypeAd
+        MetodoProduttivo: ../types#MetodoProduttivo
+        Province: ../types#Province
+        Regioni: ../types#Regioni
+        EspressioneComunitaria: ../types#EspressioneComunitaria
+        DenomZona: ../types#DenomZona
+        Menzione: ../types#Menzione
       mappers:
-        User: ./src/models/user.ts#IUserDoc
-        Ad: ./src/models/ad.ts#IAdDoc
-        Message: ./src/models/message.ts#IMessageDoc
-        Negotiation: ./src/models/negotiation.ts#INegotiationDoc
-        Review: ./src/models/review.ts#IReviewDoc
-        Vineyard: ./src/models/vineyard.ts#IVineyardDoc
-        Wine: ./src/models/wine.ts#IWineDoc
+        User: ../models/user#IUserDoc
+        Ad: ../models/ad#IAdDoc
+        Message: ../models/message#IMessageDoc
+        Negotiation: ../models/negotiation#INegotiationDoc
+        Review: ../models/review#IReviewDoc
+        Vineyard: ../models/vineyard#IVineyardDoc
+        Wine: ../models/wine#IWineDoc
   ./graphql.schema.json:
     plugins:
       - 'introspection'

@@ -18,7 +18,6 @@ export const typeDefs = gql`
   }
 
   type ReviewResponse implements MutationResponse {
-    code: String!
     success: Boolean!
     message: String!
     review: Review

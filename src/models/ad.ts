@@ -14,6 +14,7 @@ import { IWineDoc } from './wine';
 import { TypeAd, TypeProduct, Menzione } from '../types';
 import { IVineyardDoc } from './vineyard';
 import { MetodoProduttivo } from '../types';
+import { truncate } from 'lodash';
 
 export interface IAd {
   postedBy: IUserDoc['_id'];
@@ -151,6 +152,10 @@ const adSchemaFields: Record<keyof IAd, any> = {
       type: Number,
       required: true,
       minlength: 5,
+    },
+    comune: {
+      type: String,
+      required: true
     },
     provincia: {
       type: String,

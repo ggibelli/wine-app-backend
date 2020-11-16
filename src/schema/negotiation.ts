@@ -16,7 +16,6 @@ export const typeDefs = gql`
   }
 
   type NegotiationResponse implements MutationResponse {
-    code: String!
     success: Boolean!
     message: String!
     negotiation: Negotiation

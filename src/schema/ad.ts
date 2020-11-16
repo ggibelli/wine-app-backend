@@ -4,113 +4,58 @@ export const typeDefs = gql`
   type Address {
     via: String!
     CAP: Int!
-    provincia: String!
-    regione: String!
+    comune: String!
+    provincia: Province!
+    regione: Regioni!
   }
 
   input AddressInput {
     via: String!
     CAP: Int!
-    provincia: String!
-    regione: String!
+    comune: String!
+    provincia: Province!
+    regione: Regioni!
   }
 
-  input AdInputWine {
-    wineName: String!
+  input AdInput {
+    typeAd: TypeAd!
+    typeProduct: TypeProduct!
+    content: String!
+    address: AddressInput!
+    harvest: Int!
+    abv: Float!
+    wineName: String
+    vineyardName: String
     sottoZona: String
     menzione: Menzione
     metodoProduttivo: MetodoProduttivo
-    #vineyard: ID
-    harvest: Int!
-    abv: Float!
     priceFrom: Float!
     priceTo: Float!
-    litersFrom: Int!
-    litersTo: Int!
-    #kgFrom: Int
-    #kgTo: Int
-    content: String!
-    address: AddressInput!
-    typeAd: TypeAd!
-    #typeProduct: TypeProduct!
-    #isActive: Boolean!
-  }
-
-  input AdInputVineyard {
-    #wineName: String!
-    #sottoZona: String
-    #menzione: Menzione
-    #metodoProduttivo: MetodoProduttivo
-    vineyardName: String!
-    harvest: Int!
-    abv: Float!
-    priceFrom: Float!
-    priceTo: Float!
-    #litersFrom: Int!
-    #litersTo: Int!
+    litersFrom: Int
+    litersTo: Int
     kgFrom: Int
     kgTo: Int
-    content: String!
-    address: AddressInput!
-    typeAd: TypeAd!
-    typeProduct: TypeProduct!
-    #isActive: Boolean!
   }
 
-  input AdInputWineUpdate {
+  input AdInputUpdate {
     wineName: String
     sottoZona: String
     menzione: Menzione
     metodoProduttivo: MetodoProduttivo
-    #vineyard: ID
     harvest: Int
     abv: Float
     priceFrom: Float
     priceTo: Float
     litersFrom: Int
     litersTo: Int
-    #kgFrom: Int
-    #kgTo: Int
     content: String
     address: AddressInput
-    typeAd: TypeAd
-    typeProduct: TypeProduct
-    #isActive: Boolean!
   }
 
-  input AdInputVineyardUpdate {
-    #wineName: String!
-    #sottoZona: String
-    #menzione: Menzione
-    #metodoProduttivo: MetodoProduttivo
-    vineyardName: String
-    harvest: Int
-    abv: Float
-    priceFrom: Float
-    priceTo: Float
-    #litersFrom: Int!
-    #litersTo: Int!
-    kgFrom: Int
-    kgTo: Int
-    content: String
-    address: AddressInput
-    typeAd: TypeAd
-    typeProduct: TypeProduct
-    #isActive: Boolean!
-  }
-
-  type AdWineResponse implements MutationResponse {
-    code: String!
+  type AdResponse implements MutationResponse {
     success: Boolean!
     message: String!
-    ad: AdWine
-  }
-
-  type AdVineyardResponse implements MutationResponse {
-    code: String!
-    success: Boolean!
-    message: String!
-    ad: AdVineyard
+    ad: Ad
   }
 
   interface Ad {
@@ -185,42 +130,20 @@ export const typeDefs = gql`
   }
 
   type Query {
-    ad(_id: ID!): Ad!
-    adsWine(
-      wineName: String!
-      sottoZona: String
-      menzione: String
-      metodoProduttivo: String
-      harvest: Int
-      abv: Float
-      priceFrom: Float
-      priceTo: Float
-      litersFrom: Int
-      litersTo: Int
-      date: Date
-      isNew: Boolean
-    ): [Ad]
-    adsVineyard(
-      vineyardName: String!
-      harvest: Int
-      metodoProduttivo: String
-      abv: Float
-      price: Float
-      kgs: Int
-      date: Date
-      isNew: Boolean
+    ad(_id: ID!): Ad
+    ads(
+      typeAd: TypeAd!
+      typeProduct: TypeProduct!
+      wineName: String
+      vineyardName: String
     ): [Ad]
   }
 
   type Mutation {
-    createAdWine(ad: AdInputWine!): AdWineResponse
-    updateAdWine(ad: AdInputWineUpdate!, id: ID!): AdWineResponse
-    deleteAdWine(id: ID!): AdWineResponse
-    createAdVineyard(ad: AdInputVineyard!): AdVineyardResponse
-    updateAdVineyard(ad: AdInputVineyardUpdate!, id: ID!): AdVineyardResponse
-    deleteAdVineyard(id: ID!): AdVineyardResponse
+    createAd(input: AdInput!): AdResponse
+    updateAd(input: AdInputUpdate!, id: ID!): AdResponse
+    deleteAd(id: ID!): AdResponse
   }
-
   type Subscription {
     adPosted: Ad!
   }

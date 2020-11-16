@@ -27,7 +27,6 @@ export const typeDefs = gql`
   }
 
   type WineResponse implements MutationResponse {
-    code: String!
     success: Boolean!
     message: String!
     wine: Wine
