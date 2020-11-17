@@ -14,7 +14,6 @@ import { IWineDoc } from './wine';
 import { TypeAd, TypeProduct, Menzione } from '../types';
 import { IVineyardDoc } from './vineyard';
 import { MetodoProduttivo } from '../types';
-import { truncate } from 'lodash';
 
 export interface IAd {
   postedBy: IUserDoc['_id'];
@@ -155,7 +154,7 @@ const adSchemaFields: Record<keyof IAd, any> = {
     },
     comune: {
       type: String,
-      required: true
+      required: true,
     },
     provincia: {
       type: String,
@@ -190,7 +189,7 @@ const adSchemaFields: Record<keyof IAd, any> = {
   },
 };
 
-export interface IAdDoc extends Document, IAd {}
+export interface IAdDoc extends IAd, Document {}
 
 const adSchema = new Schema(adSchemaFields);
 

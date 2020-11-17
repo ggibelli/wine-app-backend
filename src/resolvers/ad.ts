@@ -1,6 +1,6 @@
 import Ads from '../data-sources/ads';
+import Users from '../data-sources/users';
 import { AdInput, AdInputUpdate, Resolvers } from '../generated/graphql';
-import { IUser, User } from '../models/user';
 
 interface StringIndexSignatureInterface {
   [index: string]: any;
@@ -8,6 +8,7 @@ interface StringIndexSignatureInterface {
 
 interface MongoDataSource {
   ads: Ads;
+  users: Users;
 }
 
 type StringIndexed<T> = T & StringIndexSignatureInterface;
@@ -15,10 +16,10 @@ type StringIndexed<T> = T & StringIndexSignatureInterface;
 export const resolver: StringIndexed<Resolvers> = {
   Ad: {
     __resolveType: (ad) => ad.typeProduct,
-    // postedBy(ad) {
-    //   const postedBy: IUser = User.findById(ad.postedBy).lean().exec();
-    //   return postedBy;
-    // },
+    postedBy(ad, _, { dataSources }: { dataSources: MongoDataSource }) {
+      const postedBy = dataSources.users.getUser(ad.postedBy);
+      return postedBy;
+    },
     activeNegotiations(ad) {
       if (!ad.negotiations) {
         return 0;
@@ -68,6 +69,18 @@ export const resolver: StringIndexed<Resolvers> = {
         success: updateAd ? true : false,
         message: updateAd ? 'Ad successfully updated' : 'there was an error',
         ad: updateAd,
+      };
+    },
+    deleteAd(
+      _: any,
+      { id }: { id: string },
+      { dataSources }: { dataSources: MongoDataSource }
+    ) {
+      const removedAd = dataSources.ads.deleteAdWine(id);
+      return {
+        success: removedAd ? true : false,
+        message: removedAd ? 'Ad successfully updated' : 'there was an error',
+        ad: removedAd,
       };
     },
   },

@@ -1,9 +1,15 @@
 import { MongoDataSource } from 'apollo-datasource-mongodb';
 import { IAdDoc, Ad, IAd } from '../models/ad';
-import { TypeProduct, TypeAd } from '../types';
+import { TypeProduct } from '../types';
+//import { ObjectId } from 'mongodb';
+
 import { assertNever } from '../utils/helpersTypeScript';
 import { AdInput, AdInputUpdate, QueryAdsArgs } from '../generated/graphql';
-import { AuthenticationError, UserInputError } from 'apollo-server-express';
+import {
+  AuthenticationError,
+  ForbiddenError,
+  UserInputError,
+} from 'apollo-server-express';
 
 interface GrapeAdParams {
   vineyardName: string;
@@ -44,90 +50,35 @@ const parseWineAd = (params: any): WineAdParams => {
 };
 
 export default class Ads extends MongoDataSource<IAd | IAdDoc> {
-  getAd(adId: string) {
+  async getAd(adId: string) {
     return this.findOneById(adId);
-    //return Ad.findById(adId).lean().exec();
+    //let asd = Ad.findById(adId).lean().exec();
   }
+
   // un metodo solo con tipo prodotto e nome vino o nome vigna
-  getAds(args: QueryAdsArgs) {
-    switch (args.typeProduct) {
-      case TypeProduct.ADGRAPE:
-        switch (args.typeAd) {
-          case TypeAd.SELL:
-            if (args.vineyardName) {
-              return Ad.find({
-                typeProduct: TypeProduct.ADGRAPE,
-                typeAd: TypeAd.SELL,
-                vineyardName: args.vineyardName,
-              })
-                .lean()
-                .exec();
-            }
-            return Ad.find({
-              typeProduct: TypeProduct.ADGRAPE,
-              typeAd: TypeAd.SELL,
-            })
-              .lean()
-              .exec();
-          case TypeAd.BUY:
-            if (args.vineyardName) {
-              return Ad.find({
-                typeProduct: TypeProduct.ADGRAPE,
-                typeAd: TypeAd.BUY,
-                vineyardName: args.vineyardName,
-              })
-                .lean()
-                .exec();
-            }
-            return Ad.find({
-              typeProduct: TypeProduct.ADGRAPE,
-              typeAd: TypeAd.BUY,
-            })
-              .lean()
-              .exec();
-        }
-
-      case TypeProduct.ADWINE:
-        switch (args.typeAd) {
-          case TypeAd.SELL:
-            if (args.wineName) {
-              return Ad.find({
-                typeProduct: TypeProduct.ADWINE,
-                typeAd: TypeAd.SELL,
-                wineName: args.wineName,
-              })
-                .lean()
-                .exec();
-            }
-            return Ad.find({
-              typeProduct: TypeProduct.ADWINE,
-              typeAd: TypeAd.SELL,
-            })
-              .lean()
-              .exec();
-          case TypeAd.BUY:
-            if (args.wineName) {
-              return Ad.find({
-                typeProduct: TypeProduct.ADWINE,
-                typeAd: TypeAd.BUY,
-                wineName: args.wineName,
-              })
-                .lean()
-                .exec();
-            }
-            return Ad.find({
-              typeProduct: TypeProduct.ADWINE,
-              typeAd: TypeAd.BUY,
-            })
-              .lean()
-              .exec();
-        }
-      default:
-        assertNever(args.typeProduct);
+  async getAds(args: QueryAdsArgs) {
+    if (args.vineyardName) {
+      return Ad.find({
+        typeAd: args.typeAd,
+        vineyardName: args.vineyardName,
+      })
+        .lean()
+        .exec();
+    } else if (args.wineName) {
+      return Ad.find({
+        typeAd: args.typeAd,
+        wineName: args.wineName,
+      })
+        .lean()
+        .exec();
     }
-    return null;
+    return Ad.find({
+      typeAd: args.typeAd,
+      typeProduct: args.typeProduct,
+    })
+      .lean()
+      .exec();
   }
-
   async createAd(ad: AdInput) {
     const { _id } = this.context.currentUser;
     if (!_id) {
@@ -178,7 +129,7 @@ export default class Ads extends MongoDataSource<IAd | IAdDoc> {
     try {
       await createdAd.save();
     } catch (e) {
-      throw new Error(e.message);
+      throw new UserInputError(e.message);
     }
     return createdAd;
   }
@@ -187,9 +138,11 @@ export default class Ads extends MongoDataSource<IAd | IAdDoc> {
     if (!this.context.currentUser) {
       throw new AuthenticationError('Must login to update ad');
     }
-    let adToUpdate = { sottoZona: 'aaa' };
-
-    const updatedAd = await Ad.findByIdAndUpdate(id, ad, { new: true })
+    const updatedAd = await Ad.findOneAndUpdate(
+      { _id: id, postedBy: this.context.currentUser._id },
+      ad,
+      { new: true }
+    )
       .lean()
       .exec();
     return updatedAd;
@@ -199,7 +152,10 @@ export default class Ads extends MongoDataSource<IAd | IAdDoc> {
     if (!this.context.currentUser) {
       throw new AuthenticationError('Must login to post ad');
     }
-    const removedAd = await Ad.findByIdAndDelete(id).lean().exec();
+    const removedAd = await Ad.findById(id).exec();
+    if (removedAd?.postedBy.toString() !== this.context.currentUser._id) {
+      throw new ForbiddenError('Only owner can delete ad');
+    }
     return removedAd;
   }
 }

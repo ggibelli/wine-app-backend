@@ -60,7 +60,7 @@ export const typeDefs = gql`
 
   interface Ad {
     _id: ID!
-    postedBy: User!
+    postedBy: User
     harvest: Int!
     abv: Float!
     priceFrom: Float!
@@ -80,7 +80,7 @@ export const typeDefs = gql`
 
   type AdWine implements Ad {
     _id: ID!
-    postedBy: User!
+    postedBy: User
     wineName: String!
     wine: Wine!
     sottoZona: String
@@ -107,7 +107,7 @@ export const typeDefs = gql`
 
   type AdVineyard implements Ad {
     _id: ID!
-    postedBy: User!
+    postedBy: User
     vineyardName: String!
     vineyard: Vineyard!
     harvest: Int!

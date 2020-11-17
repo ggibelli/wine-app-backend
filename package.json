@@ -25,15 +25,19 @@
     "typescript": "^4.0.5"
   },
   "dependencies": {
+    "apollo-datasource": "^0.7.2",
     "apollo-datasource-mongodb": "^0.2.8",
     "apollo-server-express": "^2.19.0",
     "bcrypt": "^5.0.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "graphql": "^15.4.0",
+    "isemail": "^3.2.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.20",
     "mongoose": "^5.10.11",
-    "mongoose-unique-validator": "^2.0.3"
+    "mongoose-unique-validator": "^2.0.3",
+    "password-validator": "^5.1.1",
+    "validate-vat-ts": "^1.1.0"
   }
 }

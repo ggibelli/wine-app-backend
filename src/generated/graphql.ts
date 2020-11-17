@@ -11,7 +11,7 @@ import {
   GraphQLScalarType,
   GraphQLScalarTypeConfig,
 } from 'graphql';
-import { IUserDoc } from '../models/user';
+import { IUser, IUserDoc } from '../models/user';
 import { IAd, IAdDoc } from '../models/ad';
 import { IMessageDoc } from '../models/message';
 import { INegotiationDoc } from '../models/negotiation';
@@ -80,18 +80,18 @@ export type AdInput = {
 };
 
 export type AdInputUpdate = {
-  wineName?: Maybe<Scalars['String']>;
-  sottoZona?: Maybe<Scalars['String']>;
-  menzione?: Maybe<Menzione>;
-  metodoProduttivo?: Maybe<MetodoProduttivo>;
-  harvest?: Maybe<Scalars['Int']>;
-  abv?: Maybe<Scalars['Float']>;
-  priceFrom?: Maybe<Scalars['Float']>;
-  priceTo?: Maybe<Scalars['Float']>;
-  litersFrom?: Maybe<Scalars['Int']>;
-  litersTo?: Maybe<Scalars['Int']>;
-  content?: Maybe<Scalars['String']>;
-  address?: Maybe<AddressInput>;
+  wineName?: Scalars['String'];
+  sottoZona?: Scalars['String'];
+  menzione?: Menzione;
+  metodoProduttivo?: MetodoProduttivo;
+  harvest?: Scalars['Int'];
+  abv?: Scalars['Float'];
+  priceFrom?: Scalars['Float'];
+  priceTo?: Scalars['Float'];
+  litersFrom?: Scalars['Int'];
+  litersTo?: Scalars['Int'];
+  content?: Scalars['String'];
+  address?: AddressInput;
 };
 
 export type AdResponse = MutationResponse & {
@@ -103,7 +103,7 @@ export type AdResponse = MutationResponse & {
 
 export type Ad = {
   _id: Scalars['ID'];
-  postedBy: User;
+  postedBy?: Maybe<User>;
   harvest: Scalars['Int'];
   abv: Scalars['Float'];
   priceFrom: Scalars['Float'];
@@ -124,7 +124,7 @@ export type Ad = {
 export type AdWine = Ad & {
   __typename?: 'AdWine';
   _id: Scalars['ID'];
-  postedBy: User;
+  postedBy?: Maybe<User>;
   wineName: Scalars['String'];
   wine: Wine;
   sottoZona?: Maybe<Scalars['String']>;
@@ -152,7 +152,7 @@ export type AdWine = Ad & {
 export type AdVineyard = Ad & {
   __typename?: 'AdVineyard';
   _id: Scalars['ID'];
-  postedBy: User;
+  postedBy?: Maybe<User>;
   vineyardName: Scalars['String'];
   vineyard: Vineyard;
   harvest: Scalars['Int'];
@@ -501,8 +501,8 @@ export type OwnedVineyardsInput = {
 };
 
 export type UserInput = {
-  username: Scalars['String'];
   email: Scalars['String'];
+  password: Scalars['String'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   pIva: Scalars['String'];
@@ -513,27 +513,26 @@ export type UserInput = {
 };
 
 export type UserInputUpdate = {
-  username?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
-  firstName?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
-  pIva?: Maybe<Scalars['String']>;
-  phoneNumber?: Maybe<Scalars['String']>;
-  address?: Maybe<AddressInput>;
-  isVerified?: Maybe<Scalars['Boolean']>;
-  isPremium?: Maybe<Scalars['Boolean']>;
-  ads?: Maybe<Array<Scalars['ID']>>;
-  negotiations?: Maybe<Array<Scalars['ID']>>;
-  reviews?: Maybe<Array<Scalars['ID']>>;
-  adsRemaining?: Maybe<Scalars['Int']>;
-  producedWines?: Maybe<ProducedWinesInput>;
-  ownedVineyards?: Maybe<OwnedVineyardsInput>;
+  email?: Scalars['String'];
+  password?: Scalars['String'];
+  firstName?: Scalars['String'];
+  lastName?: Scalars['String'];
+  pIva?: Scalars['String'];
+  phoneNumber?: Scalars['String'];
+  address?: AddressInput;
+  isVerified?: Scalars['Boolean'];
+  isPremium?: Scalars['Boolean'];
+  ads?: Array<Scalars['ID']>;
+  negotiations?: Array<Scalars['ID']>;
+  reviews?: Array<Scalars['ID']>;
+  adsRemaining?: Scalars['Int'];
+  producedWines?: ProducedWinesInput;
+  ownedVineyards?: OwnedVineyardsInput;
 };
 
 export type User = {
   __typename?: 'User';
   _id: Scalars['ID'];
-  username: Scalars['String'];
   email: Scalars['String'];
   firstName: Scalars['String'];
   lastName: Scalars['String'];
@@ -763,7 +762,7 @@ export type ResolversTypes = ResolversObject<{
   AdWine: ResolverTypeWrapper<
     Partial<
       Omit<AdWine, 'postedBy' | 'wine'> & {
-        postedBy: ResolversTypes['User'];
+        postedBy?: Maybe<ResolversTypes['User']>;
         wine: ResolversTypes['Wine'];
       }
     >
@@ -771,7 +770,7 @@ export type ResolversTypes = ResolversObject<{
   AdVineyard: ResolverTypeWrapper<
     Partial<
       Omit<AdVineyard, 'postedBy' | 'vineyard'> & {
-        postedBy: ResolversTypes['User'];
+        postedBy?: Maybe<ResolversTypes['User']>;
         vineyard: ResolversTypes['Vineyard'];
       }
     >
@@ -842,7 +841,7 @@ export type ResolversTypes = ResolversObject<{
   OwnedVineyardsInput: ResolverTypeWrapper<Partial<OwnedVineyardsInput>>;
   UserInput: ResolverTypeWrapper<Partial<UserInput>>;
   UserInputUpdate: ResolverTypeWrapper<Partial<UserInputUpdate>>;
-  User: ResolverTypeWrapper<IUserDoc>;
+  User: ResolverTypeWrapper<IUserDoc | IUser>;
   UserResponse: ResolverTypeWrapper<
     Partial<
       Omit<UserResponse, 'user'> & { user?: Maybe<ResolversTypes['User']> }
@@ -887,13 +886,13 @@ export type ResolversParentTypes = ResolversObject<{
   ID: Partial<Scalars['ID']>;
   AdWine: Partial<
     Omit<AdWine, 'postedBy' | 'wine'> & {
-      postedBy: ResolversParentTypes['User'];
+      postedBy?: Maybe<ResolversParentTypes['User']>;
       wine: ResolversParentTypes['Wine'];
     }
   >;
   AdVineyard: Partial<
     Omit<AdVineyard, 'postedBy' | 'vineyard'> & {
-      postedBy: ResolversParentTypes['User'];
+      postedBy?: Maybe<ResolversParentTypes['User']>;
       vineyard: ResolversParentTypes['Vineyard'];
     }
   >;
@@ -945,7 +944,7 @@ export type ResolversParentTypes = ResolversObject<{
   OwnedVineyardsInput: Partial<OwnedVineyardsInput>;
   UserInput: Partial<UserInput>;
   UserInputUpdate: Partial<UserInputUpdate>;
-  User: IUserDoc;
+  User: IUserDoc | IUser;
   UserResponse: Partial<
     Omit<UserResponse, 'user'> & { user?: Maybe<ResolversParentTypes['User']> }
   >;
@@ -999,7 +998,7 @@ export type AdResolvers<
     ContextType
   >;
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  postedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  postedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   harvest?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   abv?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   priceFrom?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
@@ -1031,7 +1030,7 @@ export type AdWineResolvers<
   ParentType extends ResolversParentTypes['AdWine'] = ResolversParentTypes['AdWine']
 > = ResolversObject<{
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  postedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  postedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   wineName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   wine?: Resolver<ResolversTypes['Wine'], ParentType, ContextType>;
   sottoZona?: Resolver<
@@ -1083,7 +1082,7 @@ export type AdVineyardResolvers<
   ParentType extends ResolversParentTypes['AdVineyard'] = ResolversParentTypes['AdVineyard']
 > = ResolversObject<{
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  postedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  postedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   vineyardName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   vineyard?: Resolver<ResolversTypes['Vineyard'], ParentType, ContextType>;
   harvest?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
@@ -1682,7 +1681,6 @@ export type UserResolvers<
   ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
 > = ResolversObject<{
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   lastName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
