@@ -17,32 +17,25 @@ export const typeDefs = gql`
     #type: Type!
   }
 
-  type ReviewResponse implements MutationResponse {
-    success: Boolean!
-    message: String!
-    review: Review
-  }
-
   type Review {
     _id: ID!
     createdBy: User!
     negotiation: Negotiation!
     forUserAd: User!
     rating: Rating!
-    "dateCreated: Date!"
-    dateFormatted: Date
+    dateCreated: Date! @date
     content: String!
     type: TypeAd!
   }
 
   extend type Query {
-    review(id: ID!): Review
-    reviews(forUser: ID, type: TypeAd): [Review!]
+    review(id: ID!): Review @authenticated
+    reviews(forUser: ID, type: TypeAd): [Review!] @authenticated
   }
 
   extend type Mutation {
-    createReview(review: ReviewInput): ReviewResponse
-    updateReview(review: ReviewInputUpdate, id: ID!): ReviewResponse
-    deleteReview(id: ID!): ReviewResponse
+    createReview(review: ReviewInput): Review @authenticated
+    updateReview(review: ReviewInputUpdate, id: ID!): Review @authenticated
+    deleteReview(id: ID!): Review @authenticated
   }
 `;

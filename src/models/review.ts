@@ -24,7 +24,7 @@ export interface IReview {
   type: TypeAd;
 }
 
-export interface IReviewDoc extends Document {}
+export interface IReviewDoc extends IReview, Document {}
 
 const reviewSchemaFields: Record<keyof IReview, any> = {
   createdBy: {

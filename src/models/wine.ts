@@ -14,7 +14,7 @@ export interface IWine {
   regione: Regioni;
 }
 
-export interface IWineDoc extends Document {}
+export interface IWineDoc extends IWine, Document {}
 
 const wineSchemaFields: Record<keyof IWine, any> = {
   denominazioneVino: {

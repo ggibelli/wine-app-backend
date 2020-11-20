@@ -4,25 +4,18 @@ export const typeDefs = gql`
   input MessageInput {
     content: String!
     sentTo: ID!
-  }
-
-  type MessageResponse implements MutationResponse {
-    success: Boolean!
-    message: String!
-    messageSent: Message
-  }
+  }}
 
   type Message {
     _id: ID!
     content: String!
     sentBy: User!
     sentTo: User!
-    "dateSent: Date!"
-    dateFormatted: Date
+    dateSent: Date! @date
   }
 
   extend type Mutation {
-    createMessage(message: MessageInput): MessageResponse
+    createMessage(message: MessageInput): Message @authenticated
   }
 
   extend type Subscription {

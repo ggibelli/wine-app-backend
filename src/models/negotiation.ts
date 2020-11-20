@@ -17,7 +17,7 @@ export interface INegotiation {
   type: TypeAd;
 }
 
-export interface INegotiationDoc extends Document {}
+export interface INegotiationDoc extends INegotiation, Document {}
 
 const negotiationSchemaFields: Record<keyof INegotiation, any> = {
   createdBy: {

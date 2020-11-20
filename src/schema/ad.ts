@@ -52,30 +52,23 @@ export const typeDefs = gql`
     address: AddressInput
   }
 
-  type AdResponse implements MutationResponse {
-    success: Boolean!
-    message: String!
-    ad: Ad
-  }
-
   interface Ad {
     _id: ID!
-    postedBy: User
+    postedBy: User @authenticated
     harvest: Int!
     abv: Float!
-    priceFrom: Float!
-    priceTo: Float!
+    priceFrom: Float! @authenticated
+    priceTo: Float! @authenticated
     content: String!
-    address: Address!
+    address: Address! @authenticated
     "negotiations: [Negotiation]"
-    activeNegotiations: Int
+    activeNegotiations: Int @authenticated
     "viewedBy: [User]"
-    numberViews: Int
+    numberViews: Int @authenticated
     typeAd: TypeAd!
     typeProduct: TypeProduct!
     isActive: Boolean!
-    "datePosted: Date!"
-    dateFormatted: String
+    datePosted: Date! @date
   }
 
   type AdWine implements Ad {
@@ -101,8 +94,7 @@ export const typeDefs = gql`
     typeAd: TypeAd!
     typeProduct: TypeProduct!
     isActive: Boolean!
-    "datePosted: Date!"
-    dateFormatted: String
+    datePosted: Date! @date
   }
 
   type AdVineyard implements Ad {
@@ -125,8 +117,7 @@ export const typeDefs = gql`
     typeAd: TypeAd!
     typeProduct: TypeProduct!
     isActive: Boolean!
-    "datePosted: Date!"
-    dateFormatted: String
+    datePosted: Date! @date
   }
 
   type Query {
@@ -140,11 +131,11 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    createAd(input: AdInput!): AdResponse
-    updateAd(input: AdInputUpdate!, id: ID!): AdResponse
-    deleteAd(id: ID!): AdResponse
+    createAd(input: AdInput!): Ad @authenticated
+    updateAd(input: AdInputUpdate!, id: ID!): Ad @authenticated
+    deleteAd(id: ID!): Ad @authenticated
   }
   type Subscription {
-    adPosted: Ad!
+    adPosted: Ad! @authenticated
   }
 `;

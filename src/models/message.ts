@@ -13,7 +13,7 @@ export interface IMessage {
   dateSent: Date;
 }
 
-export interface IMessageDoc extends Document {}
+export interface IMessageDoc extends IMessage, Document {}
 
 const messageSchemaFields: Record<keyof IMessage, any> = {
   negotiation: {

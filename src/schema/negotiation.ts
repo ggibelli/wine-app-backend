@@ -15,12 +15,6 @@ export const typeDefs = gql`
     isConcluded: Boolean
   }
 
-  type NegotiationResponse implements MutationResponse {
-    success: Boolean!
-    message: String!
-    negotiation: Negotiation
-  }
-
   type Negotiation {
     _id: ID!
     createdBy: User!
@@ -28,22 +22,21 @@ export const typeDefs = gql`
     forUserAd: User!
     messages: [Message!]
     isConcluded: Boolean!
-    "dateCreated: Date!"
-    dateFormatted: Date
+    dateCreated: Date! @date
     review: [Review]
   }
 
   extend type Query {
-    negotiation(_id: ID!): Negotiation
-    negotiations: [Negotiation!]
+    negotiation(_id: ID!): Negotiation @authenticated
+    negotiations: [Negotiation!] @authenticated
   }
 
   extend type Mutation {
-    createNegotiation(negotiation: NegotiationInput): NegotiationResponse
+    createNegotiation(negotiation: NegotiationInput): Negotiation @authenticated
     updateNegotiation(
       negotiation: NegotiationInputUpdate
       id: ID!
-    ): NegotiationResponse
-    deleteNegotiation(id: ID!): NegotiationResponse
+    ): Negotiation @authenticated
+    deleteNegotiation(id: ID!): Negotiation @authenticated
   }
 `;

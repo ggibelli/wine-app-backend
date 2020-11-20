@@ -17,20 +17,14 @@ export const typeDefs = gql`
     colore: Colore
   }
 
-  type VineyardResponse implements MutationResponse {
-    success: Boolean!
-    message: String!
-    vineyard: Vineyard
-  }
-
   extend type Query {
-    vineyards(name: String, colore: String): [Vineyard!]
-    vineyard(id: ID!): Vineyard
+    vineyards(name: String, colore: String): [Vineyard!] @authenticated
+    vineyard(id: ID!): Vineyard @authenticated
   }
 
   extend type Mutation {
-    createVineyard(vineyard: VineyardInput): VineyardResponse
-    updateVineyard(vineyard: VineyardInputUpdate, id: ID!): VineyardResponse
-    deleteVineyard(id: ID!): VineyardResponse
+    createVineyard(vineyard: VineyardInput): Vineyard @authorized
+    updateVineyard(vineyard: VineyardInputUpdate, id: ID!): Vineyard @authorized
+    deleteVineyard(id: ID!): Vineyard @authorized
   }
 `;

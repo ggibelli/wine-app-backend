@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, HookNextFunction } from 'mongoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { Address } from '../types';
 import { Province, Regioni } from '../utils/enumMongooseHelper';
@@ -12,6 +12,10 @@ import { IReviewDoc } from './review';
 import { IVineyardDoc } from './vineyard';
 import { MetodoProduttivo } from '../types';
 import { METODOPRODUTTIVO } from '../utils/enumMongooseHelper';
+
+import bcrypt from 'bcryptjs';
+
+const HASH_ROUNDS = 10;
 
 interface ProducedWines {
   wine: IWineDoc['_id'] | IWineDoc;
@@ -35,6 +39,7 @@ export interface IUser {
   address: Address;
   isVerified: boolean;
   isPremium?: boolean;
+  isAdmin: boolean;
   ads?: Array<IAdDoc['_id'] | IAdDoc>; // annunci postati dall'utente
   negotiations?: Array<INegotiationDoc['_id'] | INegotiationDoc>; // trattative dell'utente, attive e non, concluse e non
   reviews?: Array<IReviewDoc['_id'] | IReviewDoc>; // recensioni fatte e ricevute dall'utente
@@ -44,7 +49,9 @@ export interface IUser {
   ownedVineyards?: Array<OwnedVineyards>;
 }
 
-export interface IUserDoc extends Document {}
+export interface IUserDoc extends IUser, Document {
+  validatePassword(password: string): boolean;
+}
 
 const userSchemaFields: Record<keyof IUser, any> = {
   email: {
@@ -96,6 +103,10 @@ const userSchemaFields: Record<keyof IUser, any> = {
     default: false,
   },
   isPremium: {
+    type: Boolean,
+    default: false,
+  },
+  isAdmin: {
     type: Boolean,
     default: false,
   },
@@ -152,6 +163,25 @@ const userSchemaFields: Record<keyof IUser, any> = {
 };
 
 const userSchema = new Schema(userSchemaFields);
+
+userSchema.pre('save', async function (next: HookNextFunction) {
+  // here we need to retype 'this' because by default it is
+  // of type Document from which the 'IUser' interface is inheriting
+  // but the Document does not know about our password property
+  const thisObj = this as IUserDoc;
+
+  if (!this.isModified('password')) {
+    return next();
+  }
+
+  try {
+    const salt = await bcrypt.genSalt(HASH_ROUNDS);
+    thisObj.passwordHash = await bcrypt.hash(thisObj.passwordHash, salt);
+    return next();
+  } catch (e) {
+    return next(e);
+  }
+});
 
 userSchema.plugin(mongooseUniqueValidator);
 

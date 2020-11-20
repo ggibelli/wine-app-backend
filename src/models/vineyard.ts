@@ -14,7 +14,7 @@ export interface IVineyard {
   colore: Colore;
 }
 
-export interface IVineyardDoc extends Document {}
+export interface IVineyardDoc extends IVineyard, Document {}
 
 const vineyardSchemaFields: Record<keyof IVineyard, any> = {
   name: {

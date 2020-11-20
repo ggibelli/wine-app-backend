@@ -68,44 +68,33 @@ export const typeDefs = gql`
     pIva: String!
     phoneNumber: String!
     address: Address!
-    isVerified: Boolean!
-    isPremium: Boolean!
+    isVerified: Boolean! @authorized
+    isPremium: Boolean @authorized
+    isAdmin: Boolean!
     ads: [Ad!]
     negotiations: [Negotiation!]
     reviews: [Review!]
-    adsRemaining: Int
-    dateCreated: Date!
-    dateFormatted: Date
+    adsRemaining: Int @authorized
+    dateCreated: Date! @date
     producedWines: ProducedWines
     ownedVineyards: OwnedVineyards
   }
 
-  type UserResponse implements MutationResponse {
-    success: Boolean!
-    message: String!
-    user: User
-  }
-
-  type Token {
-    value: String!
-  }
-
-  type LoginResponse implements MutationResponse {
-    success: Boolean!
-    message: String!
-    token: Token
+  type AuthUser {
+    token: String!
+    user: User!
   }
 
   extend type Query {
-    users: [User!]
-    user(id: ID!): User
+    users: [User!] @authenticated
+    user(id: ID!): User @authenticated
     me: User
   }
 
   extend type Mutation {
-    createUser(user: UserInput): UserResponse
-    updateUser(user: UserInputUpdate, id: ID!): UserResponse
-    deleteUser(id: ID!): UserResponse
-    login(mail: String!, password: String!): LoginResponse
+    createUser(user: UserInput): AuthUser
+    updateUser(user: UserInputUpdate, id: ID!): User
+    deleteUser(id: ID!): User @authenticated
+    login(mail: String!, password: String!): AuthUser
   }
 `;

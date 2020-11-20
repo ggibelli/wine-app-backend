@@ -26,12 +26,6 @@ export const typeDefs = gql`
     regione: Regioni!
   }
 
-  type WineResponse implements MutationResponse {
-    success: Boolean!
-    message: String!
-    wine: Wine
-  }
-
   extend type Query {
     wines(
       name: String
@@ -43,8 +37,8 @@ export const typeDefs = gql`
   }
 
   extend type Mutation {
-    createWine(wine: WineInput): WineResponse
-    updateWine(wine: WineInputUpdate, id: ID!): WineResponse
-    deleteWine(id: ID!): WineResponse
+    createWine(wine: WineInput): Wine @authorized
+    updateWine(wine: WineInputUpdate, id: ID!): Wine @authorized
+    deleteWine(id: ID!): Wine @authorized
   }
 `;
