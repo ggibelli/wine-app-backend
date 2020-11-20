@@ -4,7 +4,7 @@ export const typeDefs = gql`
   input MessageInput {
     content: String!
     sentTo: ID!
-  }}
+  }
 
   type Message {
     _id: ID!

@@ -13,7 +13,7 @@ import { IVineyardDoc } from './vineyard';
 import { MetodoProduttivo } from '../types';
 import { METODOPRODUTTIVO } from '../utils/enumMongooseHelper';
 
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 
 const HASH_ROUNDS = 10;
 
@@ -33,7 +33,7 @@ export interface IUser {
   email: string;
   firstName: string;
   lastName: string;
-  passwordHash: string;
+  password: string;
   pIva: string;
   phoneNumber: string;
   address: Address;
@@ -68,7 +68,7 @@ const userSchemaFields: Record<keyof IUser, any> = {
   },
   firstName: String,
   lastName: String,
-  passwordHash: String,
+  password: String,
   pIva: {
     type: String,
     unique: true,
@@ -176,12 +176,16 @@ userSchema.pre('save', async function (next: HookNextFunction) {
 
   try {
     const salt = await bcrypt.genSalt(HASH_ROUNDS);
-    thisObj.passwordHash = await bcrypt.hash(thisObj.passwordHash, salt);
+    thisObj.password = await bcrypt.hash(thisObj.password, salt);
     return next();
   } catch (e) {
     return next(e);
   }
 });
+
+userSchema.methods.validatePassword = async function (pass: string) {
+  return bcrypt.compare(pass, this.password);
+};
 
 userSchema.plugin(mongooseUniqueValidator);
 

@@ -61,7 +61,7 @@ class AuthenticateDirective extends SchemaDirectiveVisitor {
   }
 }
 
-module.exports = {
+export default {
   date: FormatDateDirective,
   authenticated: AuthenticateDirective,
   authorized: AuthorizedDirective,

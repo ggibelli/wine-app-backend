@@ -557,77 +557,6 @@
         "possibleTypes": null
       },
       {
-        "kind": "OBJECT",
-        "name": "AdResponse",
-        "description": null,
-        "fields": [
-          {
-            "name": "success",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "message",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "ad",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "INTERFACE",
-              "name": "Ad",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "MutationResponse",
-            "ofType": null
-          }
-        ],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "SCALAR",
-        "name": "Boolean",
-        "description": "The `Boolean` scalar type represents `true` or `false`.",
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
         "kind": "INTERFACE",
         "name": "Ad",
         "description": null,
@@ -829,13 +758,17 @@
             "deprecationReason": null
           },
           {
-            "name": "dateFormatted",
-            "description": "datePosted: Date!",
+            "name": "datePosted",
+            "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Date",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -861,6 +794,16 @@
         "kind": "SCALAR",
         "name": "ID",
         "description": "The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `\"4\"`) or integer (such as `4`) input value will be accepted as an ID.",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
+        "name": "Boolean",
+        "description": "The `Boolean` scalar type represents `true` or `false`.",
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -1161,13 +1104,17 @@
             "deprecationReason": null
           },
           {
-            "name": "dateFormatted",
-            "description": "datePosted: Date!",
+            "name": "datePosted",
+            "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Date",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1450,13 +1397,17 @@
             "deprecationReason": null
           },
           {
-            "name": "dateFormatted",
-            "description": "datePosted: Date!",
+            "name": "datePosted",
+            "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Date",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1931,8 +1882,8 @@
               }
             ],
             "type": {
-              "kind": "OBJECT",
-              "name": "AdResponse",
+              "kind": "INTERFACE",
+              "name": "Ad",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1955,7 +1906,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "MessageResponse",
+              "name": "Message",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1978,7 +1929,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "NegotiationResponse",
+              "name": "Negotiation",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2001,7 +1952,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "ReviewResponse",
+              "name": "Review",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2024,7 +1975,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "UserResponse",
+              "name": "AuthUser",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2047,7 +1998,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "VineyardResponse",
+              "name": "Vineyard",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2070,7 +2021,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "WineResponse",
+              "name": "Wine",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2096,8 +2047,8 @@
               }
             ],
             "type": {
-              "kind": "OBJECT",
-              "name": "AdResponse",
+              "kind": "INTERFACE",
+              "name": "Ad",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2124,7 +2075,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "NegotiationResponse",
+              "name": "Negotiation",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2151,7 +2102,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "ReviewResponse",
+              "name": "Review",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2178,7 +2129,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "UserResponse",
+              "name": "User",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2205,7 +2156,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "VineyardResponse",
+              "name": "Vineyard",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2232,7 +2183,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "WineResponse",
+              "name": "Wine",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2273,7 +2224,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "LoginResponse",
+              "name": "AuthUser",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2313,8 +2264,8 @@
               }
             ],
             "type": {
-              "kind": "OBJECT",
-              "name": "AdResponse",
+              "kind": "INTERFACE",
+              "name": "Ad",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2351,7 +2302,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "NegotiationResponse",
+              "name": "Negotiation",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2388,7 +2339,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "ReviewResponse",
+              "name": "Review",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2425,7 +2376,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "UserResponse",
+              "name": "User",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2462,7 +2413,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "VineyardResponse",
+              "name": "Vineyard",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2499,7 +2450,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "WineResponse",
+              "name": "Wine",
               "ofType": null
             },
             "isDeprecated": false,
@@ -3641,67 +3592,6 @@
       },
       {
         "kind": "OBJECT",
-        "name": "MessageResponse",
-        "description": null,
-        "fields": [
-          {
-            "name": "success",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "message",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "messageSent",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Message",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "MutationResponse",
-            "ofType": null
-          }
-        ],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
         "name": "Message",
         "description": null,
         "fields": [
@@ -3770,13 +3660,17 @@
             "deprecationReason": null
           },
           {
-            "name": "dateFormatted",
-            "description": "dateSent: Date!",
+            "name": "dateSent",
+            "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "Date",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Date",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3828,48 +3722,7 @@
         "inputFields": null,
         "interfaces": [],
         "enumValues": null,
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "AdResponse",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "MessageResponse",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "NegotiationResponse",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "ReviewResponse",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "UserResponse",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "LoginResponse",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "VineyardResponse",
-            "ofType": null
-          },
-          {
-            "kind": "OBJECT",
-            "name": "WineResponse",
-            "ofType": null
-          }
-        ]
+        "possibleTypes": []
       },
       {
         "kind": "INPUT_OBJECT",
@@ -3928,67 +3781,6 @@
           }
         ],
         "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "NegotiationResponse",
-        "description": null,
-        "fields": [
-          {
-            "name": "success",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "message",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "negotiation",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Negotiation",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "MutationResponse",
-            "ofType": null
-          }
-        ],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -4098,13 +3890,17 @@
             "deprecationReason": null
           },
           {
-            "name": "dateFormatted",
-            "description": "dateCreated: Date!",
+            "name": "dateCreated",
+            "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "Date",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Date",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -4245,67 +4041,6 @@
       },
       {
         "kind": "OBJECT",
-        "name": "ReviewResponse",
-        "description": null,
-        "fields": [
-          {
-            "name": "success",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "message",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "review",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Review",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "MutationResponse",
-            "ofType": null
-          }
-        ],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
         "name": "Review",
         "description": null,
         "fields": [
@@ -4390,13 +4125,17 @@
             "deprecationReason": null
           },
           {
-            "name": "dateFormatted",
-            "description": "dateCreated: Date!",
+            "name": "dateCreated",
+            "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "Date",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Date",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -4649,6 +4388,20 @@
         "inputFields": [
           {
             "name": "email",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "password",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -5069,6 +4822,18 @@
             "description": null,
             "args": [],
             "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "isAdmin",
+            "description": null,
+            "args": [],
+            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
@@ -5169,18 +4934,6 @@
             "deprecationReason": null
           },
           {
-            "name": "dateFormatted",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Date",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "producedWines",
             "description": null,
             "args": [],
@@ -5212,27 +4965,11 @@
       },
       {
         "kind": "OBJECT",
-        "name": "UserResponse",
+        "name": "AuthUser",
         "description": null,
         "fields": [
           {
-            "name": "success",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "message",
+            "name": "token",
             "description": null,
             "args": [],
             "type": {
@@ -5252,40 +4989,11 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
-              "name": "User",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "MutationResponse",
-            "ofType": null
-          }
-        ],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "Token",
-        "description": null,
-        "fields": [
-          {
-            "name": "value",
-            "description": null,
-            "args": [],
-            "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
+                "kind": "OBJECT",
+                "name": "User",
                 "ofType": null
               }
             },
@@ -5295,67 +5003,6 @@
         ],
         "inputFields": null,
         "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "LoginResponse",
-        "description": null,
-        "fields": [
-          {
-            "name": "success",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "message",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "token",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Token",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "MutationResponse",
-            "ofType": null
-          }
-        ],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -5485,67 +5132,6 @@
           }
         ],
         "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "VineyardResponse",
-        "description": null,
-        "fields": [
-          {
-            "name": "success",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "message",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "vineyard",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Vineyard",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "MutationResponse",
-            "ofType": null
-          }
-        ],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -5787,67 +5373,6 @@
         ],
         "inputFields": null,
         "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "WineResponse",
-        "description": null,
-        "fields": [
-          {
-            "name": "success",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "message",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "wine",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Wine",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [
-          {
-            "kind": "INTERFACE",
-            "name": "MutationResponse",
-            "ofType": null
-          }
-        ],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -6739,6 +6264,44 @@
       }
     ],
     "directives": [
+      {
+        "name": "date",
+        "description": null,
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION"
+        ],
+        "args": [
+          {
+            "name": "defaultFormat",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": "\"ddd MMM, yyyy\""
+          }
+        ]
+      },
+      {
+        "name": "authenticated",
+        "description": null,
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION"
+        ],
+        "args": []
+      },
+      {
+        "name": "authorized",
+        "description": null,
+        "isRepeatable": false,
+        "locations": [
+          "FIELD_DEFINITION"
+        ],
+        "args": []
+      },
       {
         "name": "include",
         "description": "Directs the executor to include this field or fragment only when the `if` argument is true.",

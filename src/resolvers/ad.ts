@@ -32,9 +32,6 @@ export const resolver: StringIndexed<Resolvers> = {
       }
       return ad.viewedBy?.length;
     },
-    dateFormatted(ad) {
-      return new Date(ad.datePosted).toISOString();
-    },
   },
 
   Query: {
@@ -53,11 +50,7 @@ export const resolver: StringIndexed<Resolvers> = {
       { dataSources }: { dataSources: MongoDataSource }
     ) {
       const createdAd = dataSources.ads.createAd(input);
-      return {
-        success: createdAd ? true : false,
-        message: createdAd ? 'Ad successfully created' : 'there was an error',
-        ad: createdAd,
-      };
+      return createdAd;
     },
     updateAdWine(
       _: any,
@@ -65,11 +58,7 @@ export const resolver: StringIndexed<Resolvers> = {
       { dataSources }: { dataSources: MongoDataSource }
     ) {
       const updateAd = dataSources.ads.updateAdWine(ad, id);
-      return {
-        success: updateAd ? true : false,
-        message: updateAd ? 'Ad successfully updated' : 'there was an error',
-        ad: updateAd,
-      };
+      return updateAd;
     },
     deleteAd(
       _: any,
@@ -77,11 +66,7 @@ export const resolver: StringIndexed<Resolvers> = {
       { dataSources }: { dataSources: MongoDataSource }
     ) {
       const removedAd = dataSources.ads.deleteAdWine(id);
-      return {
-        success: removedAd ? true : false,
-        message: removedAd ? 'Ad successfully updated' : 'there was an error',
-        ad: removedAd,
-      };
+      return removedAd;
     },
   },
 };

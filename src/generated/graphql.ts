@@ -11,7 +11,7 @@ import {
   GraphQLScalarType,
   GraphQLScalarTypeConfig,
 } from 'graphql';
-import { IUser, IUserDoc } from '../models/user';
+import { IUserDoc } from '../models/user';
 import { IAd, IAdDoc } from '../models/ad';
 import { IMessageDoc } from '../models/message';
 import { INegotiationDoc } from '../models/negotiation';
@@ -94,13 +94,6 @@ export type AdInputUpdate = {
   address?: AddressInput;
 };
 
-export type AdResponse = MutationResponse & {
-  __typename?: 'AdResponse';
-  success: Scalars['Boolean'];
-  message: Scalars['String'];
-  ad?: Maybe<Ad>;
-};
-
 export type Ad = {
   _id: Scalars['ID'];
   postedBy?: Maybe<User>;
@@ -117,8 +110,7 @@ export type Ad = {
   typeAd: TypeAd;
   typeProduct: TypeProduct;
   isActive: Scalars['Boolean'];
-  /** datePosted: Date! */
-  dateFormatted?: Maybe<Scalars['String']>;
+  datePosted: Scalars['Date'];
 };
 
 export type AdWine = Ad & {
@@ -145,8 +137,7 @@ export type AdWine = Ad & {
   typeAd: TypeAd;
   typeProduct: TypeProduct;
   isActive: Scalars['Boolean'];
-  /** datePosted: Date! */
-  dateFormatted?: Maybe<Scalars['String']>;
+  datePosted: Scalars['Date'];
 };
 
 export type AdVineyard = Ad & {
@@ -170,8 +161,7 @@ export type AdVineyard = Ad & {
   typeAd: TypeAd;
   typeProduct: TypeProduct;
   isActive: Scalars['Boolean'];
-  /** datePosted: Date! */
-  dateFormatted?: Maybe<Scalars['String']>;
+  datePosted: Scalars['Date'];
 };
 
 export type Query = {
@@ -241,26 +231,26 @@ export type QueryWinesArgs = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createAd?: Maybe<AdResponse>;
-  createMessage?: Maybe<MessageResponse>;
-  createNegotiation?: Maybe<NegotiationResponse>;
-  createReview?: Maybe<ReviewResponse>;
-  createUser?: Maybe<UserResponse>;
-  createVineyard?: Maybe<VineyardResponse>;
-  createWine?: Maybe<WineResponse>;
-  deleteAd?: Maybe<AdResponse>;
-  deleteNegotiation?: Maybe<NegotiationResponse>;
-  deleteReview?: Maybe<ReviewResponse>;
-  deleteUser?: Maybe<UserResponse>;
-  deleteVineyard?: Maybe<VineyardResponse>;
-  deleteWine?: Maybe<WineResponse>;
-  login?: Maybe<LoginResponse>;
-  updateAd?: Maybe<AdResponse>;
-  updateNegotiation?: Maybe<NegotiationResponse>;
-  updateReview?: Maybe<ReviewResponse>;
-  updateUser?: Maybe<UserResponse>;
-  updateVineyard?: Maybe<VineyardResponse>;
-  updateWine?: Maybe<WineResponse>;
+  createAd?: Maybe<Ad>;
+  createMessage?: Maybe<Message>;
+  createNegotiation?: Maybe<Negotiation>;
+  createReview?: Maybe<Review>;
+  createUser?: Maybe<AuthUser>;
+  createVineyard?: Maybe<Vineyard>;
+  createWine?: Maybe<Wine>;
+  deleteAd?: Maybe<Ad>;
+  deleteNegotiation?: Maybe<Negotiation>;
+  deleteReview?: Maybe<Review>;
+  deleteUser?: Maybe<User>;
+  deleteVineyard?: Maybe<Vineyard>;
+  deleteWine?: Maybe<Wine>;
+  login?: Maybe<AuthUser>;
+  updateAd?: Maybe<Ad>;
+  updateNegotiation?: Maybe<Negotiation>;
+  updateReview?: Maybe<Review>;
+  updateUser?: Maybe<User>;
+  updateVineyard?: Maybe<Vineyard>;
+  updateWine?: Maybe<Wine>;
 };
 
 export type MutationCreateAdArgs = {
@@ -390,21 +380,13 @@ export type MessageInput = {
   sentTo: Scalars['ID'];
 };
 
-export type MessageResponse = MutationResponse & {
-  __typename?: 'MessageResponse';
-  success: Scalars['Boolean'];
-  message: Scalars['String'];
-  messageSent?: Maybe<Message>;
-};
-
 export type Message = {
   __typename?: 'Message';
   _id: Scalars['ID'];
   content: Scalars['String'];
   sentBy: User;
   sentTo: User;
-  /** dateSent: Date! */
-  dateFormatted?: Maybe<Scalars['Date']>;
+  dateSent: Scalars['Date'];
 };
 
 export type MutationResponse = {
@@ -421,13 +403,6 @@ export type NegotiationInputUpdate = {
   isConcluded?: Maybe<Scalars['Boolean']>;
 };
 
-export type NegotiationResponse = MutationResponse & {
-  __typename?: 'NegotiationResponse';
-  success: Scalars['Boolean'];
-  message: Scalars['String'];
-  negotiation?: Maybe<Negotiation>;
-};
-
 export type Negotiation = {
   __typename?: 'Negotiation';
   _id: Scalars['ID'];
@@ -436,8 +411,7 @@ export type Negotiation = {
   forUserAd: User;
   messages?: Maybe<Array<Message>>;
   isConcluded: Scalars['Boolean'];
-  /** dateCreated: Date! */
-  dateFormatted?: Maybe<Scalars['Date']>;
+  dateCreated: Scalars['Date'];
   review?: Maybe<Array<Maybe<Review>>>;
 };
 
@@ -454,13 +428,6 @@ export type ReviewInputUpdate = {
   content?: Maybe<Scalars['String']>;
 };
 
-export type ReviewResponse = MutationResponse & {
-  __typename?: 'ReviewResponse';
-  success: Scalars['Boolean'];
-  message: Scalars['String'];
-  review?: Maybe<Review>;
-};
-
 export type Review = {
   __typename?: 'Review';
   _id: Scalars['ID'];
@@ -468,8 +435,7 @@ export type Review = {
   negotiation: Negotiation;
   forUserAd: User;
   rating: Rating;
-  /** dateCreated: Date! */
-  dateFormatted?: Maybe<Scalars['Date']>;
+  dateCreated: Scalars['Date'];
   content: Scalars['String'];
   type: TypeAd;
 };
@@ -513,21 +479,20 @@ export type UserInput = {
 };
 
 export type UserInputUpdate = {
-  email?: Scalars['String'];
-  password?: Scalars['String'];
-  firstName?: Scalars['String'];
-  lastName?: Scalars['String'];
-  pIva?: Scalars['String'];
-  phoneNumber?: Scalars['String'];
-  address?: AddressInput;
-  isVerified?: Scalars['Boolean'];
-  isPremium?: Scalars['Boolean'];
-  ads?: Array<Scalars['ID']>;
-  negotiations?: Array<Scalars['ID']>;
-  reviews?: Array<Scalars['ID']>;
-  adsRemaining?: Scalars['Int'];
-  producedWines?: ProducedWinesInput;
-  ownedVineyards?: OwnedVineyardsInput;
+  email?: Maybe<Scalars['String']>;
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  pIva?: Maybe<Scalars['String']>;
+  phoneNumber?: Maybe<Scalars['String']>;
+  address?: Maybe<AddressInput>;
+  isVerified?: Maybe<Scalars['Boolean']>;
+  isPremium?: Maybe<Scalars['Boolean']>;
+  ads?: Maybe<Array<Scalars['ID']>>;
+  negotiations?: Maybe<Array<Scalars['ID']>>;
+  reviews?: Maybe<Array<Scalars['ID']>>;
+  adsRemaining?: Maybe<Scalars['Int']>;
+  producedWines?: Maybe<ProducedWinesInput>;
+  ownedVineyards?: Maybe<OwnedVineyardsInput>;
 };
 
 export type User = {
@@ -540,34 +505,21 @@ export type User = {
   phoneNumber: Scalars['String'];
   address: Address;
   isVerified: Scalars['Boolean'];
-  isPremium: Scalars['Boolean'];
+  isPremium?: Maybe<Scalars['Boolean']>;
+  isAdmin: Scalars['Boolean'];
   ads?: Maybe<Array<Ad>>;
   negotiations?: Maybe<Array<Negotiation>>;
   reviews?: Maybe<Array<Review>>;
   adsRemaining?: Maybe<Scalars['Int']>;
   dateCreated: Scalars['Date'];
-  dateFormatted?: Maybe<Scalars['Date']>;
   producedWines?: Maybe<ProducedWines>;
   ownedVineyards?: Maybe<OwnedVineyards>;
 };
 
-export type UserResponse = MutationResponse & {
-  __typename?: 'UserResponse';
-  success: Scalars['Boolean'];
-  message: Scalars['String'];
-  user?: Maybe<User>;
-};
-
-export type Token = {
-  __typename?: 'Token';
-  value: Scalars['String'];
-};
-
-export type LoginResponse = MutationResponse & {
-  __typename?: 'LoginResponse';
-  success: Scalars['Boolean'];
-  message: Scalars['String'];
-  token?: Maybe<Token>;
+export type AuthUser = {
+  __typename?: 'AuthUser';
+  token: Scalars['String'];
+  user: User;
 };
 
 export type Vineyard = {
@@ -585,13 +537,6 @@ export type VineyardInput = {
 export type VineyardInputUpdate = {
   name?: Maybe<Scalars['String']>;
   colore?: Maybe<Colore>;
-};
-
-export type VineyardResponse = MutationResponse & {
-  __typename?: 'VineyardResponse';
-  success: Scalars['Boolean'];
-  message: Scalars['String'];
-  vineyard?: Maybe<Vineyard>;
 };
 
 export type WineInput = {
@@ -618,13 +563,6 @@ export type Wine = {
   espressioneComunitaria: EspressioneComunitaria;
   denominazioneZona: DenomZona;
   regione: Regioni;
-};
-
-export type WineResponse = MutationResponse & {
-  __typename?: 'WineResponse';
-  success: Scalars['Boolean'];
-  message: Scalars['String'];
-  wine?: Maybe<Wine>;
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -753,12 +691,9 @@ export type ResolversTypes = ResolversObject<{
   AdInput: ResolverTypeWrapper<Partial<AdInput>>;
   Float: ResolverTypeWrapper<Partial<Scalars['Float']>>;
   AdInputUpdate: ResolverTypeWrapper<Partial<AdInputUpdate>>;
-  AdResponse: ResolverTypeWrapper<
-    Partial<Omit<AdResponse, 'ad'> & { ad?: Maybe<ResolversTypes['Ad']> }>
-  >;
-  Boolean: ResolverTypeWrapper<Partial<Scalars['Boolean']>>;
   Ad: ResolverTypeWrapper<IAdDoc | IAd>;
   ID: ResolverTypeWrapper<Partial<Scalars['ID']>>;
+  Boolean: ResolverTypeWrapper<Partial<Scalars['Boolean']>>;
   AdWine: ResolverTypeWrapper<
     Partial<
       Omit<AdWine, 'postedBy' | 'wine'> & {
@@ -789,42 +724,13 @@ export type ResolversTypes = ResolversObject<{
   EspressioneComunitaria: ResolverTypeWrapper<Partial<EspressioneComunitaria>>;
   DenomZona: ResolverTypeWrapper<Partial<DenomZona>>;
   MessageInput: ResolverTypeWrapper<Partial<MessageInput>>;
-  MessageResponse: ResolverTypeWrapper<
-    Partial<
-      Omit<MessageResponse, 'messageSent'> & {
-        messageSent?: Maybe<ResolversTypes['Message']>;
-      }
-    >
-  >;
   Message: ResolverTypeWrapper<IMessageDoc>;
-  MutationResponse:
-    | ResolversTypes['AdResponse']
-    | ResolversTypes['MessageResponse']
-    | ResolversTypes['NegotiationResponse']
-    | ResolversTypes['ReviewResponse']
-    | ResolversTypes['UserResponse']
-    | ResolversTypes['LoginResponse']
-    | ResolversTypes['VineyardResponse']
-    | ResolversTypes['WineResponse'];
+  MutationResponse: never;
   NegotiationInput: ResolverTypeWrapper<Partial<NegotiationInput>>;
   NegotiationInputUpdate: ResolverTypeWrapper<Partial<NegotiationInputUpdate>>;
-  NegotiationResponse: ResolverTypeWrapper<
-    Partial<
-      Omit<NegotiationResponse, 'negotiation'> & {
-        negotiation?: Maybe<ResolversTypes['Negotiation']>;
-      }
-    >
-  >;
   Negotiation: ResolverTypeWrapper<INegotiationDoc>;
   ReviewInput: ResolverTypeWrapper<Partial<ReviewInput>>;
   ReviewInputUpdate: ResolverTypeWrapper<Partial<ReviewInputUpdate>>;
-  ReviewResponse: ResolverTypeWrapper<
-    Partial<
-      Omit<ReviewResponse, 'review'> & {
-        review?: Maybe<ResolversTypes['Review']>;
-      }
-    >
-  >;
   Review: ResolverTypeWrapper<IReviewDoc>;
   Date: ResolverTypeWrapper<Partial<Scalars['Date']>>;
   ProducedWines: ResolverTypeWrapper<
@@ -841,32 +747,16 @@ export type ResolversTypes = ResolversObject<{
   OwnedVineyardsInput: ResolverTypeWrapper<Partial<OwnedVineyardsInput>>;
   UserInput: ResolverTypeWrapper<Partial<UserInput>>;
   UserInputUpdate: ResolverTypeWrapper<Partial<UserInputUpdate>>;
-  User: ResolverTypeWrapper<IUserDoc | IUser>;
-  UserResponse: ResolverTypeWrapper<
-    Partial<
-      Omit<UserResponse, 'user'> & { user?: Maybe<ResolversTypes['User']> }
-    >
+  User: ResolverTypeWrapper<IUserDoc>;
+  AuthUser: ResolverTypeWrapper<
+    Partial<Omit<AuthUser, 'user'> & { user: ResolversTypes['User'] }>
   >;
-  Token: ResolverTypeWrapper<Partial<Token>>;
-  LoginResponse: ResolverTypeWrapper<Partial<LoginResponse>>;
   Vineyard: ResolverTypeWrapper<IVineyardDoc>;
   VineyardInput: ResolverTypeWrapper<Partial<VineyardInput>>;
   VineyardInputUpdate: ResolverTypeWrapper<Partial<VineyardInputUpdate>>;
-  VineyardResponse: ResolverTypeWrapper<
-    Partial<
-      Omit<VineyardResponse, 'vineyard'> & {
-        vineyard?: Maybe<ResolversTypes['Vineyard']>;
-      }
-    >
-  >;
   WineInput: ResolverTypeWrapper<Partial<WineInput>>;
   WineInputUpdate: ResolverTypeWrapper<Partial<WineInputUpdate>>;
   Wine: ResolverTypeWrapper<IWineDoc>;
-  WineResponse: ResolverTypeWrapper<
-    Partial<
-      Omit<WineResponse, 'wine'> & { wine?: Maybe<ResolversTypes['Wine']> }
-    >
-  >;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -878,12 +768,9 @@ export type ResolversParentTypes = ResolversObject<{
   AdInput: Partial<AdInput>;
   Float: Partial<Scalars['Float']>;
   AdInputUpdate: Partial<AdInputUpdate>;
-  AdResponse: Partial<
-    Omit<AdResponse, 'ad'> & { ad?: Maybe<ResolversParentTypes['Ad']> }
-  >;
-  Boolean: Partial<Scalars['Boolean']>;
   Ad: IAdDoc | IAd;
   ID: Partial<Scalars['ID']>;
+  Boolean: Partial<Scalars['Boolean']>;
   AdWine: Partial<
     Omit<AdWine, 'postedBy' | 'wine'> & {
       postedBy?: Maybe<ResolversParentTypes['User']>;
@@ -900,36 +787,13 @@ export type ResolversParentTypes = ResolversObject<{
   Mutation: {};
   Subscription: {};
   MessageInput: Partial<MessageInput>;
-  MessageResponse: Partial<
-    Omit<MessageResponse, 'messageSent'> & {
-      messageSent?: Maybe<ResolversParentTypes['Message']>;
-    }
-  >;
   Message: IMessageDoc;
-  MutationResponse:
-    | ResolversParentTypes['AdResponse']
-    | ResolversParentTypes['MessageResponse']
-    | ResolversParentTypes['NegotiationResponse']
-    | ResolversParentTypes['ReviewResponse']
-    | ResolversParentTypes['UserResponse']
-    | ResolversParentTypes['LoginResponse']
-    | ResolversParentTypes['VineyardResponse']
-    | ResolversParentTypes['WineResponse'];
+  MutationResponse: never;
   NegotiationInput: Partial<NegotiationInput>;
   NegotiationInputUpdate: Partial<NegotiationInputUpdate>;
-  NegotiationResponse: Partial<
-    Omit<NegotiationResponse, 'negotiation'> & {
-      negotiation?: Maybe<ResolversParentTypes['Negotiation']>;
-    }
-  >;
   Negotiation: INegotiationDoc;
   ReviewInput: Partial<ReviewInput>;
   ReviewInputUpdate: Partial<ReviewInputUpdate>;
-  ReviewResponse: Partial<
-    Omit<ReviewResponse, 'review'> & {
-      review?: Maybe<ResolversParentTypes['Review']>;
-    }
-  >;
   Review: IReviewDoc;
   Date: Partial<Scalars['Date']>;
   ProducedWines: Partial<
@@ -944,27 +808,44 @@ export type ResolversParentTypes = ResolversObject<{
   OwnedVineyardsInput: Partial<OwnedVineyardsInput>;
   UserInput: Partial<UserInput>;
   UserInputUpdate: Partial<UserInputUpdate>;
-  User: IUserDoc | IUser;
-  UserResponse: Partial<
-    Omit<UserResponse, 'user'> & { user?: Maybe<ResolversParentTypes['User']> }
+  User: IUserDoc;
+  AuthUser: Partial<
+    Omit<AuthUser, 'user'> & { user: ResolversParentTypes['User'] }
   >;
-  Token: Partial<Token>;
-  LoginResponse: Partial<LoginResponse>;
   Vineyard: IVineyardDoc;
   VineyardInput: Partial<VineyardInput>;
   VineyardInputUpdate: Partial<VineyardInputUpdate>;
-  VineyardResponse: Partial<
-    Omit<VineyardResponse, 'vineyard'> & {
-      vineyard?: Maybe<ResolversParentTypes['Vineyard']>;
-    }
-  >;
   WineInput: Partial<WineInput>;
   WineInputUpdate: Partial<WineInputUpdate>;
   Wine: IWineDoc;
-  WineResponse: Partial<
-    Omit<WineResponse, 'wine'> & { wine?: Maybe<ResolversParentTypes['Wine']> }
-  >;
 }>;
+
+export type DateDirectiveArgs = { defaultFormat?: Maybe<Scalars['String']> };
+
+export type DateDirectiveResolver<
+  Result,
+  Parent,
+  ContextType = any,
+  Args = DateDirectiveArgs
+> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type AuthenticatedDirectiveArgs = {};
+
+export type AuthenticatedDirectiveResolver<
+  Result,
+  Parent,
+  ContextType = any,
+  Args = AuthenticatedDirectiveArgs
+> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type AuthorizedDirectiveArgs = {};
+
+export type AuthorizedDirectiveResolver<
+  Result,
+  Parent,
+  ContextType = any,
+  Args = AuthorizedDirectiveArgs
+> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type AddressResolvers<
   ContextType = any,
@@ -975,16 +856,6 @@ export type AddressResolvers<
   comune?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   provincia?: Resolver<ResolversTypes['Province'], ParentType, ContextType>;
   regione?: Resolver<ResolversTypes['Regioni'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type AdResponseResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['AdResponse'] = ResolversParentTypes['AdResponse']
-> = ResolversObject<{
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  ad?: Resolver<Maybe<ResolversTypes['Ad']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1018,11 +889,7 @@ export type AdResolvers<
     ContextType
   >;
   isActive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  dateFormatted?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >;
+  datePosted?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
 }>;
 
 export type AdWineResolvers<
@@ -1069,11 +936,7 @@ export type AdWineResolvers<
     ContextType
   >;
   isActive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  dateFormatted?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >;
+  datePosted?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1106,11 +969,7 @@ export type AdVineyardResolvers<
     ContextType
   >;
   isActive?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  dateFormatted?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >;
+  datePosted?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1196,121 +1055,121 @@ export type MutationResolvers<
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = ResolversObject<{
   createAd?: Resolver<
-    Maybe<ResolversTypes['AdResponse']>,
+    Maybe<ResolversTypes['Ad']>,
     ParentType,
     ContextType,
     RequireFields<MutationCreateAdArgs, 'input'>
   >;
   createMessage?: Resolver<
-    Maybe<ResolversTypes['MessageResponse']>,
+    Maybe<ResolversTypes['Message']>,
     ParentType,
     ContextType,
     RequireFields<MutationCreateMessageArgs, never>
   >;
   createNegotiation?: Resolver<
-    Maybe<ResolversTypes['NegotiationResponse']>,
+    Maybe<ResolversTypes['Negotiation']>,
     ParentType,
     ContextType,
     RequireFields<MutationCreateNegotiationArgs, never>
   >;
   createReview?: Resolver<
-    Maybe<ResolversTypes['ReviewResponse']>,
+    Maybe<ResolversTypes['Review']>,
     ParentType,
     ContextType,
     RequireFields<MutationCreateReviewArgs, never>
   >;
   createUser?: Resolver<
-    Maybe<ResolversTypes['UserResponse']>,
+    Maybe<ResolversTypes['AuthUser']>,
     ParentType,
     ContextType,
     RequireFields<MutationCreateUserArgs, never>
   >;
   createVineyard?: Resolver<
-    Maybe<ResolversTypes['VineyardResponse']>,
+    Maybe<ResolversTypes['Vineyard']>,
     ParentType,
     ContextType,
     RequireFields<MutationCreateVineyardArgs, never>
   >;
   createWine?: Resolver<
-    Maybe<ResolversTypes['WineResponse']>,
+    Maybe<ResolversTypes['Wine']>,
     ParentType,
     ContextType,
     RequireFields<MutationCreateWineArgs, never>
   >;
   deleteAd?: Resolver<
-    Maybe<ResolversTypes['AdResponse']>,
+    Maybe<ResolversTypes['Ad']>,
     ParentType,
     ContextType,
     RequireFields<MutationDeleteAdArgs, 'id'>
   >;
   deleteNegotiation?: Resolver<
-    Maybe<ResolversTypes['NegotiationResponse']>,
+    Maybe<ResolversTypes['Negotiation']>,
     ParentType,
     ContextType,
     RequireFields<MutationDeleteNegotiationArgs, 'id'>
   >;
   deleteReview?: Resolver<
-    Maybe<ResolversTypes['ReviewResponse']>,
+    Maybe<ResolversTypes['Review']>,
     ParentType,
     ContextType,
     RequireFields<MutationDeleteReviewArgs, 'id'>
   >;
   deleteUser?: Resolver<
-    Maybe<ResolversTypes['UserResponse']>,
+    Maybe<ResolversTypes['User']>,
     ParentType,
     ContextType,
     RequireFields<MutationDeleteUserArgs, 'id'>
   >;
   deleteVineyard?: Resolver<
-    Maybe<ResolversTypes['VineyardResponse']>,
+    Maybe<ResolversTypes['Vineyard']>,
     ParentType,
     ContextType,
     RequireFields<MutationDeleteVineyardArgs, 'id'>
   >;
   deleteWine?: Resolver<
-    Maybe<ResolversTypes['WineResponse']>,
+    Maybe<ResolversTypes['Wine']>,
     ParentType,
     ContextType,
     RequireFields<MutationDeleteWineArgs, 'id'>
   >;
   login?: Resolver<
-    Maybe<ResolversTypes['LoginResponse']>,
+    Maybe<ResolversTypes['AuthUser']>,
     ParentType,
     ContextType,
     RequireFields<MutationLoginArgs, 'mail' | 'password'>
   >;
   updateAd?: Resolver<
-    Maybe<ResolversTypes['AdResponse']>,
+    Maybe<ResolversTypes['Ad']>,
     ParentType,
     ContextType,
     RequireFields<MutationUpdateAdArgs, 'input' | 'id'>
   >;
   updateNegotiation?: Resolver<
-    Maybe<ResolversTypes['NegotiationResponse']>,
+    Maybe<ResolversTypes['Negotiation']>,
     ParentType,
     ContextType,
     RequireFields<MutationUpdateNegotiationArgs, 'id'>
   >;
   updateReview?: Resolver<
-    Maybe<ResolversTypes['ReviewResponse']>,
+    Maybe<ResolversTypes['Review']>,
     ParentType,
     ContextType,
     RequireFields<MutationUpdateReviewArgs, 'id'>
   >;
   updateUser?: Resolver<
-    Maybe<ResolversTypes['UserResponse']>,
+    Maybe<ResolversTypes['User']>,
     ParentType,
     ContextType,
     RequireFields<MutationUpdateUserArgs, 'id'>
   >;
   updateVineyard?: Resolver<
-    Maybe<ResolversTypes['VineyardResponse']>,
+    Maybe<ResolversTypes['Vineyard']>,
     ParentType,
     ContextType,
     RequireFields<MutationUpdateVineyardArgs, 'id'>
   >;
   updateWine?: Resolver<
-    Maybe<ResolversTypes['WineResponse']>,
+    Maybe<ResolversTypes['Wine']>,
     ParentType,
     ContextType,
     RequireFields<MutationUpdateWineArgs, 'id'>
@@ -1511,20 +1370,6 @@ export type DenomZonaResolvers = EnumResolverSignature<
   ResolversTypes['DenomZona']
 >;
 
-export type MessageResponseResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['MessageResponse'] = ResolversParentTypes['MessageResponse']
-> = ResolversObject<{
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  messageSent?: Resolver<
-    Maybe<ResolversTypes['Message']>,
-    ParentType,
-    ContextType
-  >;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type MessageResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Message'] = ResolversParentTypes['Message']
@@ -1533,11 +1378,7 @@ export type MessageResolvers<
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   sentBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   sentTo?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  dateFormatted?: Resolver<
-    Maybe<ResolversTypes['Date']>,
-    ParentType,
-    ContextType
-  >;
+  dateSent?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1545,34 +1386,9 @@ export type MutationResponseResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['MutationResponse'] = ResolversParentTypes['MutationResponse']
 > = ResolversObject<{
-  __resolveType: TypeResolveFn<
-    | 'AdResponse'
-    | 'MessageResponse'
-    | 'NegotiationResponse'
-    | 'ReviewResponse'
-    | 'UserResponse'
-    | 'LoginResponse'
-    | 'VineyardResponse'
-    | 'WineResponse',
-    ParentType,
-    ContextType
-  >;
+  __resolveType: TypeResolveFn<null, ParentType, ContextType>;
   success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-}>;
-
-export type NegotiationResponseResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['NegotiationResponse'] = ResolversParentTypes['NegotiationResponse']
-> = ResolversObject<{
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  negotiation?: Resolver<
-    Maybe<ResolversTypes['Negotiation']>,
-    ParentType,
-    ContextType
-  >;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type NegotiationResolvers<
@@ -1589,26 +1405,12 @@ export type NegotiationResolvers<
     ContextType
   >;
   isConcluded?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  dateFormatted?: Resolver<
-    Maybe<ResolversTypes['Date']>,
-    ParentType,
-    ContextType
-  >;
+  dateCreated?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   review?: Resolver<
     Maybe<Array<Maybe<ResolversTypes['Review']>>>,
     ParentType,
     ContextType
   >;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type ReviewResponseResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['ReviewResponse'] = ResolversParentTypes['ReviewResponse']
-> = ResolversObject<{
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  review?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1625,11 +1427,7 @@ export type ReviewResolvers<
   >;
   forUserAd?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   rating?: Resolver<ResolversTypes['Rating'], ParentType, ContextType>;
-  dateFormatted?: Resolver<
-    Maybe<ResolversTypes['Date']>,
-    ParentType,
-    ContextType
-  >;
+  dateCreated?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['TypeAd'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -1688,7 +1486,12 @@ export type UserResolvers<
   phoneNumber?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   address?: Resolver<ResolversTypes['Address'], ParentType, ContextType>;
   isVerified?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  isPremium?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  isPremium?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType
+  >;
+  isAdmin?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   ads?: Resolver<Maybe<Array<ResolversTypes['Ad']>>, ParentType, ContextType>;
   negotiations?: Resolver<
     Maybe<Array<ResolversTypes['Negotiation']>>,
@@ -1706,11 +1509,6 @@ export type UserResolvers<
     ContextType
   >;
   dateCreated?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  dateFormatted?: Resolver<
-    Maybe<ResolversTypes['Date']>,
-    ParentType,
-    ContextType
-  >;
   producedWines?: Resolver<
     Maybe<ResolversTypes['ProducedWines']>,
     ParentType,
@@ -1724,31 +1522,12 @@ export type UserResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type UserResponseResolvers<
+export type AuthUserResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['UserResponse'] = ResolversParentTypes['UserResponse']
+  ParentType extends ResolversParentTypes['AuthUser'] = ResolversParentTypes['AuthUser']
 > = ResolversObject<{
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type TokenResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['Token'] = ResolversParentTypes['Token']
-> = ResolversObject<{
-  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type LoginResponseResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['LoginResponse'] = ResolversParentTypes['LoginResponse']
-> = ResolversObject<{
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  token?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType>;
+  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1759,20 +1538,6 @@ export type VineyardResolvers<
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   colore?: Resolver<ResolversTypes['Colore'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type VineyardResponseResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['VineyardResponse'] = ResolversParentTypes['VineyardResponse']
-> = ResolversObject<{
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  vineyard?: Resolver<
-    Maybe<ResolversTypes['Vineyard']>,
-    ParentType,
-    ContextType
-  >;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1801,19 +1566,8 @@ export type WineResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type WineResponseResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['WineResponse'] = ResolversParentTypes['WineResponse']
-> = ResolversObject<{
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  wine?: Resolver<Maybe<ResolversTypes['Wine']>, ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
 export type Resolvers<ContextType = any> = ResolversObject<{
   Address?: AddressResolvers<ContextType>;
-  AdResponse?: AdResponseResolvers<ContextType>;
   Ad?: AdResolvers<ContextType>;
   AdWine?: AdWineResolvers<ContextType>;
   AdVineyard?: AdVineyardResolvers<ContextType>;
@@ -1828,24 +1582,17 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   MetodoProduttivo?: MetodoProduttivoResolvers;
   EspressioneComunitaria?: EspressioneComunitariaResolvers;
   DenomZona?: DenomZonaResolvers;
-  MessageResponse?: MessageResponseResolvers<ContextType>;
   Message?: MessageResolvers<ContextType>;
   MutationResponse?: MutationResponseResolvers<ContextType>;
-  NegotiationResponse?: NegotiationResponseResolvers<ContextType>;
   Negotiation?: NegotiationResolvers<ContextType>;
-  ReviewResponse?: ReviewResponseResolvers<ContextType>;
   Review?: ReviewResolvers<ContextType>;
   Date?: GraphQLScalarType;
   ProducedWines?: ProducedWinesResolvers<ContextType>;
   OwnedVineyards?: OwnedVineyardsResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
-  UserResponse?: UserResponseResolvers<ContextType>;
-  Token?: TokenResolvers<ContextType>;
-  LoginResponse?: LoginResponseResolvers<ContextType>;
+  AuthUser?: AuthUserResolvers<ContextType>;
   Vineyard?: VineyardResolvers<ContextType>;
-  VineyardResponse?: VineyardResponseResolvers<ContextType>;
   Wine?: WineResolvers<ContextType>;
-  WineResponse?: WineResponseResolvers<ContextType>;
 }>;
 
 /**
@@ -1853,3 +1600,16 @@ export type Resolvers<ContextType = any> = ResolversObject<{
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
 export type IResolvers<ContextType = any> = Resolvers<ContextType>;
+export type DirectiveResolvers<ContextType = any> = ResolversObject<{
+  date?: DateDirectiveResolver<any, any, ContextType>;
+  authenticated?: AuthenticatedDirectiveResolver<any, any, ContextType>;
+  authorized?: AuthorizedDirectiveResolver<any, any, ContextType>;
+}>;
+
+/**
+ * @deprecated
+ * Use "DirectiveResolvers" root object instead. If you wish to get "IDirectiveResolvers", add "typesPrefix: I" to your config.
+ */
+export type IDirectiveResolvers<ContextType = any> = DirectiveResolvers<
+  ContextType
+>;

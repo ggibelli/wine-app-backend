@@ -1,15 +1,11 @@
 import { MongoDataSource } from 'apollo-datasource-mongodb';
-import { IAdDoc, Ad, IAd } from '../models/ad';
+import { IAdDoc, Ad } from '../models/ad';
 import { TypeProduct } from '../types';
 //import { ObjectId } from 'mongodb';
 
 import { assertNever } from '../utils/helpersTypeScript';
 import { AdInput, AdInputUpdate, QueryAdsArgs } from '../generated/graphql';
-import {
-  AuthenticationError,
-  ForbiddenError,
-  UserInputError,
-} from 'apollo-server-express';
+import { UserInputError } from 'apollo-server-express';
 
 interface GrapeAdParams {
   vineyardName: string;
@@ -49,7 +45,7 @@ const parseWineAd = (params: any): WineAdParams => {
   };
 };
 
-export default class Ads extends MongoDataSource<IAd | IAdDoc> {
+export default class Ads extends MongoDataSource<IAdDoc> {
   async getAd(adId: string) {
     return this.findOneById(adId);
     //let asd = Ad.findById(adId).lean().exec();
@@ -80,10 +76,7 @@ export default class Ads extends MongoDataSource<IAd | IAdDoc> {
       .exec();
   }
   async createAd(ad: AdInput) {
-    const { _id } = this.context.currentUser;
-    if (!_id) {
-      throw new AuthenticationError('Must login to post ad');
-    }
+    const { _id } = this.context.current;
     const {
       typeAd,
       typeProduct,
@@ -135,11 +128,8 @@ export default class Ads extends MongoDataSource<IAd | IAdDoc> {
   }
 
   async updateAdWine(ad: AdInputUpdate, id: string) {
-    if (!this.context.currentUser) {
-      throw new AuthenticationError('Must login to update ad');
-    }
     const updatedAd = await Ad.findOneAndUpdate(
-      { _id: id, postedBy: this.context.currentUser._id },
+      { _id: id, postedBy: this.context.user._id },
       ad,
       { new: true }
     )
@@ -149,13 +139,12 @@ export default class Ads extends MongoDataSource<IAd | IAdDoc> {
   }
 
   async deleteAdWine(id: string) {
-    if (!this.context.currentUser) {
-      throw new AuthenticationError('Must login to post ad');
-    }
-    const removedAd = await Ad.findById(id).exec();
-    if (removedAd?.postedBy.toString() !== this.context.currentUser._id) {
-      throw new ForbiddenError('Only owner can delete ad');
-    }
+    const removedAd = await Ad.findOneAndDelete({
+      _id: id,
+      postedBy: this.context.user._id,
+    })
+      .lean()
+      .exec();
     return removedAd;
   }
 }

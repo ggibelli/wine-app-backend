@@ -1,13 +1,12 @@
 import { MongoDataSource } from 'apollo-datasource-mongodb';
 import { IUser, IUserDoc, User } from '../models/user';
-import bcrypt from 'bcrypt';
 import isemail from 'isemail';
 import isValidPassword from '../utils/passwordValidator';
 import isPivaValid from '../utils/pivaValidator';
 import { UserInput } from '../generated/graphql';
 import { UserInputError } from 'apollo-server-express';
 
-export default class Users extends MongoDataSource<IUserDoc | IUser> {
+export default class Users extends MongoDataSource<IUserDoc> {
   getUser(userId: string) {
     return this.findOneById(userId);
   }
@@ -24,14 +23,16 @@ export default class Users extends MongoDataSource<IUserDoc | IUser> {
     if (!isPivaValid(user.pIva)) {
       throw new UserInputError('The partita iva is not valid');
     }
-    const saltRounds = 10;
-    const passwordHash = await bcrypt.hash(user.password, saltRounds);
-    const newUser = new User({ ...user, passwordHash });
+    const newUser = new User({ ...user });
     try {
       await newUser.save();
     } catch (e) {
       throw new UserInputError(e.message);
     }
-    return newUser;
+    const token = this.context.createToken(newUser._id);
+    return {
+      user: newUser,
+      token,
+    };
   }
 }

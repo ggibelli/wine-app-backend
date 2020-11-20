@@ -15,7 +15,7 @@ import Vineyards from './vineyards';
 import Wines from './wines';
 
 export default () => ({
-  ads: Ad,
+  ads: new Ads(Ad),
   messages: new Messages(Message),
   negotiations: new Negotiations(Negotiation),
   reviews: new Reviews(Review),
