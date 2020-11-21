@@ -44,6 +44,7 @@ export const typeDefs = gql`
   }
 
   input UserInputUpdate {
+    _id: ID!
     email: String
     firstName: String
     lastName: String
@@ -95,6 +96,6 @@ export const typeDefs = gql`
     createUser(user: UserInput): AuthUser
     updateUser(user: UserInputUpdate, id: ID!): User
     deleteUser(id: ID!): User @authenticated
-    login(mail: String!, password: String!): AuthUser
+    login(email: String!, password: String!): AuthUser
   }
 `;

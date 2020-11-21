@@ -38,7 +38,9 @@ export const typeDefs = gql`
   }
 
   input AdInputUpdate {
+    _id: ID!
     wineName: String
+    vineyardName: String
     sottoZona: String
     menzione: Menzione
     metodoProduttivo: MetodoProduttivo
@@ -132,7 +134,7 @@ export const typeDefs = gql`
 
   type Mutation {
     createAd(input: AdInput!): Ad @authenticated
-    updateAd(input: AdInputUpdate!, id: ID!): Ad @authenticated
+    updateAd(input: AdInputUpdate!): Ad @authenticated
     deleteAd(id: ID!): Ad @authenticated
   }
   type Subscription {

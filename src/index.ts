@@ -8,7 +8,6 @@ import resolvers from './resolvers/';
 import { typeDefs as Ad } from './schema/ad';
 import { typeDefs as Directives } from './schema/directives';
 import { typeDefs as Message } from './schema/message';
-import { typeDefs as Mutations } from './schema/mutations';
 import { typeDefs as Negotiation } from './schema/negotiation';
 import { typeDefs as Review } from './schema/review';
 import { typeDefs as UserSchema } from './schema/user';
@@ -24,25 +23,26 @@ import { createToken, getUserFromToken } from './utils/auth';
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
-mongoose
-  .connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    loggerInfo('connected to MongoDB');
-  })
-  .catch((error) => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    loggerError('error connection to MongoDB: ', error.message);
-  });
+const mongooseConnection = () => {
+  mongoose
+    .connect(MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+    .then(() => {
+      loggerInfo('connected to MongoDB');
+    })
+    .catch((error) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      loggerError('error connection to MongoDB: ', error.message);
+    });
+};
 
-const schema = makeExecutableSchema({
+export const schema = makeExecutableSchema({
   typeDefs: [
     Ad,
     Directives,
     Message,
-    Mutations,
     Negotiation,
     Review,
     UserSchema,
@@ -78,8 +78,15 @@ server.applyMiddleware({ app });
 const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
-httpServer.listen(PORT, () =>
-  console.log(
-    `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
-  )
-);
+const start = () => {
+  mongooseConnection();
+  httpServer.listen(PORT, () =>
+    console.log(
+      `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
+    )
+  );
+};
+
+if (process.env.NODE_ENV !== 'test') {
+  start();
+}

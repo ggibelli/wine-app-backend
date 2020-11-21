@@ -11,7 +11,7 @@ import {
   GraphQLScalarType,
   GraphQLScalarTypeConfig,
 } from 'graphql';
-import { IUserDoc } from '../models/user';
+import { IUser, IUserDoc } from '../models/user';
 import { IAd, IAdDoc } from '../models/ad';
 import { IMessageDoc } from '../models/message';
 import { INegotiationDoc } from '../models/negotiation';
@@ -80,7 +80,9 @@ export type AdInput = {
 };
 
 export type AdInputUpdate = {
+  _id: Scalars['ID'];
   wineName?: Scalars['String'];
+  vineyardName?: Scalars['String'];
   sottoZona?: Scalars['String'];
   menzione?: Menzione;
   metodoProduttivo?: MetodoProduttivo;
@@ -306,13 +308,12 @@ export type MutationDeleteWineArgs = {
 };
 
 export type MutationLoginArgs = {
-  mail: Scalars['String'];
+  email: Scalars['String'];
   password: Scalars['String'];
 };
 
 export type MutationUpdateAdArgs = {
   input: AdInputUpdate;
-  id: Scalars['ID'];
 };
 
 export type MutationUpdateNegotiationArgs = {
@@ -400,7 +401,8 @@ export type NegotiationInput = {
 };
 
 export type NegotiationInputUpdate = {
-  isConcluded?: Maybe<Scalars['Boolean']>;
+  _id: Scalars['ID'];
+  isConcluded?: Scalars['Boolean'];
 };
 
 export type Negotiation = {
@@ -424,8 +426,9 @@ export type ReviewInput = {
 };
 
 export type ReviewInputUpdate = {
-  rating?: Maybe<Scalars['ID']>;
-  content?: Maybe<Scalars['String']>;
+  _id: Scalars['ID'];
+  rating?: Scalars['ID'];
+  content?: Scalars['String'];
 };
 
 export type Review = {
@@ -479,20 +482,21 @@ export type UserInput = {
 };
 
 export type UserInputUpdate = {
-  email?: Maybe<Scalars['String']>;
-  firstName?: Maybe<Scalars['String']>;
-  lastName?: Maybe<Scalars['String']>;
-  pIva?: Maybe<Scalars['String']>;
-  phoneNumber?: Maybe<Scalars['String']>;
-  address?: Maybe<AddressInput>;
-  isVerified?: Maybe<Scalars['Boolean']>;
-  isPremium?: Maybe<Scalars['Boolean']>;
-  ads?: Maybe<Array<Scalars['ID']>>;
-  negotiations?: Maybe<Array<Scalars['ID']>>;
-  reviews?: Maybe<Array<Scalars['ID']>>;
-  adsRemaining?: Maybe<Scalars['Int']>;
-  producedWines?: Maybe<ProducedWinesInput>;
-  ownedVineyards?: Maybe<OwnedVineyardsInput>;
+  _id: Scalars['ID'];
+  email?: Scalars['String'];
+  firstName?: Scalars['String'];
+  lastName?: Scalars['String'];
+  pIva?: Scalars['String'];
+  phoneNumber?: Scalars['String'];
+  address?: AddressInput;
+  isVerified?: Scalars['Boolean'];
+  isPremium?: Scalars['Boolean'];
+  ads?: Array<Scalars['ID']>;
+  negotiations?: Array<Scalars['ID']>;
+  reviews?: Array<Scalars['ID']>;
+  adsRemaining?: Scalars['Int'];
+  producedWines?: ProducedWinesInput;
+  ownedVineyards?: OwnedVineyardsInput;
 };
 
 export type User = {
@@ -691,8 +695,8 @@ export type ResolversTypes = ResolversObject<{
   AdInput: ResolverTypeWrapper<Partial<AdInput>>;
   Float: ResolverTypeWrapper<Partial<Scalars['Float']>>;
   AdInputUpdate: ResolverTypeWrapper<Partial<AdInputUpdate>>;
-  Ad: ResolverTypeWrapper<IAdDoc | IAd>;
   ID: ResolverTypeWrapper<Partial<Scalars['ID']>>;
+  Ad: ResolverTypeWrapper<IAdDoc | IAd>;
   Boolean: ResolverTypeWrapper<Partial<Scalars['Boolean']>>;
   AdWine: ResolverTypeWrapper<
     Partial<
@@ -747,7 +751,7 @@ export type ResolversTypes = ResolversObject<{
   OwnedVineyardsInput: ResolverTypeWrapper<Partial<OwnedVineyardsInput>>;
   UserInput: ResolverTypeWrapper<Partial<UserInput>>;
   UserInputUpdate: ResolverTypeWrapper<Partial<UserInputUpdate>>;
-  User: ResolverTypeWrapper<IUserDoc>;
+  User: ResolverTypeWrapper<IUserDoc | IUser>;
   AuthUser: ResolverTypeWrapper<
     Partial<Omit<AuthUser, 'user'> & { user: ResolversTypes['User'] }>
   >;
@@ -768,8 +772,8 @@ export type ResolversParentTypes = ResolversObject<{
   AdInput: Partial<AdInput>;
   Float: Partial<Scalars['Float']>;
   AdInputUpdate: Partial<AdInputUpdate>;
-  Ad: IAdDoc | IAd;
   ID: Partial<Scalars['ID']>;
+  Ad: IAdDoc | IAd;
   Boolean: Partial<Scalars['Boolean']>;
   AdWine: Partial<
     Omit<AdWine, 'postedBy' | 'wine'> & {
@@ -808,7 +812,7 @@ export type ResolversParentTypes = ResolversObject<{
   OwnedVineyardsInput: Partial<OwnedVineyardsInput>;
   UserInput: Partial<UserInput>;
   UserInputUpdate: Partial<UserInputUpdate>;
-  User: IUserDoc;
+  User: IUserDoc | IUser;
   AuthUser: Partial<
     Omit<AuthUser, 'user'> & { user: ResolversParentTypes['User'] }
   >;
@@ -1136,13 +1140,13 @@ export type MutationResolvers<
     Maybe<ResolversTypes['AuthUser']>,
     ParentType,
     ContextType,
-    RequireFields<MutationLoginArgs, 'mail' | 'password'>
+    RequireFields<MutationLoginArgs, 'email' | 'password'>
   >;
   updateAd?: Resolver<
     Maybe<ResolversTypes['Ad']>,
     ParentType,
     ContextType,
-    RequireFields<MutationUpdateAdArgs, 'input' | 'id'>
+    RequireFields<MutationUpdateAdArgs, 'input'>
   >;
   updateNegotiation?: Resolver<
     Maybe<ResolversTypes['Negotiation']>,
@@ -1610,6 +1614,6 @@ export type DirectiveResolvers<ContextType = any> = ResolversObject<{
  * @deprecated
  * Use "DirectiveResolvers" root object instead. If you wish to get "IDirectiveResolvers", add "typesPrefix: I" to your config.
  */
-export type IDirectiveResolvers<ContextType = any> = DirectiveResolvers<
-  ContextType
->;
+export type IDirectiveResolvers<
+  ContextType = any
+> = DirectiveResolvers<ContextType>;

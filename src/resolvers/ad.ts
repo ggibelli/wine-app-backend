@@ -1,6 +1,7 @@
 import Ads from '../data-sources/ads';
 import Users from '../data-sources/users';
 import { AdInput, AdInputUpdate, Resolvers } from '../generated/graphql';
+// import { IAd } from '../models/ad';
 
 interface StringIndexSignatureInterface {
   [index: string]: any;
@@ -9,6 +10,7 @@ interface StringIndexSignatureInterface {
 interface MongoDataSource {
   ads: Ads;
   users: Users;
+  // wines: Wines;
 }
 
 type StringIndexed<T> = T & StringIndexSignatureInterface;
@@ -32,7 +34,22 @@ export const resolver: StringIndexed<Resolvers> = {
       }
       return ad.viewedBy?.length;
     },
+    // wine(ad: IAd, _: void, { dataSources }: { dataSources: MongoDataSource }) {
+    //   return dataSources.wines.getWine(ad.wineName)
+    // },
   },
+
+  // AdWine: {
+  // wine(ad, { dataSources }: { dataSources: MongoDataSource }) {
+  //   return dataSources.wines.getWine(ad.wineName)
+  // },
+  // },
+
+  //AdVineyard: {
+  // vineyard(ad, { dataSources }: { dataSources: MongoDataSource }) {
+  //   return dataSources.vineyard.getVineyard(ad.vineyardName)
+  // },
+  //},
 
   Query: {
     ads(_, args, { dataSources }: { dataSources: MongoDataSource }) {
@@ -44,7 +61,7 @@ export const resolver: StringIndexed<Resolvers> = {
   },
 
   Mutation: {
-    createAdWine(
+    createAd(
       _: any,
       { input }: { input: AdInput },
       { dataSources }: { dataSources: MongoDataSource }
@@ -52,12 +69,12 @@ export const resolver: StringIndexed<Resolvers> = {
       const createdAd = dataSources.ads.createAd(input);
       return createdAd;
     },
-    updateAdWine(
+    updateAd(
       _: any,
-      { ad, id }: { ad: AdInputUpdate; id: string },
+      { input }: { input: AdInputUpdate },
       { dataSources }: { dataSources: MongoDataSource }
     ) {
-      const updateAd = dataSources.ads.updateAdWine(ad, id);
+      const updateAd = dataSources.ads.updateAdWine(input);
       return updateAd;
     },
     deleteAd(

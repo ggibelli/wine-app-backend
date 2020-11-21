@@ -1,5 +1,5 @@
 import { MongoDataSource } from 'apollo-datasource-mongodb';
-import { IAdDoc, Ad } from '../models/ad';
+import { IAdDoc } from '../models/ad';
 import { TypeProduct } from '../types';
 //import { ObjectId } from 'mongodb';
 
@@ -47,31 +47,34 @@ const parseWineAd = (params: any): WineAdParams => {
 
 export default class Ads extends MongoDataSource<IAdDoc> {
   async getAd(adId: string) {
-    return this.findOneById(adId);
+    return this.model.findById(adId).lean().exec();
     //let asd = Ad.findById(adId).lean().exec();
   }
 
   // un metodo solo con tipo prodotto e nome vino o nome vigna
   async getAds(args: QueryAdsArgs) {
     if (args.vineyardName) {
-      return Ad.find({
-        typeAd: args.typeAd,
-        vineyardName: args.vineyardName,
-      })
+      return this.model
+        .find({
+          typeAd: args.typeAd,
+          vineyardName: args.vineyardName,
+        })
         .lean()
         .exec();
     } else if (args.wineName) {
-      return Ad.find({
-        typeAd: args.typeAd,
-        wineName: args.wineName,
-      })
+      return this.model
+        .find({
+          typeAd: args.typeAd,
+          wineName: args.wineName,
+        })
         .lean()
         .exec();
     }
-    return Ad.find({
-      typeAd: args.typeAd,
-      typeProduct: args.typeProduct,
-    })
+    return this.model
+      .find({
+        typeAd: args.typeAd,
+        typeProduct: args.typeProduct,
+      })
       .lean()
       .exec();
   }
@@ -115,10 +118,8 @@ export default class Ads extends MongoDataSource<IAdDoc> {
       default:
         assertNever(newAd.typeProduct);
     }
-    const createdAd = new Ad({
-      ...newAd,
-      postedBy: _id,
-    });
+
+    const createdAd = new this.model({ ...newAd, postedBy: _id });
     try {
       await createdAd.save();
     } catch (e) {
@@ -127,22 +128,22 @@ export default class Ads extends MongoDataSource<IAdDoc> {
     return createdAd;
   }
 
-  async updateAdWine(ad: AdInputUpdate, id: string) {
-    const updatedAd = await Ad.findOneAndUpdate(
-      { _id: id, postedBy: this.context.user._id },
-      ad,
-      { new: true }
-    )
+  async updateAdWine(ad: AdInputUpdate) {
+    const updatedAd = await this.model
+      .findOneAndUpdate({ _id: ad._id, postedBy: this.context.user._id }, ad, {
+        new: true,
+      })
       .lean()
       .exec();
     return updatedAd;
   }
 
   async deleteAdWine(id: string) {
-    const removedAd = await Ad.findOneAndDelete({
-      _id: id,
-      postedBy: this.context.user._id,
-    })
+    const removedAd = await this.model
+      .findOneAndDelete({
+        _id: id,
+        postedBy: this.context.user._id,
+      })
       .lean()
       .exec();
     return removedAd;
