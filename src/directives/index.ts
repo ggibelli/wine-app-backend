@@ -6,7 +6,7 @@ import {
 import { defaultFieldResolver, GraphQLField, GraphQLString } from 'graphql';
 import { formatDate } from '../utils/dateFormat';
 
-class FormatDateDirective extends SchemaDirectiveVisitor {
+export class FormatDateDirective extends SchemaDirectiveVisitor {
   visitFieldDefinition(field: GraphQLField<any, any>) {
     const { resolve = defaultFieldResolver } = field;
     const { defaultFormat } = this.args;
@@ -34,7 +34,7 @@ class FormatDateDirective extends SchemaDirectiveVisitor {
   }
 }
 
-class AuthorizedDirective extends SchemaDirectiveVisitor {
+export class AuthorizedDirective extends SchemaDirectiveVisitor {
   visitFieldDefinition(field: GraphQLField<any, any>) {
     const { resolve = defaultFieldResolver } = field;
 
@@ -47,11 +47,11 @@ class AuthorizedDirective extends SchemaDirectiveVisitor {
   }
 }
 
-class AuthenticateDirective extends SchemaDirectiveVisitor {
+export class AuthenticateDirective extends SchemaDirectiveVisitor {
   visitFieldDefinition(field: GraphQLField<any, any>) {
     const resolver = field.resolve || defaultFieldResolver;
     field.resolve = async function (root, args, context, info) {
-      //console.log(args);
+      console.log(args);
       //console.log(args[2].user);
       if (!context.user) {
         throw new AuthenticationError('You need to login to continue');

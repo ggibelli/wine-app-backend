@@ -1,6 +1,9 @@
 import { gql } from 'apollo-server-express';
 
 export const typeDefs = gql`
+  directive @date(defaultFormat: String = "mmmm d, yyyy") on FIELD_DEFINITION
+  directive @authenticated on FIELD_DEFINITION
+  directive @authorized on FIELD_DEFINITION
   type Address {
     via: String!
     CAP: Int!
@@ -56,7 +59,7 @@ export const typeDefs = gql`
 
   interface Ad {
     _id: ID!
-    postedBy: User @authenticated
+    postedBy: User! @authenticated
     harvest: Int!
     abv: Float!
     priceFrom: Float! @authenticated
@@ -75,7 +78,7 @@ export const typeDefs = gql`
 
   type AdWine implements Ad {
     _id: ID!
-    postedBy: User
+    postedBy: User! @authenticated
     wineName: String!
     wine: Wine!
     sottoZona: String
@@ -99,9 +102,9 @@ export const typeDefs = gql`
     datePosted: Date! @date
   }
 
-  type AdVineyard implements Ad {
+  type AdGrape implements Ad {
     _id: ID!
-    postedBy: User
+    postedBy: User! @authenticated
     vineyardName: String!
     vineyard: Vineyard!
     harvest: Int!
@@ -129,6 +132,9 @@ export const typeDefs = gql`
       typeProduct: TypeProduct!
       wineName: String
       vineyardName: String
+      skip: Int
+      orderBy: QueryOrderBy
+      limit: Int
     ): [Ad]
   }
 

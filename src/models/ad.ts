@@ -18,12 +18,12 @@ import { MetodoProduttivo } from '../types';
 export interface IAd {
   postedBy: IUserDoc['_id'];
   wineName?: string;
-  wine?: IWineDoc['_id'] | IWineDoc;
+  wine?: IWineDoc['_id'];
   sottoZona?: string;
   menzione?: Menzione;
   metodoProduttivo?: MetodoProduttivo;
   vineyardName?: string;
-  vineyard?: IVineyardDoc['_id'] | IVineyardDoc;
+  vineyard?: IVineyardDoc['_id'];
   harvest: number;
   abv?: number;
   priceFrom: number; //se vendita priceFrom e priceTo settati a stesso numero
@@ -34,8 +34,8 @@ export interface IAd {
   kgTo?: number;
   content?: string;
   address: Address;
-  negotiations?: Array<INegotiationDoc['_id'] | INegotiationDoc>; // trattative dell'annuncio, solo attive, solo graphql??
-  viewedBy?: Array<IUserDoc['_id'] | IUserDoc>;
+  negotiations?: Array<INegotiationDoc['_id']>; // trattative dell'annuncio, solo attive, solo graphql??
+  viewedBy?: Array<IUserDoc['_id']>;
   typeAd: TypeAd;
   typeProduct: TypeProduct;
   isActive: boolean;
@@ -50,19 +50,19 @@ const adSchemaFields: Record<keyof IAd, any> = {
   },
   typeAd: {
     type: String,
-    enum: ['Sell', 'Buy'],
+    enum: [TypeAd.SELL, TypeAd.BUY],
     required: true,
   },
   typeProduct: {
     type: String,
-    enum: ['Wine', 'Grape'],
+    enum: [TypeProduct.ADWINE, TypeProduct.ADGRAPE],
     required: true,
   },
   wineName: {
     type: String,
     minlength: 3,
     required() {
-      return this.typeProduct === 'Wine';
+      return this.typeProduct === TypeProduct.ADWINE;
     },
     index: true,
   },
@@ -70,14 +70,11 @@ const adSchemaFields: Record<keyof IAd, any> = {
     type: Schema.Types.ObjectId,
     ref: 'Wine',
     required() {
-      return this.typeProduct === 'Wine';
+      return this.typeProduct === TypeProduct.ADWINE;
     },
   },
   sottoZona: {
     type: String,
-    required() {
-      return this.typeProduct === 'Wine';
-    },
   },
   menzione: {
     type: String,
@@ -93,7 +90,7 @@ const adSchemaFields: Record<keyof IAd, any> = {
     type: String,
     minlength: 3,
     required() {
-      return this.typeProduct === 'Grape';
+      return this.typeProduct === TypeProduct.ADGRAPE;
     },
     index: true,
   },
@@ -101,7 +98,7 @@ const adSchemaFields: Record<keyof IAd, any> = {
     type: Schema.Types.ObjectId,
     ref: 'Vineyard',
     required() {
-      return this.typeProduct === 'Grape';
+      return this.typeProduct === TypeProduct.ADGRAPE;
     },
   },
   abv: Number,
@@ -120,25 +117,25 @@ const adSchemaFields: Record<keyof IAd, any> = {
   litersFrom: {
     type: Number,
     required() {
-      return this.typeProduct === 'Wine';
+      return this.typeProduct === TypeProduct.ADWINE;
     },
   },
   litersTo: {
     type: Number,
     required() {
-      return this.typeProduct === 'Wine';
+      return this.typeProduct === TypeProduct.ADWINE;
     },
   },
   kgFrom: {
     type: Number,
     required() {
-      return this.typeProduct === 'Grape';
+      return this.typeProduct === TypeProduct.ADGRAPE;
     },
   },
   kgTo: {
     type: Number,
     required() {
-      return this.typeProduct === 'Grape';
+      return this.typeProduct === TypeProduct.ADGRAPE;
     },
   },
   address: {

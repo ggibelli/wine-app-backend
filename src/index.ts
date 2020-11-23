@@ -56,6 +56,7 @@ export const schema = makeExecutableSchema({
     requireResolversForResolveType: false,
   },
 });
+console.log(schemaDirectives);
 
 const server = new ApolloServer({
   schema,
@@ -70,6 +71,8 @@ const server = new ApolloServer({
   },
   dataSources,
   tracing: true,
+  mocks: true,
+  mockEntireSchema: true,
 });
 
 const app = express();

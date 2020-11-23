@@ -154,7 +154,7 @@ export enum MetodoProduttivo {
 
 export enum TypeProduct {
   ADWINE = 'AdWine',
-  ADGRAPE = 'AdVineyard',
+  ADGRAPE = 'AdGrape',
 }
 
 export enum EspressioneComunitaria {
@@ -176,4 +176,11 @@ export enum Menzione {
   RISERVA = 'Riserva',
   SUPERIORE = 'Superiore',
   VIGNA = 'Vigna',
+}
+
+export enum QueryOrderBy {
+  createdAt_ASC = 'createdAt_ASC',
+  createdAt_DESC = 'createdAt_DESC',
+  price_ASC = 'price_ASC',
+  price_DESC = 'price_DESC',
 }

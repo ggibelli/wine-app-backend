@@ -136,13 +136,13 @@ export const typeDefs = gql`
   }
 
   enum TypeAd {
-    SELL
-    BUY
+    Sell
+    Buy
   }
 
   enum TypeProduct {
-    ADWINE
-    ADVINEYARD
+    AdWine
+    AdGrape
   }
 
   enum Menzione {
@@ -185,5 +185,12 @@ export const typeDefs = gql`
     IGT
     VARIETALE
     VINO
+  }
+
+  enum QueryOrderBy {
+    createdAt_ASC
+    createdAt_DESC
+    price_ASC
+    price_DESC
   }
 `;

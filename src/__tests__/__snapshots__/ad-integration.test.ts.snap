@@ -1,15 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`queries ads 1`] = `
+exports[`Integration test ads query ads wine in sale 1`] = `
 Object {
   "data": Object {
     "ads": Array [
-      Object {
-        "content": "wow",
-      },
+      null,
     ],
   },
-  "errors": undefined,
+  "errors": Array [
+    [GraphQLError: You need to login to continue],
+  ],
   "extensions": undefined,
   "http": Object {
     "headers": Headers {

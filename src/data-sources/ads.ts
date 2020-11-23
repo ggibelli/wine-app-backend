@@ -1,6 +1,6 @@
 import { MongoDataSource } from 'apollo-datasource-mongodb';
 import { IAdDoc } from '../models/ad';
-import { TypeProduct } from '../types';
+import { QueryOrderBy, TypeProduct } from '../types';
 //import { ObjectId } from 'mongodb';
 
 import { assertNever } from '../utils/helpersTypeScript';
@@ -17,6 +17,12 @@ interface WineAdParams {
   wineName: string;
   litersFrom: number;
   litersTo: number;
+}
+
+export interface QueryAdsArgsPag extends QueryAdsArgs {
+  limit: number;
+  skip: number;
+  orderBy: QueryOrderBy;
 }
 
 const parseGrapeAd = (params: any): GrapeAdParams => {
@@ -52,29 +58,69 @@ export default class Ads extends MongoDataSource<IAdDoc> {
   }
 
   // un metodo solo con tipo prodotto e nome vino o nome vigna
-  async getAds(args: QueryAdsArgs) {
-    if (args.vineyardName) {
+  async getAds({
+    limit = 10,
+    skip = 0,
+    orderBy = QueryOrderBy.createdAt_DESC,
+    vineyardName,
+    wineName,
+    typeAd,
+    typeProduct,
+  }: QueryAdsArgs) {
+    const LIMIT_MAX = 100;
+    if (limit < 1 || skip < 0 || limit > LIMIT_MAX) {
+      throw new UserInputError(
+        `${limit} must be greater than 1 and less than 100 ${skip} must be positive `
+      );
+    }
+    let sortQuery;
+    switch (orderBy) {
+      case QueryOrderBy.createdAt_ASC:
+        sortQuery = { _id: 1 };
+        break;
+      case QueryOrderBy.createdAt_DESC:
+        sortQuery = { _id: -1 };
+        break;
+      case QueryOrderBy.price_ASC:
+        sortQuery = { priceFrom: 1 };
+        break;
+      case QueryOrderBy.price_DESC:
+        sortQuery = { priceFrom: -1 };
+        break;
+      default:
+        assertNever(orderBy);
+    }
+    if (vineyardName) {
       return this.model
         .find({
-          typeAd: args.typeAd,
-          vineyardName: args.vineyardName,
+          typeAd: typeAd,
+          vineyardName: vineyardName,
         })
+        .skip(skip)
+        .limit(limit)
+        .sort(sortQuery)
         .lean()
         .exec();
-    } else if (args.wineName) {
+    } else if (wineName) {
       return this.model
         .find({
-          typeAd: args.typeAd,
-          wineName: args.wineName,
+          typeAd: typeAd,
+          wineName: wineName,
         })
+        .skip(skip)
+        .limit(limit)
+        .sort(sortQuery)
         .lean()
         .exec();
     }
     return this.model
       .find({
-        typeAd: args.typeAd,
-        typeProduct: args.typeProduct,
+        typeAd: typeAd,
+        typeProduct: typeProduct,
       })
+      .skip(skip)
+      .limit(limit)
+      .sort(sortQuery)
       .lean()
       .exec();
   }

@@ -8,7 +8,7 @@ generates:
       - 'typescript-resolvers'
     config:
       useIndexSignature: true
-      defaultMapper: Partial<{T}>
+      #defaultMapper: Partial<{T}>
       #maybeValue: T | null | undefined
       maybeValue: 'T extends PromiseLike<infer U> ? Promise<U | null> : T | null'
       enumValues:

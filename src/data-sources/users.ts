@@ -12,8 +12,8 @@ interface Context {
 }
 
 export default class Users extends MongoDataSource<IUserDoc, Context> {
-  async getUser(userId: string) {
-    return this.model.findById(userId).lean().exec();
+  async getUser(ad: any) {
+    return this.model.findById(ad.postedBy).lean().exec();
     //return this.findOneById(userId);
   }
 

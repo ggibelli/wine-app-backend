@@ -1,11 +1,14 @@
-import { TypeProduct } from '../types';
-import { TypeAd } from '../types';
-import { MetodoProduttivo } from '../types';
-import { Province } from '../types';
-import { Regioni } from '../types';
-import { EspressioneComunitaria } from '../types';
-import { DenomZona } from '../types';
-import { Menzione } from '../types';
+import {
+  TypeProduct,
+  TypeAd,
+  MetodoProduttivo,
+  Menzione,
+  Province,
+  Regioni,
+  EspressioneComunitaria,
+  DenomZona,
+  QueryOrderBy,
+} from '../types';
 import {
   GraphQLResolveInfo,
   GraphQLScalarType,
@@ -98,7 +101,7 @@ export type AdInputUpdate = {
 
 export type Ad = {
   _id: Scalars['ID'];
-  postedBy?: Maybe<User>;
+  postedBy: User['_id'];
   harvest: Scalars['Int'];
   abv: Scalars['Float'];
   priceFrom: Scalars['Float'];
@@ -118,7 +121,7 @@ export type Ad = {
 export type AdWine = Ad & {
   __typename?: 'AdWine';
   _id: Scalars['ID'];
-  postedBy?: Maybe<User>;
+  postedBy: User['_id'];
   wineName: Scalars['String'];
   wine: Wine;
   sottoZona?: Maybe<Scalars['String']>;
@@ -142,10 +145,10 @@ export type AdWine = Ad & {
   datePosted: Scalars['Date'];
 };
 
-export type AdVineyard = Ad & {
-  __typename?: 'AdVineyard';
+export type AdGrape = Ad & {
+  __typename?: 'AdGrape';
   _id: Scalars['ID'];
-  postedBy?: Maybe<User>;
+  postedBy: User['_id'];
   vineyardName: Scalars['String'];
   vineyard: Vineyard;
   harvest: Scalars['Int'];
@@ -192,6 +195,9 @@ export type QueryAdsArgs = {
   typeProduct: TypeProduct;
   wineName?: Maybe<Scalars['String']>;
   vineyardName?: Maybe<Scalars['String']>;
+  skip?: Scalars['Int'];
+  orderBy?: QueryOrderBy;
+  limit?: Scalars['Int'];
 };
 
 export type QueryNegotiationArgs = {
@@ -700,16 +706,14 @@ export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Partial<Scalars['Boolean']>>;
   AdWine: ResolverTypeWrapper<
     Partial<
-      Omit<AdWine, 'postedBy' | 'wine'> & {
-        postedBy?: Maybe<ResolversTypes['User']>;
+      Omit<AdWine, 'wine'> & {
         wine: ResolversTypes['Wine'];
       }
     >
   >;
-  AdVineyard: ResolverTypeWrapper<
+  AdGrape: ResolverTypeWrapper<
     Partial<
-      Omit<AdVineyard, 'postedBy' | 'vineyard'> & {
-        postedBy?: Maybe<ResolversTypes['User']>;
+      Omit<AdGrape, 'vineyard'> & {
         vineyard: ResolversTypes['Vineyard'];
       }
     >
@@ -776,13 +780,12 @@ export type ResolversParentTypes = ResolversObject<{
   Ad: IAdDoc | IAd;
   Boolean: Partial<Scalars['Boolean']>;
   AdWine: Partial<
-    Omit<AdWine, 'postedBy' | 'wine'> & {
-      postedBy?: Maybe<ResolversParentTypes['User']>;
+    Omit<AdWine, 'wine'> & {
       wine: ResolversParentTypes['Wine'];
     }
   >;
-  AdVineyard: Partial<
-    Omit<AdVineyard, 'postedBy' | 'vineyard'> & {
+  AdGrape: Partial<
+    Omit<AdGrape, 'postedBy' | 'vineyard'> & {
       postedBy?: Maybe<ResolversParentTypes['User']>;
       vineyard: ResolversParentTypes['Vineyard'];
     }
@@ -867,13 +870,9 @@ export type AdResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Ad'] = ResolversParentTypes['Ad']
 > = ResolversObject<{
-  __resolveType: TypeResolveFn<
-    'AdWine' | 'AdVineyard',
-    ParentType,
-    ContextType
-  >;
+  __resolveType: TypeResolveFn<'AdWine' | 'AdGrape', ParentType, ContextType>;
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  postedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  postedBy: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   harvest?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   abv?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   priceFrom?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
@@ -901,7 +900,7 @@ export type AdWineResolvers<
   ParentType extends ResolversParentTypes['AdWine'] = ResolversParentTypes['AdWine']
 > = ResolversObject<{
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  postedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  postedBy: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   wineName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   wine?: Resolver<ResolversTypes['Wine'], ParentType, ContextType>;
   sottoZona?: Resolver<
@@ -944,9 +943,9 @@ export type AdWineResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type AdVineyardResolvers<
+export type AdGrapeResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['AdVineyard'] = ResolversParentTypes['AdVineyard']
+  ParentType extends ResolversParentTypes['AdGrape'] = ResolversParentTypes['AdGrape']
 > = ResolversObject<{
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   postedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
@@ -1574,7 +1573,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Address?: AddressResolvers<ContextType>;
   Ad?: AdResolvers<ContextType>;
   AdWine?: AdWineResolvers<ContextType>;
-  AdVineyard?: AdVineyardResolvers<ContextType>;
+  AdGrape?: AdGrapeResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;

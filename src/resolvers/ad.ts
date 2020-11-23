@@ -19,7 +19,9 @@ export const resolver: StringIndexed<Resolvers> = {
   Ad: {
     __resolveType: (ad) => ad.typeProduct,
     postedBy(ad, _, { dataSources }: { dataSources: MongoDataSource }) {
+      console.log('ooo');
       const postedBy = dataSources.users.getUser(ad.postedBy);
+      console.log('chiamato');
       return postedBy;
     },
     activeNegotiations(ad) {
@@ -38,6 +40,14 @@ export const resolver: StringIndexed<Resolvers> = {
     //   return dataSources.wines.getWine(ad.wineName)
     // },
   },
+  AdWine: {
+    postedBy(ad, _, { dataSources }: { dataSources: MongoDataSource }) {
+      console.log('ooo');
+      const postedBy = dataSources.users.getUser(ad);
+
+      return postedBy;
+    },
+  },
 
   // AdWine: {
   // wine(ad, { dataSources }: { dataSources: MongoDataSource }) {
@@ -45,7 +55,7 @@ export const resolver: StringIndexed<Resolvers> = {
   // },
   // },
 
-  //AdVineyard: {
+  //AdGrape: {
   // vineyard(ad, { dataSources }: { dataSources: MongoDataSource }) {
   //   return dataSources.vineyard.getVineyard(ad.vineyardName)
   // },
