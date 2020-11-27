@@ -58,7 +58,7 @@ const reviewSchemaFields: Record<keyof IReview, any> = {
   },
   type: {
     type: String,
-    enum: ['Sell', 'Buy'],
+    enum: ['SELL', 'BUY'],
   },
 };
 

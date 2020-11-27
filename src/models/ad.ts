@@ -42,6 +42,10 @@ export interface IAd {
   datePosted: Date;
 }
 
+export interface AdGraphQl extends IAd {
+  _id: string;
+}
+
 const adSchemaFields: Record<keyof IAd, any> = {
   postedBy: {
     type: Schema.Types.ObjectId,
@@ -69,22 +73,22 @@ const adSchemaFields: Record<keyof IAd, any> = {
   wine: {
     type: Schema.Types.ObjectId,
     ref: 'Wine',
-    required() {
-      return this.typeProduct === TypeProduct.ADWINE;
-    },
+    // required() {
+    //   return this.typeProduct === TypeProduct.ADWINE;
+    // },
   },
   sottoZona: {
     type: String,
   },
   menzione: {
     type: String,
-    enum: ['Classico', 'Riserva', 'Superiore', 'Vigna'],
+    enum: ['CLASSICO', 'RISERVA', 'SUPERIORE', 'VIGNA'],
   },
   metodoProduttivo: {
     type: String,
     enum: Object.values(METODOPRODUTTIVO),
     required: true,
-    default: 'Convenzionale',
+    default: 'CONVENZIONALE',
   },
   vineyardName: {
     type: String,
@@ -97,9 +101,9 @@ const adSchemaFields: Record<keyof IAd, any> = {
   vineyard: {
     type: Schema.Types.ObjectId,
     ref: 'Vineyard',
-    required() {
-      return this.typeProduct === TypeProduct.ADGRAPE;
-    },
+    // required() {
+    //   return this.typeProduct === TypeProduct.ADGRAPE;
+    // },
   },
   abv: Number,
   harvest: {
@@ -178,7 +182,10 @@ const adSchemaFields: Record<keyof IAd, any> = {
     type: String,
     required: true,
   },
-  isActive: Boolean,
+  isActive: {
+    type: Boolean,
+    default: true,
+  },
   datePosted: {
     type: Date,
     // `Date.now()` returns the current unix timestamp as a number

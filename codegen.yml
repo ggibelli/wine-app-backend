@@ -8,9 +8,9 @@ generates:
       - 'typescript-resolvers'
     config:
       useIndexSignature: true
-      #defaultMapper: Partial<{T}>
+      defaultMapper: Partial<{T}>
       #maybeValue: T | null | undefined
-      maybeValue: 'T extends PromiseLike<infer U> ? Promise<U | null> : T | null'
+      maybeValue: 'T extends PromiseLike<infer U> ? Promise<U | null> : T | null | undefined'
       enumValues:
         TypeProduct: ../types#TypeProduct
         TypeAd: ../types#TypeAd
@@ -21,8 +21,8 @@ generates:
         DenomZona: ../types#DenomZona
         Menzione: ../types#Menzione
       mappers:
-        User: ../models/user#IUserDoc
-        Ad: ../models/ad#IAdDoc
+        User: ../models/user#UserGraphQl
+        Ad: ../models/ad#AdGraphQl
         Message: ../models/message#IMessageDoc
         Negotiation: ../models/negotiation#INegotiationDoc
         Review: ../models/review#IReviewDoc

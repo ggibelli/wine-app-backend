@@ -53,6 +53,11 @@ export interface IUserDoc extends IUser, Document {
   validatePassword(password: string): boolean;
 }
 
+export interface UserGraphQl extends IUser {
+  validatePassword(password: string): boolean;
+  _id: string;
+}
+
 const userSchemaFields: Record<keyof IUser, any> = {
   email: {
     type: String,

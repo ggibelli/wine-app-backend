@@ -51,8 +51,6 @@ export class AuthenticateDirective extends SchemaDirectiveVisitor {
   visitFieldDefinition(field: GraphQLField<any, any>) {
     const resolver = field.resolve || defaultFieldResolver;
     field.resolve = async function (root, args, context, info) {
-      console.log(args);
-      //console.log(args[2].user);
       if (!context.user) {
         throw new AuthenticationError('You need to login to continue');
       }

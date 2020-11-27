@@ -9,6 +9,7 @@ export const typeDefs = gql`
   }
 
   input NegotiationInputUpdate {
+    _id: ID!
     #ad: ID!
     #forUserAd: ID!
     #messages: [ID!]
@@ -26,17 +27,21 @@ export const typeDefs = gql`
     review: [Review]
   }
 
+  type NegotiationPayload {
+    response: Negotiation
+    errors: [Error]
+  }
+
   extend type Query {
     negotiation(_id: ID!): Negotiation @authenticated
     negotiations: [Negotiation!] @authenticated
   }
 
   extend type Mutation {
-    createNegotiation(negotiation: NegotiationInput): Negotiation @authenticated
-    updateNegotiation(
-      negotiation: NegotiationInputUpdate
-      id: ID!
-    ): Negotiation @authenticated
-    deleteNegotiation(id: ID!): Negotiation @authenticated
+    createNegotiation(negotiation: NegotiationInput): NegotiationPayload
+      @authenticated
+    updateNegotiation(negotiation: NegotiationInputUpdate): NegotiationPayload
+      @authenticated
+    deleteNegotiation(id: ID!): NegotiationPayload @authenticated
   }
 `;

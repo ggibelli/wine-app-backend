@@ -1,6 +1,6 @@
 import { MongoDataSource } from 'apollo-datasource-mongodb';
 import { IAdDoc } from '../models/ad';
-import { QueryOrderBy, TypeProduct } from '../types';
+import { QueryOrderBy, TypeProduct, Error } from '../types';
 //import { ObjectId } from 'mongodb';
 
 import { assertNever } from '../utils/helpersTypeScript';
@@ -25,11 +25,33 @@ export interface QueryAdsArgsPag extends QueryAdsArgs {
   orderBy: QueryOrderBy;
 }
 
-const parseGrapeAd = (params: any): GrapeAdParams => {
-  if (!params.vineyardName || !params.kgFrom || !params.kgTo) {
-    throw new UserInputError('All the parameters are mandatory', {
-      invalidArgs: params,
+const parseGrapeAd = (params: any, errors: Error[]): GrapeAdParams => {
+  if (!params.vineyardName) {
+    errors.push({
+      name: 'UserInputError',
+      text: 'The vineyard name is mandatory',
     });
+    // throw new UserInputError('All the parameters are mandatory', {
+    //   invalidArgs: params,
+    // });
+  }
+  if (!params.kgFrom) {
+    errors.push({
+      name: 'UserInputError',
+      text: 'The kg from is mandatory',
+    });
+    // throw new UserInputError('All the parameters are mandatory', {
+    //   invalidArgs: params,
+    // });
+  }
+  if (!params.kgTo) {
+    errors.push({
+      name: 'UserInputError',
+      text: 'The kg to is mandatory',
+    });
+    // throw new UserInputError('All the parameters are mandatory', {
+    //   invalidArgs: params,
+    // });
   }
   return {
     vineyardName: params.vineyardName,
@@ -38,11 +60,33 @@ const parseGrapeAd = (params: any): GrapeAdParams => {
   };
 };
 
-const parseWineAd = (params: any): WineAdParams => {
-  if (!params.wineName || !params.litersFrom || !params.litersTo) {
-    throw new UserInputError('All the parameters are mandatory', {
-      invalidArgs: params,
+const parseWineAd = (params: any, errors: Error[]): WineAdParams => {
+  if (!params.wineName) {
+    errors.push({
+      name: 'UserInputError',
+      text: 'The wine name is mandatory',
     });
+    // throw new UserInputError('All the parameters are mandatory', {
+    //   invalidArgs: params,
+    // });
+  }
+  if (!params.litersFrom) {
+    errors.push({
+      name: 'UserInputError',
+      text: 'The liters from is mandatory',
+    });
+    // throw new UserInputError('All the parameters are mandatory', {
+    //   invalidArgs: params,
+    // });
+  }
+  if (!params.litersTo) {
+    errors.push({
+      name: 'UserInputError',
+      text: 'The liters to is mandatory',
+    });
+    // throw new UserInputError('All the parameters are mandatory', {
+    //   invalidArgs: params,
+    // });
   }
   return {
     wineName: params.wineName,
@@ -55,6 +99,10 @@ export default class Ads extends MongoDataSource<IAdDoc> {
   async getAd(adId: string) {
     return this.model.findById(adId).lean().exec();
     //let asd = Ad.findById(adId).lean().exec();
+  }
+
+  async getAdsByUser(userId: string) {
+    return this.model.find({ postedBy: userId }).lean().exec();
   }
 
   // un metodo solo con tipo prodotto e nome vino o nome vigna
@@ -125,7 +173,8 @@ export default class Ads extends MongoDataSource<IAdDoc> {
       .exec();
   }
   async createAd(ad: AdInput) {
-    const { _id } = this.context.current;
+    const errors: Error[] = [];
+    const { _id } = this.context.user;
     const {
       typeAd,
       typeProduct,
@@ -152,39 +201,65 @@ export default class Ads extends MongoDataSource<IAdDoc> {
       case TypeProduct.ADGRAPE:
         newAd = {
           ...newAd,
-          ...parseGrapeAd(restParams),
+          ...parseGrapeAd(restParams, errors),
         };
         break;
       case TypeProduct.ADWINE:
         newAd = {
           ...newAd,
-          ...parseWineAd(restParams),
+          ...parseWineAd(restParams, errors),
         };
         break;
       default:
         assertNever(newAd.typeProduct);
+    }
+    if (errors.length !== 0) {
+      return {
+        response: null,
+        errors,
+      };
     }
 
     const createdAd = new this.model({ ...newAd, postedBy: _id });
     try {
       await createdAd.save();
     } catch (e) {
-      throw new UserInputError(e.message);
+      errors.push({ name: 'General Error', text: e.message });
+      return {
+        response: null,
+        errors,
+      };
+      //throw new UserInputError(e.message);
     }
-    return createdAd;
+    return {
+      response: createdAd,
+      errors,
+    };
   }
 
-  async updateAdWine(ad: AdInputUpdate) {
+  async updateAd(ad: AdInputUpdate) {
+    const errors: Error[] = [];
     const updatedAd = await this.model
       .findOneAndUpdate({ _id: ad._id, postedBy: this.context.user._id }, ad, {
         new: true,
       })
       .lean()
       .exec();
-    return updatedAd;
+    if (!updatedAd) {
+      errors.push({ name: 'General error', text: 'Error during the update' });
+      return {
+        response: null,
+        errors,
+      };
+    }
+    return {
+      response: updatedAd,
+      errors,
+    };
   }
 
   async deleteAdWine(id: string) {
+    const errors: Error[] = [];
     const removedAd = await this.model
       .findOneAndDelete({
         _id: id,
@@ -192,6 +267,16 @@ export default class Ads extends MongoDataSource<IAdDoc> {
       })
       .lean()
       .exec();
-    return removedAd;
+    if (!removedAd) {
+      errors.push({ name: 'General error', text: 'Error during the delete' });
+      return {
+        response: null,
+        errors,
+      };
+    }
+    return {
+      response: removedAd,
+      errors,
+    };
   }
 }

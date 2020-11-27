@@ -14,8 +14,13 @@ export const typeDefs = gql`
     dateSent: Date! @date
   }
 
+  type MessagePayload {
+    response: Message
+    errors: [Error]
+  }
+
   extend type Mutation {
-    createMessage(message: MessageInput): Message @authenticated
+    createMessage(message: MessageInput): MessagePayload @authenticated
   }
 
   extend type Subscription {

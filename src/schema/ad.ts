@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server-express';
 
 export const typeDefs = gql`
-  directive @date(defaultFormat: String = "mmmm d, yyyy") on FIELD_DEFINITION
+  directive @date(defaultFormat: String = "dd MMM, yyyy") on FIELD_DEFINITION
   directive @authenticated on FIELD_DEFINITION
   directive @authorized on FIELD_DEFINITION
   type Address {
@@ -104,7 +104,7 @@ export const typeDefs = gql`
 
   type AdGrape implements Ad {
     _id: ID!
-    postedBy: User! @authenticated
+    postedBy: User!
     vineyardName: String!
     vineyard: Vineyard!
     harvest: Int!
@@ -125,6 +125,11 @@ export const typeDefs = gql`
     datePosted: Date! @date
   }
 
+  type AdPayload {
+    response: Ad
+    errors: [Error]
+  }
+
   type Query {
     ad(_id: ID!): Ad
     ads(
@@ -139,9 +144,9 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    createAd(input: AdInput!): Ad @authenticated
-    updateAd(input: AdInputUpdate!): Ad @authenticated
-    deleteAd(id: ID!): Ad @authenticated
+    createAd(input: AdInput!): AdPayload @authenticated
+    updateAd(input: AdInputUpdate!): AdPayload @authenticated
+    deleteAd(id: ID!): AdPayload @authenticated
   }
   type Subscription {
     adPosted: Ad! @authenticated

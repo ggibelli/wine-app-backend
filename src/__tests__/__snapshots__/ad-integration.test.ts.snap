@@ -1,6 +1,97 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Integration test ads query ads wine in sale 1`] = `
+exports[`Integration test ads create adGrape  mutation it fails if kgs are missing 1`] = `
+Object {
+  "data": Object {
+    "createAd": Object {
+      "errors": Array [
+        Object {
+          "name": "UserInputError",
+          "text": "The kg from is mandatory",
+        },
+        Object {
+          "name": "UserInputError",
+          "text": "The kg to is mandatory",
+        },
+      ],
+      "response": null,
+    },
+  },
+}
+`;
+
+exports[`Integration test ads create adGrape  mutation it fails if not logged in 1`] = `
+Object {
+  "data": Object {
+    "createAd": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "createAd",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test ads create adGrape  mutation successfull 1`] = `
+Object {
+  "data": Object {
+    "createAd": Object {
+      "errors": Array [],
+      "response": Object {
+        "abv": 12,
+        "activeNegotiations": 0,
+        "content": "buona uva",
+        "datePosted": "26 Nov, 2020",
+        "harvest": 2020,
+        "postedBy": Object {
+          "firstName": "Giovanni",
+        },
+        "priceFrom": 1,
+        "priceTo": 1.5,
+        "vineyardName": "Uvetta",
+      },
+    },
+  },
+}
+`;
+
+exports[`Integration test ads create adWine  mutation successfull 1`] = `
+Object {
+  "data": Object {
+    "createAd": Object {
+      "errors": Array [],
+      "response": Object {
+        "abv": 12,
+        "activeNegotiations": 0,
+        "content": "wow",
+        "datePosted": "26 Nov, 2020",
+        "harvest": 2020,
+        "postedBy": Object {
+          "firstName": "Giovanni",
+        },
+        "priceFrom": 1,
+        "priceTo": 1.5,
+        "wineName": "Vino",
+      },
+    },
+  },
+}
+`;
+
+exports[`Integration test ads query ads wine in sale fails if not logged in 1`] = `
 Object {
   "data": Object {
     "ads": Array [
@@ -8,13 +99,43 @@ Object {
     ],
   },
   "errors": Array [
-    [GraphQLError: You need to login to continue],
-  ],
-  "extensions": undefined,
-  "http": Object {
-    "headers": Headers {
-      Symbol(map): Object {},
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 3,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "ads",
+        0,
+        "postedBy",
+      ],
     },
+  ],
+}
+`;
+
+exports[`Integration test ads query ads wine in sale succeds if logged in 1`] = `
+Object {
+  "data": Object {
+    "ads": Array [
+      Object {
+        "abv": 12,
+        "activeNegotiations": 0,
+        "datePosted": "17 Dec, 1995",
+        "harvest": 2020,
+        "postedBy": Object {
+          "firstName": "Giovanni",
+        },
+        "priceFrom": 1,
+        "priceTo": 1.5,
+      },
+    ],
   },
 }
 `;

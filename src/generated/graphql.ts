@@ -14,8 +14,8 @@ import {
   GraphQLScalarType,
   GraphQLScalarTypeConfig,
 } from 'graphql';
-import { IUser, IUserDoc } from '../models/user';
-import { IAd, IAdDoc } from '../models/ad';
+import { UserGraphQl } from '../models/user';
+import { AdGraphQl } from '../models/ad';
 import { IMessageDoc } from '../models/message';
 import { INegotiationDoc } from '../models/negotiation';
 import { IReviewDoc } from '../models/review';
@@ -101,7 +101,7 @@ export type AdInputUpdate = {
 
 export type Ad = {
   _id: Scalars['ID'];
-  postedBy: User['_id'];
+  postedBy: User;
   harvest: Scalars['Int'];
   abv: Scalars['Float'];
   priceFrom: Scalars['Float'];
@@ -121,7 +121,7 @@ export type Ad = {
 export type AdWine = Ad & {
   __typename?: 'AdWine';
   _id: Scalars['ID'];
-  postedBy: User['_id'];
+  postedBy: User;
   wineName: Scalars['String'];
   wine: Wine;
   sottoZona?: Maybe<Scalars['String']>;
@@ -148,7 +148,7 @@ export type AdWine = Ad & {
 export type AdGrape = Ad & {
   __typename?: 'AdGrape';
   _id: Scalars['ID'];
-  postedBy: User['_id'];
+  postedBy: User;
   vineyardName: Scalars['String'];
   vineyard: Vineyard;
   harvest: Scalars['Int'];
@@ -167,6 +167,12 @@ export type AdGrape = Ad & {
   typeProduct: TypeProduct;
   isActive: Scalars['Boolean'];
   datePosted: Scalars['Date'];
+};
+
+export type AdPayload = {
+  __typename?: 'AdPayload';
+  response?: Maybe<Ad>;
+  errors?: Maybe<Array<Maybe<Error>>>;
 };
 
 export type Query = {
@@ -208,10 +214,10 @@ export type QueryReviewArgs = {
   id: Scalars['ID'];
 };
 
-export type QueryReviewsArgs = {
-  forUser?: Maybe<Scalars['ID']>;
-  type?: Maybe<TypeAd>;
-};
+// export type QueryReviewsArgs = {
+//   forUser?: Maybe<Scalars['ID']>;
+//   type?: Maybe<TypeAd>;
+// };
 
 export type QueryUserArgs = {
   id: Scalars['ID'];
@@ -221,44 +227,44 @@ export type QueryVineyardArgs = {
   id: Scalars['ID'];
 };
 
-export type QueryVineyardsArgs = {
-  name?: Maybe<Scalars['String']>;
-  colore?: Maybe<Scalars['String']>;
-};
+// export type QueryVineyardsArgs = {
+//   name?: Maybe<Scalars['String']>;
+//   colore?: Maybe<Scalars['String']>;
+// };
 
 export type QueryWineArgs = {
   _id: Scalars['ID'];
 };
 
-export type QueryWinesArgs = {
-  name?: Maybe<Scalars['String']>;
-  espressioneComunitaria?: Maybe<Scalars['String']>;
-  denomZona?: Maybe<Scalars['String']>;
-  regione?: Maybe<Scalars['String']>;
-};
+// export type QueryWinesArgs = {
+//   name?: Maybe<Scalars['String']>;
+//   espressioneComunitaria?: Maybe<Scalars['String']>;
+//   denomZona?: Maybe<Scalars['String']>;
+//   regione?: Maybe<Scalars['String']>;
+// };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createAd?: Maybe<Ad>;
-  createMessage?: Maybe<Message>;
-  createNegotiation?: Maybe<Negotiation>;
-  createReview?: Maybe<Review>;
-  createUser?: Maybe<AuthUser>;
-  createVineyard?: Maybe<Vineyard>;
-  createWine?: Maybe<Wine>;
-  deleteAd?: Maybe<Ad>;
-  deleteNegotiation?: Maybe<Negotiation>;
-  deleteReview?: Maybe<Review>;
-  deleteUser?: Maybe<User>;
-  deleteVineyard?: Maybe<Vineyard>;
-  deleteWine?: Maybe<Wine>;
-  login?: Maybe<AuthUser>;
-  updateAd?: Maybe<Ad>;
-  updateNegotiation?: Maybe<Negotiation>;
-  updateReview?: Maybe<Review>;
-  updateUser?: Maybe<User>;
-  updateVineyard?: Maybe<Vineyard>;
-  updateWine?: Maybe<Wine>;
+  createAd?: Maybe<AdPayload>;
+  createMessage?: Maybe<MessagePayload>;
+  createNegotiation?: Maybe<NegotiationPayload>;
+  createReview?: Maybe<ReviewPayload>;
+  createUser?: Maybe<AuthUserPayload>;
+  createVineyard?: Maybe<VineyardPayload>;
+  createWine?: Maybe<WinePayload>;
+  deleteAd?: Maybe<AdPayload>;
+  deleteNegotiation?: Maybe<NegotiationPayload>;
+  deleteReview?: Maybe<ReviewPayload>;
+  deleteUser?: Maybe<UserPayload>;
+  deleteVineyard?: Maybe<VineyardPayload>;
+  deleteWine?: Maybe<WinePayload>;
+  login?: Maybe<AuthUserPayload>;
+  updateAd?: Maybe<AdPayload>;
+  updateNegotiation?: Maybe<NegotiationPayload>;
+  updateReview?: Maybe<ReviewPayload>;
+  updateUser?: Maybe<UserPayload>;
+  updateVineyard?: Maybe<VineyardPayload>;
+  updateWine?: Maybe<WinePayload>;
 };
 
 export type MutationCreateAdArgs = {
@@ -278,7 +284,7 @@ export type MutationCreateReviewArgs = {
 };
 
 export type MutationCreateUserArgs = {
-  user?: Maybe<UserInput>;
+  user: UserInput;
 };
 
 export type MutationCreateVineyardArgs = {
@@ -324,27 +330,22 @@ export type MutationUpdateAdArgs = {
 
 export type MutationUpdateNegotiationArgs = {
   negotiation?: Maybe<NegotiationInputUpdate>;
-  id: Scalars['ID'];
 };
 
 export type MutationUpdateReviewArgs = {
   review?: Maybe<ReviewInputUpdate>;
-  id: Scalars['ID'];
 };
 
 export type MutationUpdateUserArgs = {
   user?: Maybe<UserInputUpdate>;
-  id: Scalars['ID'];
 };
 
 export type MutationUpdateVineyardArgs = {
   vineyard?: Maybe<VineyardInputUpdate>;
-  id: Scalars['ID'];
 };
 
 export type MutationUpdateWineArgs = {
   wine?: Maybe<WineInputUpdate>;
-  id: Scalars['ID'];
 };
 
 export type Subscription = {
@@ -381,6 +382,19 @@ export enum Colore {
 export { EspressioneComunitaria };
 
 export { DenomZona };
+
+// export enum QueryOrderBy {
+//   CreatedAtAsc = 'createdAt_ASC',
+//   CreatedAtDesc = 'createdAt_DESC',
+//   PriceAsc = 'price_ASC',
+//   PriceDesc = 'price_DESC',
+// }
+
+export type Error = {
+  __typename?: 'Error';
+  name?: Maybe<Scalars['String']>;
+  text?: Maybe<Scalars['String']>;
+};
 
 export type MessageInput = {
   content: Scalars['String'];
@@ -530,6 +544,48 @@ export type AuthUser = {
   __typename?: 'AuthUser';
   token: Scalars['String'];
   user: User;
+};
+
+export type AuthUserPayload = {
+  __typename?: 'AuthUserPayload';
+  response?: Maybe<AuthUser>;
+  errors?: Maybe<Array<Maybe<Error>>>;
+};
+
+export type MessagePayload = {
+  __typename?: 'MessagePayload';
+  response?: Maybe<Message>;
+  errors?: Maybe<Array<Maybe<Error>>>;
+};
+
+export type NegotiationPayload = {
+  __typename?: 'NegotiationPayload';
+  response?: Maybe<Negotiation>;
+  errors?: Maybe<Array<Maybe<Error>>>;
+};
+
+export type ReviewPayload = {
+  __typename?: 'ReviewPayload';
+  response?: Maybe<Review>;
+  errors?: Maybe<Array<Maybe<Error>>>;
+};
+
+export type VineyardPayload = {
+  __typename?: 'VineyardPayload';
+  response?: Maybe<Vineyard>;
+  errors?: Maybe<Array<Maybe<Error>>>;
+};
+
+export type WinePayload = {
+  __typename?: 'WinePayload';
+  response?: Maybe<Wine>;
+  errors?: Maybe<Array<Maybe<Error>>>;
+};
+
+export type UserPayload = {
+  __typename?: 'UserPayload';
+  response?: Maybe<User>;
+  errors?: Maybe<Array<Maybe<Error>>>;
 };
 
 export type Vineyard = {
@@ -702,22 +758,30 @@ export type ResolversTypes = ResolversObject<{
   Float: ResolverTypeWrapper<Partial<Scalars['Float']>>;
   AdInputUpdate: ResolverTypeWrapper<Partial<AdInputUpdate>>;
   ID: ResolverTypeWrapper<Partial<Scalars['ID']>>;
-  Ad: ResolverTypeWrapper<IAdDoc | IAd>;
+  Ad: ResolverTypeWrapper<AdGraphQl>;
   Boolean: ResolverTypeWrapper<Partial<Scalars['Boolean']>>;
   AdWine: ResolverTypeWrapper<
     Partial<
-      Omit<AdWine, 'wine'> & {
+      Omit<AdWine, 'postedBy' | 'wine'> & {
+        postedBy: ResolversTypes['User'];
         wine: ResolversTypes['Wine'];
       }
     >
   >;
   AdGrape: ResolverTypeWrapper<
     Partial<
-      Omit<AdGrape, 'vineyard'> & {
+      Omit<AdGrape, 'postedBy' | 'vineyard'> & {
+        postedBy: ResolversTypes['User'];
         vineyard: ResolversTypes['Vineyard'];
       }
     >
   >;
+  AdPayload: ResolverTypeWrapper<
+    Partial<
+      Omit<AdPayload, 'response'> & { response?: Maybe<ResolversTypes['Ad']> }
+    >
+  >;
+
   Query: ResolverTypeWrapper<{}>;
   Mutation: ResolverTypeWrapper<{}>;
   Subscription: ResolverTypeWrapper<{}>;
@@ -731,15 +795,38 @@ export type ResolversTypes = ResolversObject<{
   Colore: ResolverTypeWrapper<Partial<Colore>>;
   EspressioneComunitaria: ResolverTypeWrapper<Partial<EspressioneComunitaria>>;
   DenomZona: ResolverTypeWrapper<Partial<DenomZona>>;
+  QueryOrderBy: ResolverTypeWrapper<Partial<QueryOrderBy>>;
+  Error: ResolverTypeWrapper<Partial<Error>>;
   MessageInput: ResolverTypeWrapper<Partial<MessageInput>>;
   Message: ResolverTypeWrapper<IMessageDoc>;
+  MessagePayload: ResolverTypeWrapper<
+    Partial<
+      Omit<MessagePayload, 'response'> & {
+        response?: Maybe<ResolversTypes['Message']>;
+      }
+    >
+  >;
   MutationResponse: never;
   NegotiationInput: ResolverTypeWrapper<Partial<NegotiationInput>>;
   NegotiationInputUpdate: ResolverTypeWrapper<Partial<NegotiationInputUpdate>>;
   Negotiation: ResolverTypeWrapper<INegotiationDoc>;
+  NegotiationPayload: ResolverTypeWrapper<
+    Partial<
+      Omit<NegotiationPayload, 'response'> & {
+        response?: Maybe<ResolversTypes['Negotiation']>;
+      }
+    >
+  >;
   ReviewInput: ResolverTypeWrapper<Partial<ReviewInput>>;
   ReviewInputUpdate: ResolverTypeWrapper<Partial<ReviewInputUpdate>>;
   Review: ResolverTypeWrapper<IReviewDoc>;
+  ReviewPayload: ResolverTypeWrapper<
+    Partial<
+      Omit<ReviewPayload, 'response'> & {
+        response?: Maybe<ResolversTypes['Review']>;
+      }
+    >
+  >;
   Date: ResolverTypeWrapper<Partial<Scalars['Date']>>;
   ProducedWines: ResolverTypeWrapper<
     Partial<Omit<ProducedWines, 'wine'> & { wine: ResolversTypes['Wine'] }>
@@ -755,16 +842,44 @@ export type ResolversTypes = ResolversObject<{
   OwnedVineyardsInput: ResolverTypeWrapper<Partial<OwnedVineyardsInput>>;
   UserInput: ResolverTypeWrapper<Partial<UserInput>>;
   UserInputUpdate: ResolverTypeWrapper<Partial<UserInputUpdate>>;
-  User: ResolverTypeWrapper<IUserDoc | IUser>;
+  User: ResolverTypeWrapper<UserGraphQl>;
   AuthUser: ResolverTypeWrapper<
     Partial<Omit<AuthUser, 'user'> & { user: ResolversTypes['User'] }>
+  >;
+  AuthUserPayload: ResolverTypeWrapper<
+    Partial<
+      Omit<AuthUserPayload, 'response'> & {
+        response?: Maybe<ResolversTypes['AuthUser']>;
+      }
+    >
+  >;
+  UserPayload: ResolverTypeWrapper<
+    Partial<
+      Omit<UserPayload, 'response'> & {
+        response?: Maybe<ResolversTypes['User']>;
+      }
+    >
   >;
   Vineyard: ResolverTypeWrapper<IVineyardDoc>;
   VineyardInput: ResolverTypeWrapper<Partial<VineyardInput>>;
   VineyardInputUpdate: ResolverTypeWrapper<Partial<VineyardInputUpdate>>;
+  VineyardPayload: ResolverTypeWrapper<
+    Partial<
+      Omit<VineyardPayload, 'response'> & {
+        response?: Maybe<ResolversTypes['Vineyard']>;
+      }
+    >
+  >;
   WineInput: ResolverTypeWrapper<Partial<WineInput>>;
   WineInputUpdate: ResolverTypeWrapper<Partial<WineInputUpdate>>;
   Wine: ResolverTypeWrapper<IWineDoc>;
+  WinePayload: ResolverTypeWrapper<
+    Partial<
+      Omit<WinePayload, 'response'> & {
+        response?: Maybe<ResolversTypes['Wine']>;
+      }
+    >
+  >;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -777,7 +892,7 @@ export type ResolversParentTypes = ResolversObject<{
   Float: Partial<Scalars['Float']>;
   AdInputUpdate: Partial<AdInputUpdate>;
   ID: Partial<Scalars['ID']>;
-  Ad: IAdDoc | IAd;
+  Ad: AdGraphQl;
   Boolean: Partial<Scalars['Boolean']>;
   AdWine: Partial<
     Omit<AdWine, 'wine'> & {
@@ -790,18 +905,41 @@ export type ResolversParentTypes = ResolversObject<{
       vineyard: ResolversParentTypes['Vineyard'];
     }
   >;
+  AdPayload: Partial<
+    Omit<AdPayload, 'response'> & {
+      response?: Maybe<ResolversParentTypes['Ad']>;
+    }
+  >;
+
   Query: {};
   Mutation: {};
   Subscription: {};
+  Error: Partial<Error>;
+
   MessageInput: Partial<MessageInput>;
   Message: IMessageDoc;
+  MessagePayload: Partial<
+    Omit<MessagePayload, 'response'> & {
+      response?: Maybe<ResolversParentTypes['Message']>;
+    }
+  >;
   MutationResponse: never;
   NegotiationInput: Partial<NegotiationInput>;
   NegotiationInputUpdate: Partial<NegotiationInputUpdate>;
   Negotiation: INegotiationDoc;
+  NegotiationPayload: Partial<
+    Omit<NegotiationPayload, 'response'> & {
+      response?: Maybe<ResolversParentTypes['Negotiation']>;
+    }
+  >;
   ReviewInput: Partial<ReviewInput>;
   ReviewInputUpdate: Partial<ReviewInputUpdate>;
   Review: IReviewDoc;
+  ReviewPayload: Partial<
+    Omit<ReviewPayload, 'response'> & {
+      response?: Maybe<ResolversParentTypes['Review']>;
+    }
+  >;
   Date: Partial<Scalars['Date']>;
   ProducedWines: Partial<
     Omit<ProducedWines, 'wine'> & { wine: ResolversParentTypes['Wine'] }
@@ -815,16 +953,36 @@ export type ResolversParentTypes = ResolversObject<{
   OwnedVineyardsInput: Partial<OwnedVineyardsInput>;
   UserInput: Partial<UserInput>;
   UserInputUpdate: Partial<UserInputUpdate>;
-  User: IUserDoc | IUser;
+  User: UserGraphQl;
   AuthUser: Partial<
     Omit<AuthUser, 'user'> & { user: ResolversParentTypes['User'] }
+  >;
+  AuthUserPayload: Partial<
+    Omit<AuthUserPayload, 'response'> & {
+      response?: Maybe<ResolversParentTypes['AuthUser']>;
+    }
+  >;
+  UserPayload: Partial<
+    Omit<UserPayload, 'response'> & {
+      response?: Maybe<ResolversParentTypes['User']>;
+    }
   >;
   Vineyard: IVineyardDoc;
   VineyardInput: Partial<VineyardInput>;
   VineyardInputUpdate: Partial<VineyardInputUpdate>;
+  VineyardPayload: Partial<
+    Omit<VineyardPayload, 'response'> & {
+      response?: Maybe<ResolversParentTypes['Vineyard']>;
+    }
+  >;
   WineInput: Partial<WineInput>;
   WineInputUpdate: Partial<WineInputUpdate>;
   Wine: IWineDoc;
+  WinePayload: Partial<
+    Omit<WinePayload, 'response'> & {
+      response?: Maybe<ResolversParentTypes['Wine']>;
+    }
+  >;
 }>;
 
 export type DateDirectiveArgs = { defaultFormat?: Maybe<Scalars['String']> };
@@ -976,6 +1134,96 @@ export type AdGrapeResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type AdPayloadResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['AdPayload'] = ResolversParentTypes['AdPayload']
+> = ResolversObject<{
+  response?: Resolver<Maybe<ResolversTypes['Ad']>, ParentType, ContextType>;
+  errors?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Error']>>>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MessagePayloadResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['MessagePayload'] = ResolversParentTypes['MessagePayload']
+> = ResolversObject<{
+  response?: Resolver<
+    Maybe<ResolversTypes['Message']>,
+    ParentType,
+    ContextType
+  >;
+  errors?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Error']>>>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type ReviewPayloadResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['ReviewPayload'] = ResolversParentTypes['ReviewPayload']
+> = ResolversObject<{
+  response?: Resolver<Maybe<ResolversTypes['Review']>, ParentType, ContextType>;
+  errors?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Error']>>>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type NegotiationPayloadResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['NegotiationPayload'] = ResolversParentTypes['NegotiationPayload']
+> = ResolversObject<{
+  response?: Resolver<
+    Maybe<ResolversTypes['Negotiation']>,
+    ParentType,
+    ContextType
+  >;
+  errors?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Error']>>>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type VineyardPayloadResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['VineyardPayload'] = ResolversParentTypes['VineyardPayload']
+> = ResolversObject<{
+  response?: Resolver<
+    Maybe<ResolversTypes['Vineyard']>,
+    ParentType,
+    ContextType
+  >;
+  errors?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Error']>>>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type WinePayloadResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['WinePayload'] = ResolversParentTypes['WinePayload']
+> = ResolversObject<{
+  response?: Resolver<Maybe<ResolversTypes['Wine']>, ParentType, ContextType>;
+  errors?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Error']>>>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type QueryResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
@@ -1013,8 +1261,8 @@ export type QueryResolvers<
   reviews?: Resolver<
     Maybe<Array<ResolversTypes['Review']>>,
     ParentType,
-    ContextType,
-    RequireFields<QueryReviewsArgs, never>
+    ContextType
+    //RequireFields<QueryReviewsArgs, never>
   >;
   user?: Resolver<
     Maybe<ResolversTypes['User']>,
@@ -1036,8 +1284,8 @@ export type QueryResolvers<
   vineyards?: Resolver<
     Maybe<Array<ResolversTypes['Vineyard']>>,
     ParentType,
-    ContextType,
-    RequireFields<QueryVineyardsArgs, never>
+    ContextType
+    //RequireFields<QueryVineyardsArgs, never>
   >;
   wine?: Resolver<
     Maybe<ResolversTypes['Wine']>,
@@ -1048,8 +1296,8 @@ export type QueryResolvers<
   wines?: Resolver<
     Maybe<Array<ResolversTypes['Wine']>>,
     ParentType,
-    ContextType,
-    RequireFields<QueryWinesArgs, never>
+    ContextType
+    //RequireFields<QueryWinesArgs, never>
   >;
 }>;
 
@@ -1058,124 +1306,124 @@ export type MutationResolvers<
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = ResolversObject<{
   createAd?: Resolver<
-    Maybe<ResolversTypes['Ad']>,
+    Maybe<ResolversTypes['AdPayload']>,
     ParentType,
     ContextType,
     RequireFields<MutationCreateAdArgs, 'input'>
   >;
   createMessage?: Resolver<
-    Maybe<ResolversTypes['Message']>,
+    Maybe<ResolversTypes['MessagePayload']>,
     ParentType,
     ContextType,
     RequireFields<MutationCreateMessageArgs, never>
   >;
   createNegotiation?: Resolver<
-    Maybe<ResolversTypes['Negotiation']>,
+    Maybe<ResolversTypes['NegotiationPayload']>,
     ParentType,
     ContextType,
     RequireFields<MutationCreateNegotiationArgs, never>
   >;
   createReview?: Resolver<
-    Maybe<ResolversTypes['Review']>,
+    Maybe<ResolversTypes['ReviewPayload']>,
     ParentType,
     ContextType,
     RequireFields<MutationCreateReviewArgs, never>
   >;
   createUser?: Resolver<
-    Maybe<ResolversTypes['AuthUser']>,
+    Maybe<ResolversTypes['AuthUserPayload']>,
     ParentType,
     ContextType,
-    RequireFields<MutationCreateUserArgs, never>
+    RequireFields<MutationCreateUserArgs, 'user'>
   >;
   createVineyard?: Resolver<
-    Maybe<ResolversTypes['Vineyard']>,
+    Maybe<ResolversTypes['VineyardPayload']>,
     ParentType,
     ContextType,
     RequireFields<MutationCreateVineyardArgs, never>
   >;
   createWine?: Resolver<
-    Maybe<ResolversTypes['Wine']>,
+    Maybe<ResolversTypes['WinePayload']>,
     ParentType,
     ContextType,
     RequireFields<MutationCreateWineArgs, never>
   >;
   deleteAd?: Resolver<
-    Maybe<ResolversTypes['Ad']>,
+    Maybe<ResolversTypes['AdPayload']>,
     ParentType,
     ContextType,
     RequireFields<MutationDeleteAdArgs, 'id'>
   >;
   deleteNegotiation?: Resolver<
-    Maybe<ResolversTypes['Negotiation']>,
+    Maybe<ResolversTypes['NegotiationPayload']>,
     ParentType,
     ContextType,
     RequireFields<MutationDeleteNegotiationArgs, 'id'>
   >;
   deleteReview?: Resolver<
-    Maybe<ResolversTypes['Review']>,
+    Maybe<ResolversTypes['ReviewPayload']>,
     ParentType,
     ContextType,
     RequireFields<MutationDeleteReviewArgs, 'id'>
   >;
   deleteUser?: Resolver<
-    Maybe<ResolversTypes['User']>,
+    Maybe<ResolversTypes['UserPayload']>,
     ParentType,
     ContextType,
     RequireFields<MutationDeleteUserArgs, 'id'>
   >;
   deleteVineyard?: Resolver<
-    Maybe<ResolversTypes['Vineyard']>,
+    Maybe<ResolversTypes['VineyardPayload']>,
     ParentType,
     ContextType,
     RequireFields<MutationDeleteVineyardArgs, 'id'>
   >;
   deleteWine?: Resolver<
-    Maybe<ResolversTypes['Wine']>,
+    Maybe<ResolversTypes['WinePayload']>,
     ParentType,
     ContextType,
     RequireFields<MutationDeleteWineArgs, 'id'>
   >;
   login?: Resolver<
-    Maybe<ResolversTypes['AuthUser']>,
+    Maybe<ResolversTypes['AuthUserPayload']>,
     ParentType,
     ContextType,
     RequireFields<MutationLoginArgs, 'email' | 'password'>
   >;
   updateAd?: Resolver<
-    Maybe<ResolversTypes['Ad']>,
+    Maybe<ResolversTypes['AdPayload']>,
     ParentType,
     ContextType,
     RequireFields<MutationUpdateAdArgs, 'input'>
   >;
   updateNegotiation?: Resolver<
-    Maybe<ResolversTypes['Negotiation']>,
+    Maybe<ResolversTypes['NegotiationPayload']>,
     ParentType,
     ContextType,
-    RequireFields<MutationUpdateNegotiationArgs, 'id'>
+    RequireFields<MutationUpdateNegotiationArgs, 'negotiation'>
   >;
   updateReview?: Resolver<
-    Maybe<ResolversTypes['Review']>,
+    Maybe<ResolversTypes['ReviewPayload']>,
     ParentType,
     ContextType,
-    RequireFields<MutationUpdateReviewArgs, 'id'>
+    RequireFields<MutationUpdateReviewArgs, 'review'>
   >;
   updateUser?: Resolver<
-    Maybe<ResolversTypes['User']>,
+    Maybe<ResolversTypes['UserPayload']>,
     ParentType,
     ContextType,
-    RequireFields<MutationUpdateUserArgs, 'id'>
+    RequireFields<MutationUpdateUserArgs, 'user'>
   >;
   updateVineyard?: Resolver<
-    Maybe<ResolversTypes['Vineyard']>,
+    Maybe<ResolversTypes['VineyardPayload']>,
     ParentType,
     ContextType,
-    RequireFields<MutationUpdateVineyardArgs, 'id'>
+    RequireFields<MutationUpdateVineyardArgs, 'vineyard'>
   >;
   updateWine?: Resolver<
-    Maybe<ResolversTypes['Wine']>,
+    Maybe<ResolversTypes['WinePayload']>,
     ParentType,
     ContextType,
-    RequireFields<MutationUpdateWineArgs, 'id'>
+    RequireFields<MutationUpdateWineArgs, 'wine'>
   >;
 }>;
 
@@ -1343,7 +1591,7 @@ export type TypeAdResolvers = EnumResolverSignature<
 >;
 
 export type TypeProductResolvers = EnumResolverSignature<
-  { ADWINE?: any; ADVINEYARD?: any },
+  { AdWine?: any; AdGrape?: any },
   ResolversTypes['TypeProduct']
 >;
 
@@ -1373,6 +1621,15 @@ export type DenomZonaResolvers = EnumResolverSignature<
   ResolversTypes['DenomZona']
 >;
 
+export type ErrorResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Error'] = ResolversParentTypes['Error']
+> = ResolversObject<{
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  text?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type MessageResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Message'] = ResolversParentTypes['Message']
@@ -1383,15 +1640,6 @@ export type MessageResolvers<
   sentTo?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   dateSent?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-}>;
-
-export type MutationResponseResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['MutationResponse'] = ResolversParentTypes['MutationResponse']
-> = ResolversObject<{
-  __resolveType: TypeResolveFn<null, ParentType, ContextType>;
-  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 }>;
 
 export type NegotiationResolvers<
@@ -1534,6 +1782,36 @@ export type AuthUserResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type AuthUserPayloadResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['AuthUserPayload'] = ResolversParentTypes['AuthUserPayload']
+> = ResolversObject<{
+  response?: Resolver<
+    Maybe<ResolversTypes['AuthUser']>,
+    ParentType,
+    ContextType
+  >;
+  errors?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Error']>>>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type UserPayloadResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['UserPayload'] = ResolversParentTypes['UserPayload']
+> = ResolversObject<{
+  response?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  errors?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Error']>>>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type VineyardResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Vineyard'] = ResolversParentTypes['Vineyard']
@@ -1574,6 +1852,13 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Ad?: AdResolvers<ContextType>;
   AdWine?: AdWineResolvers<ContextType>;
   AdGrape?: AdGrapeResolvers<ContextType>;
+  AdPayload?: AdPayloadResolvers<ContextType>;
+  MessagePayload?: MessagePayloadResolvers<ContextType>;
+  NegotiationPayload?: NegotiationPayloadResolvers<ContextType>;
+  ReviewPayload?: ReviewPayloadResolvers<ContextType>;
+  VineyardPayload?: VineyardPayloadResolvers<ContextType>;
+  WinePayload?: WinePayloadResolvers<ContextType>;
+
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
@@ -1585,8 +1870,9 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   MetodoProduttivo?: MetodoProduttivoResolvers;
   EspressioneComunitaria?: EspressioneComunitariaResolvers;
   DenomZona?: DenomZonaResolvers;
+  Error?: ErrorResolvers<ContextType>;
+
   Message?: MessageResolvers<ContextType>;
-  MutationResponse?: MutationResponseResolvers<ContextType>;
   Negotiation?: NegotiationResolvers<ContextType>;
   Review?: ReviewResolvers<ContextType>;
   Date?: GraphQLScalarType;
@@ -1594,6 +1880,8 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   OwnedVineyards?: OwnedVineyardsResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   AuthUser?: AuthUserResolvers<ContextType>;
+  AuthUserPayload?: AuthUserPayloadResolvers<ContextType>;
+  UserPayload?: UserPayloadResolvers<ContextType>;
   Vineyard?: VineyardResolvers<ContextType>;
   Wine?: WineResolvers<ContextType>;
 }>;

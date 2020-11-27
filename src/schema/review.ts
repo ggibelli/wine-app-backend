@@ -10,6 +10,7 @@ export const typeDefs = gql`
   }
 
   input ReviewInputUpdate {
+    _id: ID!
     #negotiation: ID!
     #forUserAd: ID!
     rating: ID
@@ -28,14 +29,19 @@ export const typeDefs = gql`
     type: TypeAd!
   }
 
+  type ReviewPayload {
+    response: Review
+    errors: [Error]
+  }
+
   extend type Query {
     review(id: ID!): Review @authenticated
-    reviews(forUser: ID, type: TypeAd): [Review!] @authenticated
+    reviews: [Review!] @authenticated
   }
 
   extend type Mutation {
-    createReview(review: ReviewInput): Review @authenticated
-    updateReview(review: ReviewInputUpdate, id: ID!): Review @authenticated
-    deleteReview(id: ID!): Review @authenticated
+    createReview(review: ReviewInput): ReviewPayload @authenticated
+    updateReview(review: ReviewInputUpdate): ReviewPayload @authenticated
+    deleteReview(id: ID!): ReviewPayload @authenticated
   }
 `;

@@ -1,22 +1,51 @@
-import { QueryResolvers } from '../generated/graphql';
-import { User } from '../models/user';
+import { Resolvers, UserInput } from '../generated/graphql';
+import { UserGraphQl } from '../models/user';
+import Users from '../data-sources/users';
+import Ads from '../data-sources/ads';
 
-interface Resolvers {
-  Query: QueryResolvers;
+interface StringIndexSignatureInterface {
+  [index: string]: any;
 }
 
-export const resolver: Resolvers = {
-  Query: {
-    users: async () => {
-      //
-      return await User.find({});
-    },
+type StringIndexed<T> = T & StringIndexSignatureInterface;
 
-    user: async (_root, { id }) => {
-      const user = await User.findById(id);
-      //
-      if (!user) return null;
+interface MongoDataSource {
+  users: Users;
+  ads: Ads;
+  // wines: Wines;
+}
+
+export const resolver: StringIndexed<Resolvers> = {
+  Query: {
+    users(_, __, { dataSources }: { dataSources: MongoDataSource }) {
+      return dataSources.users.getUsers();
+    },
+    user(_, { id }, { dataSources }: { dataSources: MongoDataSource }) {
+      return dataSources.users.getUser(id);
+    },
+    me(_, __, { user }: { user: UserGraphQl }) {
       return user;
+    },
+  },
+  Mutation: {
+    createUser(
+      _: any,
+      { user }: { user: UserInput },
+      { dataSources }: { dataSources: MongoDataSource }
+    ) {
+      return dataSources.users.createUser(user);
+    },
+    login(
+      _: any,
+      { email, password }: { email: string; password: string },
+      { dataSources }: { dataSources: MongoDataSource }
+    ) {
+      return dataSources.users.login(email, password);
+    },
+  },
+  User: {
+    ads(user, _, { dataSources }: { dataSources: MongoDataSource }) {
+      return dataSources.ads.getAdsByUser(user._id);
     },
   },
 };

@@ -27,7 +27,7 @@ const negotiationSchemaFields: Record<keyof INegotiation, any> = {
   },
   type: {
     type: String,
-    enum: ['Sell', 'Buy'],
+    enum: ['SELL', 'BUY'],
     required: true,
   },
   ad: {

@@ -1462,6 +1462,45 @@
       },
       {
         "kind": "OBJECT",
+        "name": "AdPayload",
+        "description": null,
+        "fields": [
+          {
+            "name": "response",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "INTERFACE",
+              "name": "Ad",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "errors",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Error",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "Query",
         "description": null,
         "fields": [
@@ -1948,8 +1987,8 @@
               }
             ],
             "type": {
-              "kind": "INTERFACE",
-              "name": "Ad",
+              "kind": "OBJECT",
+              "name": "AdPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2032,16 +2071,20 @@
                 "name": "user",
                 "description": null,
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "UserInput",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "UserInput",
+                    "ofType": null
+                  }
                 },
                 "defaultValue": null
               }
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "AuthUser",
+              "name": "AuthUserPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2113,8 +2156,8 @@
               }
             ],
             "type": {
-              "kind": "INTERFACE",
-              "name": "Ad",
+              "kind": "OBJECT",
+              "name": "AdPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2195,7 +2238,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "User",
+              "name": "UserPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2290,7 +2333,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "AuthUser",
+              "name": "AuthUserPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2316,8 +2359,8 @@
               }
             ],
             "type": {
-              "kind": "INTERFACE",
-              "name": "Ad",
+              "kind": "OBJECT",
+              "name": "AdPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2428,7 +2471,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "User",
+              "name": "UserPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2602,7 +2645,7 @@
             "deprecationReason": null
           },
           {
-            "name": "AT",
+            "name": "ASTI",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -3356,13 +3399,13 @@
         "interfaces": null,
         "enumValues": [
           {
-            "name": "Sell",
+            "name": "SELL",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "Buy",
+            "name": "BUY",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -3636,6 +3679,41 @@
             "deprecationReason": null
           }
         ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "Error",
+        "description": null,
+        "fields": [
+          {
+            "name": "name",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "text",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
         "possibleTypes": null
       },
       {
@@ -5066,6 +5144,84 @@
       },
       {
         "kind": "OBJECT",
+        "name": "AuthUserPayload",
+        "description": null,
+        "fields": [
+          {
+            "name": "response",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "AuthUser",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "errors",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Error",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UserPayload",
+        "description": null,
+        "fields": [
+          {
+            "name": "response",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "User",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "errors",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Error",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "Vineyard",
         "description": null,
         "fields": [
@@ -6326,9 +6482,7 @@
         "name": "date",
         "description": null,
         "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION"
-        ],
+        "locations": ["FIELD_DEFINITION"],
         "args": [
           {
             "name": "defaultFormat",
@@ -6338,7 +6492,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "\"ddd MMM, yyyy\""
+            "defaultValue": "\"dd MMM, yyyy\""
           }
         ]
       },
@@ -6346,29 +6500,28 @@
         "name": "authenticated",
         "description": null,
         "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION"
-        ],
+        "locations": ["FIELD_DEFINITION"],
         "args": []
       },
       {
         "name": "authorized",
         "description": null,
         "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION"
-        ],
+        "locations": ["FIELD_DEFINITION"],
+        "args": []
+      },
+      {
+        "name": "authorizeda",
+        "description": null,
+        "isRepeatable": false,
+        "locations": ["FIELD_DEFINITION"],
         "args": []
       },
       {
         "name": "include",
         "description": "Directs the executor to include this field or fragment only when the `if` argument is true.",
         "isRepeatable": false,
-        "locations": [
-          "FIELD",
-          "FRAGMENT_SPREAD",
-          "INLINE_FRAGMENT"
-        ],
+        "locations": ["FIELD", "FRAGMENT_SPREAD", "INLINE_FRAGMENT"],
         "args": [
           {
             "name": "if",
@@ -6390,11 +6543,7 @@
         "name": "skip",
         "description": "Directs the executor to skip this field or fragment when the `if` argument is true.",
         "isRepeatable": false,
-        "locations": [
-          "FIELD",
-          "FRAGMENT_SPREAD",
-          "INLINE_FRAGMENT"
-        ],
+        "locations": ["FIELD", "FRAGMENT_SPREAD", "INLINE_FRAGMENT"],
         "args": [
           {
             "name": "if",
@@ -6439,9 +6588,7 @@
         "name": "specifiedBy",
         "description": "Exposes a URL that specifies the behaviour of this scalar.",
         "isRepeatable": false,
-        "locations": [
-          "SCALAR"
-        ],
+        "locations": ["SCALAR"],
         "args": [
           {
             "name": "url",

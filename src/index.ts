@@ -14,6 +14,8 @@ import { typeDefs as UserSchema } from './schema/user';
 import { typeDefs as Vineyard } from './schema/vineyard';
 import { typeDefs as Wine } from './schema/wine';
 import { typeDefs as Enum } from './schema/enum';
+import { typeDefs as Errors } from './schema/error';
+
 import { typeDefs as Scalars } from './schema/scalars';
 import dataSources from './data-sources';
 import schemaDirectives from './directives';
@@ -49,18 +51,34 @@ export const schema = makeExecutableSchema({
     Wine,
     Vineyard,
     Enum,
+    Errors,
     Scalars,
   ],
   resolvers,
   resolverValidationOptions: {
     requireResolversForResolveType: false,
   },
+  schemaDirectives,
+  inheritResolversFromInterfaces: true,
 });
-console.log(schemaDirectives);
 
 const server = new ApolloServer({
+  // typeDefs: [
+  // Ad,
+  // Directives,
+  // Message,
+  // Negotiation,
+  // Review,
+  // Errors,
+  // UserSchema,
+  // Wine,
+  // Vineyard,
+  // Enum,
+  // Scalars,
+  // ],
+  // resolvers,
+  //schemaDirectives,
   schema,
-  schemaDirectives,
   context: ({ req, connection }: { req: Request; connection: any }) => {
     if (connection) {
       return { ...connection.context };
@@ -71,8 +89,8 @@ const server = new ApolloServer({
   },
   dataSources,
   tracing: true,
-  mocks: true,
-  mockEntireSchema: true,
+  //mocks: true,
+  //mockEntireSchema: true,
 });
 
 const app = express();

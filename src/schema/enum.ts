@@ -136,8 +136,8 @@ export const typeDefs = gql`
   }
 
   enum TypeAd {
-    Sell
-    Buy
+    SELL
+    BUY
   }
 
   enum TypeProduct {

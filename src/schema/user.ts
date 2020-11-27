@@ -86,16 +86,26 @@ export const typeDefs = gql`
     user: User!
   }
 
+  type AuthUserPayload {
+    response: AuthUser
+    errors: [Error]
+  }
+
+  type UserPayload {
+    response: User
+    errors: [Error]
+  }
+
   extend type Query {
     users: [User!] @authenticated
     user(id: ID!): User @authenticated
-    me: User
+    me: User @authenticated
   }
 
   extend type Mutation {
-    createUser(user: UserInput): AuthUser
-    updateUser(user: UserInputUpdate, id: ID!): User
-    deleteUser(id: ID!): User @authenticated
-    login(email: String!, password: String!): AuthUser
+    createUser(user: UserInput!): AuthUserPayload
+    updateUser(user: UserInputUpdate, id: ID!): UserPayload
+    deleteUser(id: ID!): UserPayload @authenticated
+    login(email: String!, password: String!): AuthUserPayload
   }
 `;
