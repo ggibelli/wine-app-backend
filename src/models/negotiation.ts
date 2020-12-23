@@ -1,24 +1,27 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import mongoose, { Schema, Document } from 'mongoose';
 import { IUserDoc } from './user';
 import { IAdDoc } from './ad';
 import { IMessageDoc } from './message';
 import { TypeAd } from '../types';
+import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 export interface INegotiation {
   createdBy: IUserDoc['_id'];
   ad: IAdDoc['_id'];
-  forUserAd: IUserDoc['_id'] | IUserDoc;
-  messages?: Array<IMessageDoc['_id'] | IMessageDoc>;
+  forUserAd: IUserDoc['_id'];
+  messages?: mongoose.Types.Array<IMessageDoc['_id']>;
   isConcluded: boolean;
   dateCreated: Date;
   type: TypeAd;
 }
 
+export interface NegotiationGraphQl extends INegotiation {
+  _id: mongoose.Types.ObjectId;
+}
+
 export interface INegotiationDoc extends INegotiation, Document {}
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const negotiationSchemaFields: Record<keyof INegotiation, any> = {
   createdBy: {
     type: Schema.Types.ObjectId,
@@ -60,7 +63,7 @@ const negotiationSchemaFields: Record<keyof INegotiation, any> = {
 const negotiationSchema = new Schema(negotiationSchemaFields);
 
 negotiationSchema.index({ createdBy: 1, ad: 1 }, { unique: true });
-
+negotiationSchema.plugin(mongooseUniqueValidator);
 export const Negotiation = mongoose.model<INegotiationDoc>(
   'Negotiation',
   negotiationSchema

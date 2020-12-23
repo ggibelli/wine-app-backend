@@ -1,5 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import express, { Request } from 'express';
-import { ApolloServer, makeExecutableSchema } from 'apollo-server-express';
+import {
+  ApolloServer,
+  AuthenticationError,
+  makeExecutableSchema,
+} from 'apollo-server-express';
 import mongoose from 'mongoose';
 import http from 'http';
 import { MONGODB_URI, PORT } from './utils/config';
@@ -15,12 +24,16 @@ import { typeDefs as Vineyard } from './schema/vineyard';
 import { typeDefs as Wine } from './schema/wine';
 import { typeDefs as Enum } from './schema/enum';
 import { typeDefs as Errors } from './schema/error';
-
 import { typeDefs as Scalars } from './schema/scalars';
 import dataSources from './data-sources';
-import schemaDirectives from './directives';
+import {
+  AuthenticateDirective,
+  AuthorizedDirective,
+  FormatDateDirective,
+} from './directives';
 
-import { createToken, getUserFromToken } from './utils/auth';
+import { createToken, getUserFromToken, createTokenMail } from './utils/auth';
+import { confirmationRouter } from './controllers/accountConfirmation';
 
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
@@ -55,54 +68,64 @@ export const schema = makeExecutableSchema({
     Scalars,
   ],
   resolvers,
-  resolverValidationOptions: {
-    requireResolversForResolveType: false,
+  schemaDirectives: {
+    date: FormatDateDirective,
+    authenticated: AuthenticateDirective,
+    authorized: AuthorizedDirective,
   },
-  schemaDirectives,
   inheritResolversFromInterfaces: true,
 });
 
+function initializeSubscriptionDataSources(context: { dataSources: any }) {
+  const dataSources = context.dataSources;
+  if (dataSources) {
+    for (const instance in dataSources) {
+      dataSources[instance].initialize({ context, cache: undefined });
+    }
+  }
+}
+
 const server = new ApolloServer({
-  // typeDefs: [
-  // Ad,
-  // Directives,
-  // Message,
-  // Negotiation,
-  // Review,
-  // Errors,
-  // UserSchema,
-  // Wine,
-  // Vineyard,
-  // Enum,
-  // Scalars,
-  // ],
-  // resolvers,
-  //schemaDirectives,
   schema,
-  context: ({ req, connection }: { req: Request; connection: any }) => {
+  schemaDirectives: {
+    date: FormatDateDirective,
+    authenticated: AuthenticateDirective,
+    authorized: AuthorizedDirective,
+  },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  context: async ({ req, connection }: { req: Request; connection: any }) => {
     if (connection) {
-      return { ...connection.context };
+      const subscriptionContext = connection.context;
+      initializeSubscriptionDataSources(subscriptionContext);
+      return subscriptionContext;
     }
     const token = req.headers.authorization;
-    const user = getUserFromToken(token);
-    return { user, createToken };
+    const user = await getUserFromToken(token);
+    return { user, createToken, createTokenMail };
+  },
+  subscriptions: {
+    async onConnect(connParams) {
+      // @ts-ignore
+      const token = connParams.authorization;
+      const user = await getUserFromToken(token);
+      if (!user) throw new AuthenticationError('need to login');
+      return { user, dataSources: dataSources() };
+    },
   },
   dataSources,
   tracing: true,
-  //mocks: true,
-  //mockEntireSchema: true,
 });
 
-const app = express();
+export const app = express();
 server.applyMiddleware({ app });
-
+app.use(confirmationRouter);
 const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
 const start = () => {
   mongooseConnection();
   httpServer.listen(PORT, () =>
-    console.log(
+    loggerInfo(
       `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
     )
   );

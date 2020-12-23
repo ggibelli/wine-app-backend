@@ -1,20 +1,22 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import mongoose, { Schema, Document } from 'mongoose';
 import { IUserDoc } from './user';
 import { INegotiationDoc } from './negotiation';
 
 export interface IMessage {
-  negotiation: INegotiationDoc['_id'] | INegotiationDoc;
+  negotiation: INegotiationDoc['_id'];
   content: string;
-  sentBy: IUserDoc['_id'] | IUserDoc;
-  sentTo: IUserDoc['_id'] | IUserDoc;
+  sentBy: IUserDoc['_id'];
+  sentTo: IUserDoc['_id'];
   dateSent: Date;
+}
+
+export interface MessageGraphQl extends IMessage {
+  _id: mongoose.Types.ObjectId;
 }
 
 export interface IMessageDoc extends IMessage, Document {}
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const messageSchemaFields: Record<keyof IMessage, any> = {
   negotiation: {
     type: Schema.Types.ObjectId,
@@ -44,5 +46,7 @@ const messageSchemaFields: Record<keyof IMessage, any> = {
 };
 
 const messageSchema = new Schema(messageSchemaFields);
+
+messageSchema.index({ negotiation: 1, sentTo: 1, sentFrom: 1 });
 
 export const Message = mongoose.model<IMessageDoc>('Message', messageSchema);

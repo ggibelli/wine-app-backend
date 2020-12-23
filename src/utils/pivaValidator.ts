@@ -7,6 +7,7 @@ const isPivaValid = (function (arr) {
 
     while (len) {
       val = parseInt(ccNum.charAt(--len), 10);
+      // eslint-disable-next-line no-cond-assign
       sum += (bit ^= 1) ? arr[val] : val;
     }
 

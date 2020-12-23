@@ -1,0 +1,648 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Integration test users create user mutation returns errors if parameters are invalid 1`] = `
+Object {
+  "data": Object {
+    "createUser": Object {
+      "errors": Array [
+        Object {
+          "name": "UserInputError",
+          "text": "The email provided is not valid",
+        },
+        Object {
+          "name": "UserInputError",
+          "text": "The password provided is not valid",
+        },
+        Object {
+          "name": "UserInputError",
+          "text": "The PIVA provided is not valid",
+        },
+      ],
+      "response": null,
+    },
+  },
+}
+`;
+
+exports[`Integration test users create user mutation successfull and activation successfull 1`] = `
+Object {
+  "data": Object {
+    "me": Object {
+      "isVerified": true,
+      "pIva": "01640250054",
+      "phoneNumber": "1234527890",
+    },
+  },
+}
+`;
+
+exports[`Integration test users invalid login mutation returns errors 1`] = `
+Object {
+  "data": Object {
+    "login": Object {
+      "errors": Array [
+        Object {
+          "name": "UserInputError",
+        },
+      ],
+      "response": null,
+    },
+  },
+}
+`;
+
+exports[`Integration test users query me fails if not logged  1`] = `
+Object {
+  "data": Object {
+    "me": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "me",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test users query me is successfull if logged in, shows parameter meant for user Giovanni 1`] = `
+Object {
+  "data": Object {
+    "me": Object {
+      "ads": Array [
+        Object {
+          "postedBy": Object {
+            "firstName": "Giovanni",
+          },
+          "wineName": "Vino",
+        },
+      ],
+      "isVerified": true,
+      "messages": Array [
+        Object {
+          "content": "ciao",
+          "sentBy": Object {
+            "firstName": "Giovanni",
+          },
+          "sentTo": Object {
+            "firstName": "Mariuccio",
+          },
+        },
+        Object {
+          "content": "ciao di nuovo",
+          "sentBy": Object {
+            "firstName": "Luigetto",
+          },
+          "sentTo": Object {
+            "firstName": "Giovanni",
+          },
+        },
+      ],
+      "negotiations": Array [
+        Object {
+          "createdBy": Object {
+            "firstName": "Giovanni",
+          },
+          "forUserAd": Object {
+            "firstName": "Mariuccio",
+          },
+        },
+        Object {
+          "createdBy": Object {
+            "firstName": "Luigetto",
+          },
+          "forUserAd": Object {
+            "firstName": "Giovanni",
+          },
+        },
+      ],
+      "pIva": "12345678901",
+      "phoneNumber": "1234567890",
+      "reviews": Array [
+        Object {
+          "createdBy": Object {
+            "firstName": "Giovanni",
+          },
+          "forUser": Object {
+            "firstName": "Mariuccio",
+          },
+          "rating": "PERFECT",
+        },
+        Object {
+          "createdBy": Object {
+            "firstName": "Luigetto",
+          },
+          "forUser": Object {
+            "firstName": "Giovanni",
+          },
+          "rating": "POOR",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`Integration test users query me is successfull if logged in, shows parameter meant for user Mariuccio 1`] = `
+Object {
+  "data": Object {
+    "me": Object {
+      "ads": Array [
+        Object {
+          "postedBy": Object {
+            "firstName": "Mariuccio",
+          },
+          "wineName": "Vino vendo",
+        },
+      ],
+      "isVerified": true,
+      "messages": Array [
+        Object {
+          "content": "ciao",
+          "sentBy": Object {
+            "firstName": "Giovanni",
+          },
+          "sentTo": Object {
+            "firstName": "Mariuccio",
+          },
+        },
+      ],
+      "negotiations": Array [
+        Object {
+          "createdBy": Object {
+            "firstName": "Giovanni",
+          },
+          "forUserAd": Object {
+            "firstName": "Mariuccio",
+          },
+        },
+      ],
+      "pIva": "12345678301",
+      "phoneNumber": "1234567830",
+      "reviews": Array [
+        Object {
+          "createdBy": Object {
+            "firstName": "Giovanni",
+          },
+          "forUser": Object {
+            "firstName": "Mariuccio",
+          },
+          "rating": "PERFECT",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`Integration test users query single user is successfull if logged in, shows sensitive parameter meant for user in ctx 1`] = `
+Object {
+  "data": Object {
+    "user": Object {
+      "ads": Array [
+        Object {
+          "postedBy": Object {
+            "firstName": "Giovanni",
+          },
+          "wineName": "Vino",
+        },
+      ],
+      "firstName": "Giovanni",
+      "messages": Array [
+        Object {
+          "content": "ciao",
+          "sentBy": Object {
+            "firstName": "Giovanni",
+          },
+          "sentTo": Object {
+            "firstName": "Mariuccio",
+          },
+        },
+        Object {
+          "content": "ciao di nuovo",
+          "sentBy": Object {
+            "firstName": "Luigetto",
+          },
+          "sentTo": Object {
+            "firstName": "Giovanni",
+          },
+        },
+      ],
+      "negotiations": Array [
+        Object {
+          "createdBy": Object {
+            "firstName": "Giovanni",
+          },
+          "forUserAd": Object {
+            "firstName": "Mariuccio",
+          },
+        },
+        Object {
+          "createdBy": Object {
+            "firstName": "Luigetto",
+          },
+          "forUserAd": Object {
+            "firstName": "Giovanni",
+          },
+        },
+      ],
+      "reviews": Array [
+        Object {
+          "createdBy": Object {
+            "firstName": "Giovanni",
+          },
+          "forUser": Object {
+            "firstName": "Mariuccio",
+          },
+          "rating": "PERFECT",
+        },
+        Object {
+          "createdBy": Object {
+            "firstName": "Luigetto",
+          },
+          "forUser": Object {
+            "firstName": "Giovanni",
+          },
+          "rating": "POOR",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`Integration test users query single user is successfull if logged in, shows sensitive parameter meant for user in ctx and forbidden if not same user 1`] = `
+Object {
+  "data": Object {
+    "user": Object {
+      "ads": Array [
+        Object {
+          "postedBy": Object {
+            "firstName": "Mariuccio",
+          },
+          "wineName": "Vino vendo",
+        },
+      ],
+      "firstName": "Mariuccio",
+      "messages": null,
+      "negotiations": null,
+      "reviews": null,
+    },
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "FORBIDDEN",
+      },
+      "locations": Array [
+        Object {
+          "column": 5,
+          "line": 12,
+        },
+      ],
+      "message": "You can only see your own negotiations",
+      "path": Array [
+        "user",
+        "negotiations",
+      ],
+    },
+    Object {
+      "extensions": Object {
+        "code": "FORBIDDEN",
+      },
+      "locations": Array [
+        Object {
+          "column": 5,
+          "line": 20,
+        },
+      ],
+      "message": "You can only see your own messages",
+      "path": Array [
+        "user",
+        "messages",
+      ],
+    },
+    Object {
+      "extensions": Object {
+        "code": "FORBIDDEN",
+      },
+      "locations": Array [
+        Object {
+          "column": 5,
+          "line": 29,
+        },
+      ],
+      "message": "You can only see your own negotiations",
+      "path": Array [
+        "user",
+        "reviews",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test users query users fails if not logged  1`] = `
+Object {
+  "data": Object {
+    "users": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "users",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test users query users is successfull if logged in, shows sensitive parameters only to user in ctx 1`] = `
+Object {
+  "data": Object {
+    "users": Array [
+      Object {
+        "ads": Array [
+          Object {
+            "postedBy": Object {
+              "firstName": "Mariuccio",
+            },
+            "wineName": "Vino vendo",
+          },
+        ],
+        "email": "The user prefers to hide the email",
+        "firstName": "Mariuccio",
+        "messages": null,
+        "negotiations": null,
+        "phoneNumber": "The user prefers to hide the phone number",
+        "reviews": null,
+      },
+      Object {
+        "ads": Array [],
+        "email": "The user prefers to hide the email",
+        "firstName": "Luigetto",
+        "messages": null,
+        "negotiations": null,
+        "phoneNumber": "The user prefers to hide the phone number",
+        "reviews": null,
+      },
+      Object {
+        "ads": Array [
+          Object {
+            "postedBy": Object {
+              "firstName": "Giovanni",
+            },
+            "wineName": "Vino",
+          },
+        ],
+        "email": "gio@prova.it",
+        "firstName": "Giovanni",
+        "messages": Array [
+          Object {
+            "content": "ciao",
+            "sentBy": Object {
+              "firstName": "Giovanni",
+            },
+            "sentTo": Object {
+              "firstName": "Mariuccio",
+            },
+          },
+          Object {
+            "content": "ciao di nuovo",
+            "sentBy": Object {
+              "firstName": "Luigetto",
+            },
+            "sentTo": Object {
+              "firstName": "Giovanni",
+            },
+          },
+        ],
+        "negotiations": Array [
+          Object {
+            "createdBy": Object {
+              "firstName": "Giovanni",
+            },
+            "forUserAd": Object {
+              "firstName": "Mariuccio",
+            },
+          },
+          Object {
+            "createdBy": Object {
+              "firstName": "Luigetto",
+            },
+            "forUserAd": Object {
+              "firstName": "Giovanni",
+            },
+          },
+        ],
+        "phoneNumber": "1234567890",
+        "reviews": Array [
+          Object {
+            "createdBy": Object {
+              "firstName": "Giovanni",
+            },
+            "forUser": Object {
+              "firstName": "Mariuccio",
+            },
+            "rating": "PERFECT",
+          },
+          Object {
+            "createdBy": Object {
+              "firstName": "Luigetto",
+            },
+            "forUser": Object {
+              "firstName": "Giovanni",
+            },
+            "rating": "POOR",
+          },
+        ],
+      },
+      Object {
+        "ads": Array [],
+        "email": "giollo@ollo.it",
+        "firstName": "Giova",
+        "messages": null,
+        "negotiations": null,
+        "phoneNumber": "1234527890",
+        "reviews": null,
+      },
+    ],
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "FORBIDDEN",
+      },
+      "locations": Array [
+        Object {
+          "column": 5,
+          "line": 14,
+        },
+      ],
+      "message": "You can only see your own negotiations",
+      "path": Array [
+        "users",
+        0,
+        "negotiations",
+      ],
+    },
+    Object {
+      "extensions": Object {
+        "code": "FORBIDDEN",
+      },
+      "locations": Array [
+        Object {
+          "column": 5,
+          "line": 22,
+        },
+      ],
+      "message": "You can only see your own messages",
+      "path": Array [
+        "users",
+        0,
+        "messages",
+      ],
+    },
+    Object {
+      "extensions": Object {
+        "code": "FORBIDDEN",
+      },
+      "locations": Array [
+        Object {
+          "column": 5,
+          "line": 31,
+        },
+      ],
+      "message": "You can only see your own negotiations",
+      "path": Array [
+        "users",
+        0,
+        "reviews",
+      ],
+    },
+    Object {
+      "extensions": Object {
+        "code": "FORBIDDEN",
+      },
+      "locations": Array [
+        Object {
+          "column": 5,
+          "line": 14,
+        },
+      ],
+      "message": "You can only see your own negotiations",
+      "path": Array [
+        "users",
+        1,
+        "negotiations",
+      ],
+    },
+    Object {
+      "extensions": Object {
+        "code": "FORBIDDEN",
+      },
+      "locations": Array [
+        Object {
+          "column": 5,
+          "line": 22,
+        },
+      ],
+      "message": "You can only see your own messages",
+      "path": Array [
+        "users",
+        1,
+        "messages",
+      ],
+    },
+    Object {
+      "extensions": Object {
+        "code": "FORBIDDEN",
+      },
+      "locations": Array [
+        Object {
+          "column": 5,
+          "line": 31,
+        },
+      ],
+      "message": "You can only see your own negotiations",
+      "path": Array [
+        "users",
+        1,
+        "reviews",
+      ],
+    },
+    Object {
+      "extensions": Object {
+        "code": "FORBIDDEN",
+      },
+      "locations": Array [
+        Object {
+          "column": 5,
+          "line": 14,
+        },
+      ],
+      "message": "You can only see your own negotiations",
+      "path": Array [
+        "users",
+        3,
+        "negotiations",
+      ],
+    },
+    Object {
+      "extensions": Object {
+        "code": "FORBIDDEN",
+      },
+      "locations": Array [
+        Object {
+          "column": 5,
+          "line": 22,
+        },
+      ],
+      "message": "You can only see your own messages",
+      "path": Array [
+        "users",
+        3,
+        "messages",
+      ],
+    },
+    Object {
+      "extensions": Object {
+        "code": "FORBIDDEN",
+      },
+      "locations": Array [
+        Object {
+          "column": 5,
+          "line": 31,
+        },
+      ],
+      "message": "You can only see your own negotiations",
+      "path": Array [
+        "users",
+        3,
+        "reviews",
+      ],
+    },
+  ],
+}
+`;

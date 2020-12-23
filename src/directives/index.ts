@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   SchemaDirectiveVisitor,
   AuthenticationError,
@@ -34,19 +38,6 @@ export class FormatDateDirective extends SchemaDirectiveVisitor {
   }
 }
 
-export class AuthorizedDirective extends SchemaDirectiveVisitor {
-  visitFieldDefinition(field: GraphQLField<any, any>) {
-    const { resolve = defaultFieldResolver } = field;
-
-    field.resolve = async function (root, args, context, info) {
-      if (!context.user.isAdmin) {
-        throw new ForbiddenError('You need to be Admin to continue');
-      }
-      return await resolve.call(this, root, args, context, info);
-    };
-  }
-}
-
 export class AuthenticateDirective extends SchemaDirectiveVisitor {
   visitFieldDefinition(field: GraphQLField<any, any>) {
     const resolver = field.resolve || defaultFieldResolver;
@@ -55,6 +46,18 @@ export class AuthenticateDirective extends SchemaDirectiveVisitor {
         throw new AuthenticationError('You need to login to continue');
       }
       return resolver(root, args, context, info);
+    };
+  }
+}
+
+export class AuthorizedDirective extends SchemaDirectiveVisitor {
+  visitFieldDefinition(field: GraphQLField<any, any>) {
+    const { resolve = defaultFieldResolver } = field;
+    field.resolve = async function (root, args, context, info) {
+      if (!context.user.isAdmin) {
+        throw new ForbiddenError('You need to be Admin to continue');
+      }
+      return resolve.call(this, root, args, context, info);
     };
   }
 }

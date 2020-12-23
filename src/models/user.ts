@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import mongoose, { Schema, Document, HookNextFunction } from 'mongoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { Address } from '../types';
@@ -12,6 +10,7 @@ import { IReviewDoc } from './review';
 import { IVineyardDoc } from './vineyard';
 import { MetodoProduttivo } from '../types';
 import { METODOPRODUTTIVO } from '../utils/enumMongooseHelper';
+import DataLoader from 'dataloader';
 
 import bcrypt from 'bcrypt';
 
@@ -40,13 +39,14 @@ export interface IUser {
   isVerified: boolean;
   isPremium?: boolean;
   isAdmin: boolean;
-  ads?: Array<IAdDoc['_id'] | IAdDoc>; // annunci postati dall'utente
-  negotiations?: Array<INegotiationDoc['_id'] | INegotiationDoc>; // trattative dell'utente, attive e non, concluse e non
-  reviews?: Array<IReviewDoc['_id'] | IReviewDoc>; // recensioni fatte e ricevute dall'utente
+  hideContact: boolean;
+  ads?: mongoose.Types.Array<IAdDoc['_id'] | IAdDoc>; // annunci postati dall'utente
+  negotiations?: mongoose.Types.Array<INegotiationDoc['_id'] | INegotiationDoc>; // trattative dell'utente, attive e non, concluse e non
+  reviews?: mongoose.Types.Array<IReviewDoc['_id'] | IReviewDoc>; // recensioni fatte e ricevute dall'utente
   adsRemaining?: number;
   dateCreated: Date;
-  producedWines?: Array<ProducedWines>;
-  ownedVineyards?: Array<OwnedVineyards>;
+  producedWines?: mongoose.Types.Array<ProducedWines>;
+  ownedVineyards?: mongoose.Types.Array<OwnedVineyards>;
 }
 
 export interface IUserDoc extends IUser, Document {
@@ -55,9 +55,10 @@ export interface IUserDoc extends IUser, Document {
 
 export interface UserGraphQl extends IUser {
   validatePassword(password: string): boolean;
-  _id: string;
+  _id: mongoose.Types.ObjectId;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const userSchemaFields: Record<keyof IUser, any> = {
   email: {
     type: String,
@@ -114,6 +115,10 @@ const userSchemaFields: Record<keyof IUser, any> = {
   isAdmin: {
     type: Boolean,
     default: false,
+  },
+  hideContact: {
+    type: Boolean,
+    default: true,
   },
   ads: [
     {
@@ -195,3 +200,8 @@ userSchema.methods.validatePassword = async function (pass: string) {
 userSchema.plugin(mongooseUniqueValidator);
 
 export const User = mongoose.model<IUserDoc>('User', userSchema);
+
+export const getUserLoader = () =>
+  new DataLoader(async (userIds) => {
+    return User.find({ _id: { $in: userIds } }).exec();
+  });

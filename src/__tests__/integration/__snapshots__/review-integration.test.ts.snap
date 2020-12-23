@@ -1,0 +1,287 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Integration test reviews create review mutation fails if is for own user 1`] = `
+Object {
+  "data": Object {
+    "createReview": Object {
+      "errors": Array [
+        Object {
+          "name": "General Error",
+          "text": "You cannot review yourself",
+        },
+      ],
+      "response": null,
+    },
+  },
+}
+`;
+
+exports[`Integration test reviews create review mutation fails if not logged in 1`] = `
+Object {
+  "data": Object {
+    "createReview": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "createReview",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test reviews create review mutation successfull 1`] = `
+Object {
+  "data": Object {
+    "createReview": Object {
+      "errors": Array [],
+      "response": Object {
+        "createdBy": Object {
+          "firstName": "Giovanni",
+        },
+        "forUser": Object {
+          "firstName": "Mariuccio",
+        },
+        "negotiation": Object {
+          "type": "SELL",
+        },
+        "rating": "AVERAGE",
+      },
+    },
+  },
+}
+`;
+
+exports[`Integration test reviews delete review mutation fails if logged in and not same user 1`] = `
+Object {
+  "data": Object {
+    "deleteReview": Object {
+      "errors": Array [
+        Object {
+          "name": "General error",
+          "text": "Errors during the review delete, only creator can delete review",
+        },
+      ],
+      "response": null,
+    },
+  },
+}
+`;
+
+exports[`Integration test reviews delete review mutation succeds if logged in and same user 1`] = `
+Object {
+  "data": Object {
+    "deleteReview": Object {
+      "errors": Array [],
+      "response": Object {
+        "createdBy": Object {
+          "firstName": "Giovanni",
+        },
+        "forUser": Object {
+          "firstName": "Mariuccio",
+        },
+        "negotiation": Object {
+          "type": "SELL",
+        },
+        "rating": "AVERAGE",
+      },
+    },
+  },
+}
+`;
+
+exports[`Integration test reviews query reviews fails if not logged in 1`] = `
+Object {
+  "data": Object {
+    "reviews": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "reviews",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test reviews query reviews succeds if logged in and admin, all are shown 1`] = `
+Object {
+  "data": Object {
+    "reviews": Array [
+      Object {
+        "createdBy": Object {
+          "firstName": "Mariuccio",
+        },
+        "forUser": Object {
+          "firstName": "Giovanni",
+        },
+        "negotiation": Object {
+          "type": "BUY",
+        },
+        "rating": "PERFECT",
+      },
+      Object {
+        "createdBy": Object {
+          "firstName": "Luigetto",
+        },
+        "forUser": Object {
+          "firstName": "Mariuccio",
+        },
+        "negotiation": Object {
+          "type": "SELL",
+        },
+        "rating": "POOR",
+      },
+      Object {
+        "createdBy": Object {
+          "firstName": "Giovanni",
+        },
+        "forUser": Object {
+          "firstName": "Mariuccio",
+        },
+        "negotiation": Object {
+          "type": "SELL",
+        },
+        "rating": "AVERAGE",
+      },
+    ],
+  },
+}
+`;
+
+exports[`Integration test reviews query reviews succeds if logged in and not admin, only user review shown 1`] = `
+Object {
+  "data": Object {
+    "reviews": Array [
+      Object {
+        "createdBy": Object {
+          "firstName": "Mariuccio",
+        },
+        "forUser": Object {
+          "firstName": "Giovanni",
+        },
+        "negotiation": Object {
+          "type": "BUY",
+        },
+        "rating": "PERFECT",
+      },
+      Object {
+        "createdBy": Object {
+          "firstName": "Luigetto",
+        },
+        "forUser": Object {
+          "firstName": "Mariuccio",
+        },
+        "negotiation": Object {
+          "type": "SELL",
+        },
+        "rating": "POOR",
+      },
+    ],
+  },
+}
+`;
+
+exports[`Integration test reviews query single review fails if not logged 1`] = `
+Object {
+  "data": Object {
+    "review": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "review",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test reviews query single review succeds if logged 1`] = `
+Object {
+  "data": Object {
+    "review": Object {
+      "createdBy": Object {
+        "firstName": "Mariuccio",
+      },
+      "forUser": Object {
+        "firstName": "Giovanni",
+      },
+      "negotiation": Object {
+        "type": "BUY",
+      },
+      "rating": "PERFECT",
+    },
+  },
+}
+`;
+
+exports[`Integration test reviews update review mutation fails if logged in and not same user 1`] = `
+Object {
+  "data": Object {
+    "updateReview": Object {
+      "errors": Array [
+        Object {
+          "name": "General error",
+          "text": "Errors during the review update, only creator can update review",
+        },
+      ],
+      "response": null,
+    },
+  },
+}
+`;
+
+exports[`Integration test reviews update review mutation succeds if logged in and same user 1`] = `
+Object {
+  "data": Object {
+    "updateReview": Object {
+      "errors": Array [],
+      "response": Object {
+        "createdBy": Object {
+          "firstName": "Giovanni",
+        },
+        "forUser": Object {
+          "firstName": "Mariuccio",
+        },
+        "negotiation": Object {
+          "type": "SELL",
+        },
+        "rating": "AVERAGE",
+      },
+    },
+  },
+}
+`;

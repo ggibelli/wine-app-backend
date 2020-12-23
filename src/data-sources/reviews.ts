@@ -1,69 +1,161 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import mongoose, { Schema, Document } from 'mongoose';
-import { IUserDoc } from './users';
-import { INegotiationDoc } from './negotiations';
-import { TypeAd } from '../types';
 
-enum Rating {
-  POOR = 1,
-  AVERAGE = 2,
-  OK = 3,
-  GOOD = 4,
-  PERFECT = 5,
+import { MongoDataSource } from 'apollo-datasource-mongodb';
+import { Errors } from '../types';
+import { IReviewDoc, ReviewGraphQl } from '../models/review';
+import { UserGraphQl } from '../models/user';
+import { ReviewInput, ReviewInputUpdate } from '../generated/graphql';
+import { sendMail } from '../utils/mailServer';
+import { CronJob } from 'cron';
+import { loggerError } from '../utils/logger';
+
+interface Context {
+  user: UserGraphQl;
+  createToken(user: UserGraphQl): string;
 }
 
-export interface IReview {
-  createdBy: IUserDoc['_id'] | IUserDoc;
-  negotiation: INegotiationDoc['_id'] | INegotiationDoc;
-  forUserAd: IUserDoc['_id'] | IUserDoc;
-  rating: Rating;
-  dateCreated: Date;
-  content: string;
-  type: TypeAd;
+interface Response {
+  response: IReviewDoc | ReviewGraphQl | null;
+  errors: Errors[];
 }
 
-export interface IReviewDoc extends Document {}
+export default class Reviews extends MongoDataSource<IReviewDoc, Context> {
+  async getReview(id: string): Promise<IReviewDoc | null | undefined> {
+    return this.findOneById(id);
+  }
+  async getReviews(): Promise<ReviewGraphQl[]> {
+    const userCtx = this.context.user;
+    if (userCtx.isAdmin) {
+      return this.model.find({}).lean().exec();
+    }
+    await this.collection.createIndex({ createdBy: 1 });
+    await this.collection.createIndex({ forUser: 1 });
+    return this.model
+      .find({
+        $or: [{ createdBy: userCtx._id }, { forUser: userCtx._id }],
+      })
+      .lean()
+      .exec();
+  }
 
-const reviewSchemaFields: Record<keyof IReview, any> = {
-  createdBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  negotiation: {
-    type: Schema.Types.ObjectId,
-    ref: 'Negotiation',
-    required: true,
-  },
-  forUserAd: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-    required: true,
-  },
-  dateCreated: {
-    type: Date,
-    // `Date.now()` returns the current unix timestamp as a number
-    default: Date.now,
-  },
-  content: {
-    type: String,
-    minlength: 5,
-  },
-  rating: {
-    type: Number,
-    enum: [1, 2, 3, 4, 5],
-    required: true,
-  },
-  type: {
-    type: String,
-    enum: ['SELL', 'BUY'],
-  },
-};
+  async createReview(review: ReviewInput): Promise<Response> {
+    const userCtx = this.context.user;
+    const errors: Errors[] = [];
+    const createdReview = new this.model({
+      ...review,
+      createdBy: userCtx,
+    });
+    if (
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      createdReview.forUser.toString() == userCtx._id.toHexString()
+    ) {
+      errors.push({
+        name: 'General Error',
+        text: 'You cannot review yourself',
+      });
+      return {
+        response: null,
+        errors,
+      };
+    }
+    try {
+      await createdReview.save();
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      errors.push({ name: 'General Error', text: e.message });
+      return {
+        response: null,
+        errors,
+      };
+    }
+    const mailBody = {
+      subject: 'New Review',
+      body: {
+        intro: `User ${userCtx.firstName} wrote a review. \n
+          for your negotiation,click on the <a href="${createdReview._id}">link</a> to see it`,
+      },
+    };
+    let countDeliveryTries = 0;
+    const jobMail = new CronJob('*/1 * * * *', () => {
+      const recipient: string[] = [];
+      if (countDeliveryTries >= 2) {
+        jobMail.stop();
+        return;
+      }
+      createdReview
+        .populate({ path: 'forUser', select: 'email' })
+        .execPopulate()
+        .then((review) => {
+          recipient.push(review.forUser.email);
+        })
+        .catch((e) => {
+          loggerError(e);
+        });
+      sendMail(mailBody, recipient)
+        .then(() => {
+          jobMail.stop();
+        })
+        .catch((e) => {
+          loggerError(e);
+          countDeliveryTries += 1;
+        });
+    });
+    jobMail.start();
+    return {
+      response: createdReview,
+      errors,
+    };
+  }
 
-const reviewSchema = new Schema(reviewSchemaFields);
+  async updateReview(review: ReviewInputUpdate): Promise<Response> {
+    const userCtx = this.context.user;
 
-reviewSchema.index({ createdBy: 1, negotiation: 1 }, { unique: true });
+    const errors: Errors[] = [];
+    const updatedReview = await this.model.findOneAndUpdate(
+      { createdBy: userCtx, _id: review._id },
+      review,
+      {
+        new: true,
+      }
+    );
+    if (!updatedReview) {
+      errors.push({
+        name: 'General error',
+        text: 'Errors during the review update, only creator can update review',
+      });
+      return {
+        response: null,
+        errors,
+      };
+    }
+    return {
+      response: updatedReview,
+      errors,
+    };
+  }
 
-export const Review = mongoose.model<IReviewDoc>('Review', reviewSchema);
+  async deleteReview(reviewId: string): Promise<Response> {
+    const userCtx = this.context.user;
+
+    const errors: Errors[] = [];
+    const deletedReview = await this.model
+      .findOneAndDelete({ _id: reviewId, createdBy: userCtx })
+      .lean()
+      .exec();
+    if (!deletedReview) {
+      errors.push({
+        name: 'General error',
+        text: 'Errors during the review delete, only creator can delete review',
+      });
+      return {
+        response: null,
+        errors,
+      };
+    }
+    return {
+      response: deletedReview,
+      errors,
+    };
+  }
+}

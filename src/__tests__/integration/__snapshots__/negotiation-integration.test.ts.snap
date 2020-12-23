@@ -1,0 +1,392 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Integration test negotiations create negotiation mutation fails if not logged in 1`] = `
+Object {
+  "data": Object {
+    "createNegotiation": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "createNegotiation",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test negotiations create negotiation mutation fails if user not verified 1`] = `
+Object {
+  "data": Object {
+    "createNegotiation": Object {
+      "errors": Array [
+        Object {
+          "name": "AuthorizationError",
+          "text": "You need to verify your account",
+        },
+      ],
+      "response": null,
+    },
+  },
+}
+`;
+
+exports[`Integration test negotiations create negotiation mutation successfull 1`] = `
+Object {
+  "data": Object {
+    "createNegotiation": Object {
+      "errors": Array [],
+      "response": Object {
+        "ad": Object {
+          "wineName": "Vino vendo",
+        },
+        "createdBy": Object {
+          "firstName": "Giovanni",
+        },
+        "forUserAd": Object {
+          "firstName": "Mariuccio",
+        },
+        "isConcluded": false,
+      },
+    },
+  },
+}
+`;
+
+exports[`Integration test negotiations delete negotiation mutation fails if logged in and not same user 1`] = `
+Object {
+  "data": Object {
+    "deleteNegotiation": Object {
+      "errors": Array [
+        Object {
+          "name": "General error",
+          "text": "Errors during the negotiation delete, only creator can delete negotiation",
+        },
+      ],
+      "response": null,
+    },
+  },
+}
+`;
+
+exports[`Integration test negotiations delete negotiation mutation succeds if logged in and same user 1`] = `
+Object {
+  "data": Object {
+    "deleteNegotiation": Object {
+      "errors": Array [],
+      "response": Object {
+        "ad": Object {
+          "wineName": "Vino vendo",
+        },
+        "createdBy": Object {
+          "firstName": "Giovanni",
+        },
+        "forUserAd": Object {
+          "firstName": "Mariuccio",
+        },
+        "isConcluded": true,
+      },
+    },
+  },
+}
+`;
+
+exports[`Integration test negotiations query negotiations fails if not logged in 1`] = `
+Object {
+  "data": Object {
+    "negotiations": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "negotiations",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test negotiations query negotiations succeds if logged in and admin, all are shown 1`] = `
+Object {
+  "data": Object {
+    "negotiations": Array [
+      Object {
+        "ad": Object {
+          "content": "wow",
+        },
+        "createdBy": Object {
+          "firstName": "Mariuccio",
+        },
+        "forUserAd": Object {
+          "firstName": "Giovanni",
+        },
+        "isConcluded": false,
+      },
+      Object {
+        "ad": Object {
+          "content": "waaow",
+        },
+        "createdBy": Object {
+          "firstName": "Luigetto",
+        },
+        "forUserAd": Object {
+          "firstName": "Mariuccio",
+        },
+        "isConcluded": false,
+      },
+      Object {
+        "ad": Object {
+          "content": "waaow",
+        },
+        "createdBy": Object {
+          "firstName": "Giovanni",
+        },
+        "forUserAd": Object {
+          "firstName": "Mariuccio",
+        },
+        "isConcluded": false,
+      },
+    ],
+  },
+}
+`;
+
+exports[`Integration test negotiations query negotiations succeds if logged in and not admin, only user negotiation shown 1`] = `
+Object {
+  "data": Object {
+    "negotiations": Array [
+      Object {
+        "ad": Object {
+          "content": "wow",
+        },
+        "createdBy": Object {
+          "firstName": "Mariuccio",
+        },
+        "forUserAd": Object {
+          "firstName": "Giovanni",
+        },
+        "isConcluded": false,
+      },
+      Object {
+        "ad": Object {
+          "content": "waaow",
+        },
+        "createdBy": Object {
+          "firstName": "Luigetto",
+        },
+        "forUserAd": Object {
+          "firstName": "Mariuccio",
+        },
+        "isConcluded": false,
+      },
+    ],
+  },
+}
+`;
+
+exports[`Integration test negotiations query negotiationsForAd fails if not logged in 1`] = `
+Object {
+  "data": Object {
+    "negotiationsForAd": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "negotiationsForAd",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test negotiations query negotiationsForAd succeds if logged in 1`] = `
+Object {
+  "data": Object {
+    "negotiationsForAd": Array [
+      Object {
+        "ad": Object {
+          "content": "waaow",
+        },
+        "createdBy": Object {
+          "firstName": "Luigetto",
+        },
+        "forUserAd": Object {
+          "firstName": "Mariuccio",
+        },
+        "isConcluded": false,
+      },
+      Object {
+        "ad": Object {
+          "content": "waaow",
+        },
+        "createdBy": Object {
+          "firstName": "Giovanni",
+        },
+        "forUserAd": Object {
+          "firstName": "Mariuccio",
+        },
+        "isConcluded": false,
+      },
+    ],
+  },
+}
+`;
+
+exports[`Integration test negotiations query negotiationsWithUser fails if not logged in 1`] = `
+Object {
+  "data": Object {
+    "negotiationsWithUser": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "negotiationsWithUser",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test negotiations query negotiationsWithUser succeds if logged in 1`] = `
+Object {
+  "data": Object {
+    "negotiationsWithUser": Array [
+      Object {
+        "ad": Object {
+          "content": "waaow",
+        },
+        "createdBy": Object {
+          "firstName": "Giovanni",
+        },
+        "forUserAd": Object {
+          "firstName": "Mariuccio",
+        },
+        "isConcluded": false,
+      },
+    ],
+  },
+}
+`;
+
+exports[`Integration test negotiations query single negotiation fails if not logged 1`] = `
+Object {
+  "data": Object {
+    "negotiation": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "negotiation",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test negotiations query single negotiation succeds if logged 1`] = `
+Object {
+  "data": Object {
+    "negotiation": Object {
+      "ad": Object {
+        "content": "wow",
+        "wineName": "Vino",
+      },
+      "createdBy": Object {
+        "firstName": "Mariuccio",
+      },
+      "forUserAd": Object {
+        "firstName": "Giovanni",
+      },
+      "isConcluded": false,
+    },
+  },
+}
+`;
+
+exports[`Integration test negotiations update negotiation mutation fails if logged in and not same user 1`] = `
+Object {
+  "data": Object {
+    "updateNegotiation": Object {
+      "errors": Array [
+        Object {
+          "name": "General error",
+          "text": "Errors during the negotiation update, only creator can update negotiation",
+        },
+      ],
+      "response": null,
+    },
+  },
+}
+`;
+
+exports[`Integration test negotiations update negotiation mutation succeds if logged in and same user 1`] = `
+Object {
+  "data": Object {
+    "updateNegotiation": Object {
+      "errors": Array [],
+      "response": Object {
+        "ad": Object {
+          "wineName": "Vino vendo",
+        },
+        "createdBy": Object {
+          "firstName": "Giovanni",
+        },
+        "forUserAd": Object {
+          "firstName": "Mariuccio",
+        },
+        "isConcluded": true,
+      },
+    },
+  },
+}
+`;

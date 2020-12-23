@@ -4,12 +4,12 @@ export const typeDefs = gql`
   type Vineyard {
     _id: ID!
     name: String!
-    colore: Colore!
+    colore: Colore
   }
 
   input VineyardInput {
     name: String!
-    colore: Colore!
+    colore: Colore
   }
 
   input VineyardInputUpdate {
@@ -20,7 +20,7 @@ export const typeDefs = gql`
 
   type VineyardPayload {
     response: Vineyard
-    errors: [Error]
+    errors: [Errors]
   }
 
   extend type Query {
@@ -29,8 +29,12 @@ export const typeDefs = gql`
   }
 
   extend type Mutation {
-    createVineyard(vineyard: VineyardInput): VineyardPayload @authorized
-    updateVineyard(vineyard: VineyardInputUpdate): VineyardPayload @authorized
-    deleteVineyard(id: ID!): VineyardPayload @authorized
+    createVineyard(vineyard: VineyardInput!): VineyardPayload
+      @authorized
+      @authenticated
+    updateVineyard(vineyard: VineyardInputUpdate!): VineyardPayload
+      @authorized
+      @authenticated
+    deleteVineyard(id: ID!): VineyardPayload @authorized @authenticated
   }
 `;

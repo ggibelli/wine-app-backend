@@ -6,7 +6,7 @@ export const typeDefs = gql`
     aka: String
     espressioneComunitaria: EspressioneComunitaria!
     denominazioneZona: DenomZona!
-    regione: Regioni!
+    regione: [Regioni!]!
   }
 
   input WineInputUpdate {
@@ -15,7 +15,7 @@ export const typeDefs = gql`
     aka: String
     espressioneComunitaria: EspressioneComunitaria
     denominazioneZona: DenomZona
-    regione: Regioni
+    regione: [Regioni]
   }
 
   type Wine {
@@ -24,22 +24,22 @@ export const typeDefs = gql`
     aka: String
     espressioneComunitaria: EspressioneComunitaria!
     denominazioneZona: DenomZona!
-    regione: Regioni!
+    regione: [Regioni!]!
   }
 
   type WinePayload {
     response: Wine
-    errors: [Error]
+    errors: [Errors]
   }
 
   extend type Query {
     wines: [Wine!] @authenticated
-    wine(_id: ID!): Wine @authenticated
+    wine(id: ID!): Wine @authenticated
   }
 
   extend type Mutation {
-    createWine(wine: WineInput): WinePayload @authorized
-    updateWine(wine: WineInputUpdate): WinePayload @authorized
-    deleteWine(id: ID!): WinePayload @authorized
+    createWine(wine: WineInput!): WinePayload @authorized @authenticated
+    updateWine(wine: WineInputUpdate!): WinePayload @authorized @authenticated
+    deleteWine(id: ID!): WinePayload @authorized @authenticated
   }
 `;

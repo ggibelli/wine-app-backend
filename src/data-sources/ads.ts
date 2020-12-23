@@ -1,16 +1,48 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { MongoDataSource } from 'apollo-datasource-mongodb';
-import { IAdDoc } from '../models/ad';
-import { QueryOrderBy, TypeProduct, Error } from '../types';
-//import { ObjectId } from 'mongodb';
+import { AdGraphQl, IAdDoc } from '../models/ad';
+import { QueryOrderBy, TypeProduct, Errors, TypeAd } from '../types';
+import { ObjectId } from 'mongodb';
 
 import { assertNever } from '../utils/helpersTypeScript';
 import { AdInput, AdInputUpdate, QueryAdsArgs } from '../generated/graphql';
 import { UserInputError } from 'apollo-server-express';
+import { UserGraphQl } from '../models/user';
+import { sendMail } from '../utils/mailServer';
+import { CronJob } from 'cron';
+import { loggerError } from '../utils/logger';
+
+export interface FollowUp {
+  userMail: string;
+  userId: string;
+  adId: string;
+}
 
 interface GrapeAdParams {
   vineyardName: string;
   kgFrom: number;
   kgTo: number;
+}
+
+type RestParams = Omit<
+  AdInput,
+  | 'typeAd'
+  | 'typeProduct'
+  | 'content'
+  | 'address'
+  | 'harvest'
+  | 'abv'
+  | 'priceFrom'
+  | 'priceTo'
+>;
+
+export interface AdResponse {
+  usersToNotify?: Array<FollowUp['userId']>;
+  response: IAdDoc | AdGraphQl | null;
+  errors: Errors[];
 }
 
 interface WineAdParams {
@@ -25,7 +57,12 @@ export interface QueryAdsArgsPag extends QueryAdsArgs {
   orderBy: QueryOrderBy;
 }
 
-const parseGrapeAd = (params: any, errors: Error[]): GrapeAdParams => {
+interface Context {
+  user: UserGraphQl;
+  createToken(user: UserGraphQl): string;
+}
+
+const parseGrapeAd = (params: RestParams, errors: Errors[]): GrapeAdParams => {
   if (!params.vineyardName) {
     errors.push({
       name: 'UserInputError',
@@ -57,10 +94,10 @@ const parseGrapeAd = (params: any, errors: Error[]): GrapeAdParams => {
     vineyardName: params.vineyardName,
     kgFrom: params.kgFrom,
     kgTo: params.kgTo,
-  };
+  } as GrapeAdParams;
 };
 
-const parseWineAd = (params: any, errors: Error[]): WineAdParams => {
+const parseWineAd = (params: RestParams, errors: Errors[]): WineAdParams => {
   if (!params.wineName) {
     errors.push({
       name: 'UserInputError',
@@ -92,16 +129,22 @@ const parseWineAd = (params: any, errors: Error[]): WineAdParams => {
     wineName: params.wineName,
     litersFrom: params.litersFrom,
     litersTo: params.litersTo,
-  };
+  } as WineAdParams;
 };
 
-export default class Ads extends MongoDataSource<IAdDoc> {
-  async getAd(adId: string) {
-    return this.model.findById(adId).lean().exec();
-    //let asd = Ad.findById(adId).lean().exec();
+export default class Ads extends MongoDataSource<IAdDoc, Context> {
+  async getAd(adId: string): Promise<IAdDoc | null | undefined> {
+    //const user = this.context.user;
+    const ad = await this.findOneById(adId);
+    // if (user) {
+    //   ad?.viewedBy?.addToSet(user._id);
+    //   await ad?.save();
+    // }
+    //ad?.populate({ path: 'negotiations', select: 'createdBy' });
+    return ad;
   }
 
-  async getAdsByUser(userId: string) {
+  async getAdsByUser(userId: ObjectId): Promise<AdGraphQl[]> {
     return this.model.find({ postedBy: userId }).lean().exec();
   }
 
@@ -114,7 +157,7 @@ export default class Ads extends MongoDataSource<IAdDoc> {
     wineName,
     typeAd,
     typeProduct,
-  }: QueryAdsArgs) {
+  }: QueryAdsArgs): Promise<AdGraphQl[]> {
     const LIMIT_MAX = 100;
     if (limit < 1 || skip < 0 || limit > LIMIT_MAX) {
       throw new UserInputError(
@@ -172,8 +215,21 @@ export default class Ads extends MongoDataSource<IAdDoc> {
       .lean()
       .exec();
   }
-  async createAd(ad: AdInput) {
-    const errors: Error[] = [];
+
+  async createAd(ad: AdInput): Promise<AdResponse> {
+    const errors: Errors[] = [];
+    // eslint-disable-next-line @typescript-eslint/await-thenable
+    const user = this.context.user;
+    if (!user.isVerified) {
+      errors.push({
+        name: 'AuthorizationError',
+        text: 'You need to verify your account',
+      });
+      return {
+        response: null,
+        errors,
+      };
+    }
     const { _id } = this.context.user;
     const {
       typeAd,
@@ -184,6 +240,7 @@ export default class Ads extends MongoDataSource<IAdDoc> {
       abv,
       priceFrom,
       priceTo,
+      needsFollowUp,
       ...restParams
     } = ad;
     let newAd = {
@@ -195,6 +252,7 @@ export default class Ads extends MongoDataSource<IAdDoc> {
       abv: abv,
       priceFrom: priceFrom,
       priceTo: priceTo,
+      needsFollowUp: needsFollowUp,
     };
 
     switch (newAd.typeProduct) {
@@ -221,9 +279,13 @@ export default class Ads extends MongoDataSource<IAdDoc> {
     }
 
     const createdAd = new this.model({ ...newAd, postedBy: _id });
+
+    // If the Ad created was wine I look who wants a follow up about that wine and push the user id and mail into the array
+
     try {
       await createdAd.save();
     } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       errors.push({ name: 'General Error', text: e.message });
       return {
         response: null,
@@ -231,22 +293,84 @@ export default class Ads extends MongoDataSource<IAdDoc> {
       };
       //throw new UserInputError(e.message);
     }
+    let countDeliveryTries = 0;
+    const followUpUsersToNotify: FollowUp[] = [];
+    const SellOrBuy =
+      createdAd.typeAd === TypeAd.SELL ? TypeAd.BUY : TypeAd.SELL;
+    await this.collection.createIndex({ needsFollowUp: 1 });
+    const adsToFollow = await this.model
+      .find({
+        $or: [
+          {
+            wineName: createdAd.wineName,
+            vineyardName: createdAd.vineyardName,
+          },
+        ],
+        $and: [{ needsFollowUp: true, typeAd: SellOrBuy }],
+      })
+      .populate('postedBy', { email: 1 })
+      .lean()
+      .exec();
+    adsToFollow.map((ad) =>
+      followUpUsersToNotify.push({
+        userId: ad.postedBy._id,
+        userMail: ad.postedBy.email,
+        adId: ad._id,
+      })
+    );
+    const mailBody = {
+      subject: 'New Ad',
+      body: {
+        intro: `Looks like there is a new ad that might interest you, here the link ${createdAd._id}`,
+      },
+    };
+    const recipients = followUpUsersToNotify
+      .filter((userFollowUp) => userFollowUp.userMail !== user.email)
+      .map((user) => user.userMail);
+    const uniqueRecipients = [...new Set(recipients)];
+    const uniqueUsersToNotifiy = [
+      ...new Set(followUpUsersToNotify.map((user) => user.userId.toString())),
+    ];
+    const jobMail = new CronJob('*/3 * * * *', () => {
+      if (countDeliveryTries >= 2) {
+        jobMail.stop();
+        return;
+      }
+      sendMail(mailBody, uniqueRecipients)
+        .then(() => {
+          jobMail.stop();
+        })
+        .catch((error) => {
+          loggerError(error);
+          countDeliveryTries += 1;
+        });
+    });
+    if (recipients.length > 0) {
+      jobMail.start();
+    }
     return {
+      usersToNotify: uniqueUsersToNotifiy,
       response: createdAd,
       errors,
     };
   }
 
-  async updateAd(ad: AdInputUpdate) {
-    const errors: Error[] = [];
+  async updateAd(ad: AdInputUpdate): Promise<AdResponse> {
+    const errors: Errors[] = [];
+    const user = this.context.user;
     const updatedAd = await this.model
-      .findOneAndUpdate({ _id: ad._id, postedBy: this.context.user._id }, ad, {
+
+      .findOneAndUpdate({ _id: ad._id, postedBy: user._id }, ad, {
         new: true,
       })
+      .populate('negotiations', { createdBy: 1 })
       .lean()
       .exec();
     if (!updatedAd) {
-      errors.push({ name: 'General error', text: 'Error during the update' });
+      errors.push({
+        name: 'General error',
+        text: 'Error during the update, only ad owner can update it',
+      });
       return {
         response: null,
         errors,
@@ -258,17 +382,22 @@ export default class Ads extends MongoDataSource<IAdDoc> {
     };
   }
 
-  async deleteAdWine(id: string) {
-    const errors: Error[] = [];
+  async deleteAd(id: string): Promise<AdResponse> {
+    const errors: Errors[] = [];
+    const user = this.context.user;
     const removedAd = await this.model
       .findOneAndDelete({
         _id: id,
-        postedBy: this.context.user._id,
+        postedBy: user._id,
       })
+      .populate('negotiations', { createdBy: 1 })
       .lean()
       .exec();
     if (!removedAd) {
-      errors.push({ name: 'General error', text: 'Error during the delete' });
+      errors.push({
+        name: 'General error',
+        text: 'Error during the delete, only ad owner can delete it',
+      });
       return {
         response: null,
         errors,

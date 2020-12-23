@@ -1,0 +1,343 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Integration test messages create message mutation fails if not logged in 1`] = `
+Object {
+  "data": Object {
+    "createMessage": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "createMessage",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test messages create message mutation fails if recipient same as sender 1`] = `
+Object {
+  "data": Object {
+    "createMessage": Object {
+      "errors": Array [
+        Object {
+          "name": "UserInputError",
+          "text": "You cannot send messages to yourself",
+        },
+      ],
+      "response": null,
+    },
+  },
+}
+`;
+
+exports[`Integration test messages create message mutation fails if user does not own the negotiation 1`] = `
+Object {
+  "data": Object {
+    "createMessage": Object {
+      "errors": Array [
+        Object {
+          "name": "UserInputError",
+          "text": "You can only send messages if you own the negotiation",
+        },
+      ],
+      "response": null,
+    },
+  },
+}
+`;
+
+exports[`Integration test messages create message mutation successfull 1`] = `
+Object {
+  "data": Object {
+    "createMessage": Object {
+      "errors": Array [],
+      "response": Object {
+        "content": "prova prova",
+        "negotiation": Object {
+          "createdBy": Object {
+            "firstName": "Giovanni",
+          },
+          "forUserAd": Object {
+            "firstName": "Mariuccio",
+          },
+        },
+        "sentBy": Object {
+          "firstName": "Giovanni",
+        },
+        "sentTo": Object {
+          "firstName": "Mariuccio",
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`Integration test messages query message fails if not logged in 1`] = `
+Object {
+  "data": Object {
+    "messages": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "messages",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test messages query messageForNegotiation fails if not logged in 1`] = `
+Object {
+  "data": Object {
+    "messagesForNegotiation": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "messagesForNegotiation",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test messages query messages succeds if logged in and admin, all are shown 1`] = `
+Object {
+  "data": Object {
+    "messages": Array [
+      Object {
+        "content": "ciao",
+        "sentBy": Object {
+          "firstName": "Giovanni",
+        },
+        "sentTo": Object {
+          "firstName": "Mariuccio",
+        },
+      },
+      Object {
+        "content": "ciao di nuovo",
+        "sentBy": Object {
+          "firstName": "Luigetto",
+        },
+        "sentTo": Object {
+          "firstName": "Mariuccio",
+        },
+      },
+      Object {
+        "content": "prova prova",
+        "sentBy": Object {
+          "firstName": "Giovanni",
+        },
+        "sentTo": Object {
+          "firstName": "Mariuccio",
+        },
+      },
+    ],
+  },
+}
+`;
+
+exports[`Integration test messages query messagesForNegotiation succeds if logged in 1`] = `
+Object {
+  "data": Object {
+    "messagesForNegotiation": Array [
+      Object {
+        "content": "ciao",
+        "negotiation": Object {
+          "createdBy": Object {
+            "firstName": "Giovanni",
+          },
+          "forUserAd": Object {
+            "firstName": "Mariuccio",
+          },
+        },
+        "sentBy": Object {
+          "firstName": "Giovanni",
+        },
+        "sentTo": Object {
+          "firstName": "Mariuccio",
+        },
+      },
+      Object {
+        "content": "prova prova",
+        "negotiation": Object {
+          "createdBy": Object {
+            "firstName": "Giovanni",
+          },
+          "forUserAd": Object {
+            "firstName": "Mariuccio",
+          },
+        },
+        "sentBy": Object {
+          "firstName": "Giovanni",
+        },
+        "sentTo": Object {
+          "firstName": "Mariuccio",
+        },
+      },
+    ],
+  },
+}
+`;
+
+exports[`Integration test messages query messagesToUser fails if not logged in 1`] = `
+Object {
+  "data": Object {
+    "messagesToUser": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "messagesToUser",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test messages query messagesToUser succeds if logged in 1`] = `
+Object {
+  "data": Object {
+    "messagesToUser": Array [
+      Object {
+        "content": "ciao",
+        "sentBy": Object {
+          "firstName": "Giovanni",
+        },
+        "sentTo": Object {
+          "firstName": "Mariuccio",
+        },
+      },
+      Object {
+        "content": "prova prova",
+        "sentBy": Object {
+          "firstName": "Giovanni",
+        },
+        "sentTo": Object {
+          "firstName": "Mariuccio",
+        },
+      },
+    ],
+  },
+}
+`;
+
+exports[`Integration test messages query negotiations succeds if logged in and not admin, only user message shown 1`] = `
+Object {
+  "data": Object {
+    "messages": Array [
+      Object {
+        "content": "ciao",
+        "sentBy": Object {
+          "firstName": "Giovanni",
+        },
+        "sentTo": Object {
+          "firstName": "Mariuccio",
+        },
+      },
+      Object {
+        "content": "ciao di nuovo",
+        "sentBy": Object {
+          "firstName": "Luigetto",
+        },
+        "sentTo": Object {
+          "firstName": "Mariuccio",
+        },
+      },
+      Object {
+        "content": "prova prova",
+        "sentBy": Object {
+          "firstName": "Giovanni",
+        },
+        "sentTo": Object {
+          "firstName": "Mariuccio",
+        },
+      },
+    ],
+  },
+}
+`;
+
+exports[`Integration test messages query single message fails if not logged 1`] = `
+Object {
+  "data": Object {
+    "message": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "message",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test messages query single message succeds if logged 1`] = `
+Object {
+  "data": Object {
+    "message": Object {
+      "content": "ciao",
+      "sentBy": Object {
+        "firstName": "Giovanni",
+      },
+      "sentTo": Object {
+        "firstName": "Mariuccio",
+      },
+    },
+  },
+}
+`;

@@ -8098,16 +8098,19 @@ const $ = cheerio.load(`<table class="single_table" data-toggle="table" data-sho
                                         </tbody>
                                     </table>`);
 interface Vineyard {
-  vineyardName: string;
+  name: string;
 }
-const vineyardDb: Vineyard[] = [];
-$('a').each(function (_, el) {
-  //console.log(el);
-  var link = $(el).attr('href');
-  if (link?.startsWith('https://www.quattrocalici.it/vitigni/')) {
-    const vineyardName = $(el).text();
-    vineyardDb.push({ vineyardName: vineyardName });
-  }
-});
+const createVineyardDb = (): Vineyard[] => {
+  const vineyardDb: Vineyard[] = [];
+  $('a').each(function (_i, el) {
+    //console.log(_);
+    const link = $(el).attr('href');
+    if (link?.startsWith('https://www.quattrocalici.it/vitigni/')) {
+      const vineyardName = $(el).text();
+      vineyardDb.push({ name: vineyardName });
+    }
+  });
+  return vineyardDb;
+};
 
-export default vineyardDb;
+export default createVineyardDb;

@@ -3,8 +3,8 @@ import { gql } from 'apollo-server-express';
 export const typeDefs = gql`
   input ReviewInput {
     negotiation: ID!
-    forUserAd: ID!
-    rating: ID!
+    forUser: ID!
+    rating: Rating!
     content: String!
     type: TypeAd!
   }
@@ -13,7 +13,7 @@ export const typeDefs = gql`
     _id: ID!
     #negotiation: ID!
     #forUserAd: ID!
-    rating: ID
+    rating: Rating
     content: String
     #type: Type!
   }
@@ -22,7 +22,7 @@ export const typeDefs = gql`
     _id: ID!
     createdBy: User!
     negotiation: Negotiation!
-    forUserAd: User!
+    forUser: User!
     rating: Rating!
     dateCreated: Date! @date
     content: String!
@@ -31,7 +31,7 @@ export const typeDefs = gql`
 
   type ReviewPayload {
     response: Review
-    errors: [Error]
+    errors: [Errors]
   }
 
   extend type Query {
@@ -40,8 +40,12 @@ export const typeDefs = gql`
   }
 
   extend type Mutation {
-    createReview(review: ReviewInput): ReviewPayload @authenticated
-    updateReview(review: ReviewInputUpdate): ReviewPayload @authenticated
+    createReview(review: ReviewInput!): ReviewPayload @authenticated
+    updateReview(review: ReviewInputUpdate!): ReviewPayload @authenticated
     deleteReview(id: ID!): ReviewPayload @authenticated
+  }
+
+  extend type Subscription {
+    reviewCreated: Review! @authenticated
   }
 `;

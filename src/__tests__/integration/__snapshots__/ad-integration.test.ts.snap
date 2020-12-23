@@ -1,0 +1,276 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Integration test ads create adGrape mutation it fails if kgs are missing 1`] = `
+Object {
+  "data": Object {
+    "createAd": Object {
+      "errors": Array [
+        Object {
+          "name": "UserInputError",
+          "text": "The kg from is mandatory",
+        },
+        Object {
+          "name": "UserInputError",
+          "text": "The kg to is mandatory",
+        },
+      ],
+      "response": null,
+    },
+  },
+}
+`;
+
+exports[`Integration test ads create adGrape mutation it fails if not logged in 1`] = `
+Object {
+  "data": Object {
+    "createAd": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "createAd",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test ads create adGrape mutation successfull 1`] = `
+Object {
+  "data": Object {
+    "createAd": Object {
+      "errors": Array [],
+      "response": Object {
+        "abv": 12,
+        "activeNegotiations": 0,
+        "content": "buona uva",
+        "harvest": 2020,
+        "postedBy": Object {
+          "firstName": "Mariuccio",
+        },
+        "priceFrom": 1,
+        "priceTo": 1.5,
+        "vineyardName": "Uvetta",
+      },
+    },
+  },
+}
+`;
+
+exports[`Integration test ads create adWine mutation fails if user not verified 1`] = `
+Object {
+  "data": Object {
+    "createAd": Object {
+      "errors": Array [
+        Object {
+          "name": "AuthorizationError",
+          "text": "You need to verify your account",
+        },
+      ],
+      "response": null,
+    },
+  },
+}
+`;
+
+exports[`Integration test ads create adWine mutation successfull 1`] = `
+Object {
+  "data": Object {
+    "createAd": Object {
+      "errors": Array [],
+      "response": Object {
+        "abv": 12,
+        "activeNegotiations": 0,
+        "content": "wow",
+        "harvest": 2020,
+        "postedBy": Object {
+          "firstName": "Giovanni",
+        },
+        "priceFrom": 1,
+        "priceTo": 1.5,
+        "wine": Object {
+          "regione": Array [
+            "ABRUZZO",
+          ],
+        },
+        "wineName": "Abruzzo",
+      },
+    },
+  },
+}
+`;
+
+exports[`Integration test ads create adWine mutation successfull, followup sent to user looking to buy wine 1`] = `
+Object {
+  "data": Object {
+    "createAd": Object {
+      "errors": Array [],
+      "response": Object {
+        "abv": 12.5,
+        "activeNegotiations": 0,
+        "content": "wow",
+        "harvest": 2020,
+        "postedBy": Object {
+          "firstName": "Mariuccio",
+        },
+        "priceFrom": 1,
+        "priceTo": 1.5,
+        "wine": Object {
+          "regione": Array [
+            "ABRUZZO",
+          ],
+        },
+        "wineName": "Abruzzo",
+      },
+    },
+  },
+}
+`;
+
+exports[`Integration test ads delete adWine mutation fails if logged in and other user 1`] = `
+Object {
+  "data": Object {
+    "deleteAd": Object {
+      "errors": Array [
+        Object {
+          "name": "General error",
+          "text": "Error during the delete, only ad owner can delete it",
+        },
+      ],
+      "response": null,
+    },
+  },
+}
+`;
+
+exports[`Integration test ads delete adWine mutation succeds if logged in and same user 1`] = `
+Object {
+  "data": Object {
+    "deleteAd": Object {
+      "errors": Array [],
+      "response": Object {
+        "content": "wow",
+        "datePosted": "17 Dec, 95",
+        "isActive": false,
+        "postedBy": Object {
+          "firstName": "Giovanni",
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`Integration test ads query ads wine in sale fails if not logged in 1`] = `
+Object {
+  "data": Object {
+    "ads": Array [
+      null,
+    ],
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 3,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "ads",
+        0,
+        "postedBy",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test ads query ads wine in sale succeds if logged in 1`] = `
+Object {
+  "data": Object {
+    "ads": Array [
+      Object {
+        "abv": 12,
+        "activeNegotiations": 0,
+        "datePosted": "17 Dec, 95",
+        "harvest": 2020,
+        "postedBy": Object {
+          "firstName": "Giovanni",
+        },
+        "priceFrom": 1,
+        "priceTo": 1.5,
+      },
+    ],
+  },
+}
+`;
+
+exports[`Integration test ads query single ad does not show 0 number visit if not logged 1`] = `
+Object {
+  "data": Object {
+    "ad": Object {
+      "content": "wow",
+      "numberViews": 0,
+    },
+  },
+}
+`;
+
+exports[`Integration test ads query single ad shows number visit if logged 1`] = `
+Object {
+  "data": Object {
+    "ad": Object {
+      "content": "wow",
+      "numberViews": 1,
+    },
+  },
+}
+`;
+
+exports[`Integration test ads update adWine mutation fails if logged in and other user 1`] = `
+Object {
+  "data": Object {
+    "updateAd": Object {
+      "errors": Array [
+        Object {
+          "name": "General error",
+          "text": "Error during the update, only ad owner can update it",
+        },
+      ],
+      "response": null,
+    },
+  },
+}
+`;
+
+exports[`Integration test ads update adWine mutation succeds if logged in and same user 1`] = `
+Object {
+  "data": Object {
+    "updateAd": Object {
+      "errors": Array [],
+      "response": Object {
+        "content": "wow",
+        "isActive": false,
+        "postedBy": Object {
+          "firstName": "Giovanni",
+        },
+      },
+    },
+  },
+}
+`;

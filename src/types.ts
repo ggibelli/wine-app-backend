@@ -185,7 +185,20 @@ export enum QueryOrderBy {
   price_DESC = 'price_DESC',
 }
 
-export interface Error {
+export interface Errors {
   text: string;
   name: string;
+}
+
+export enum Rating {
+  POOR = 'POOR',
+  AVERAGE = 'AVERAGE',
+  OK = 'OK',
+  GOOD = 'GOOD',
+  PERFECT = 'PERFECT',
+}
+
+export enum Colore {
+  BIANCA = 'BIANCA',
+  ROSSA = 'ROSSA',
 }

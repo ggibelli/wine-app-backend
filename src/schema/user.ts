@@ -3,14 +3,14 @@ import { gql } from 'apollo-server-express';
 export const typeDefs = gql`
   type ProducedWines {
     wine: Wine!
-    bottlesProduced: Int
-    metodoProduttivo: MetodoProduttivo
+    bottlesProduced: Int!
+    metodoProduttivo: MetodoProduttivo!
   }
 
   type OwnedVineyards {
     vineyard: Vineyard!
-    tonsProduced: Int
-    metodoProduttivo: MetodoProduttivo
+    tonsProduced: Int!
+    metodoProduttivo: MetodoProduttivo!
   }
 
   input ProducedWinesInput {
@@ -33,6 +33,7 @@ export const typeDefs = gql`
     pIva: String!
     phoneNumber: String!
     address: AddressInput!
+    hideContact: Boolean!
     #verified: Boolean
     #premium: Boolean
     #ads: [ID!]
@@ -46,6 +47,7 @@ export const typeDefs = gql`
   input UserInputUpdate {
     _id: ID!
     email: String
+    password: String
     firstName: String
     lastName: String
     pIva: String
@@ -53,10 +55,7 @@ export const typeDefs = gql`
     address: AddressInput
     isVerified: Boolean
     isPremium: Boolean
-    ads: [ID!]
-    negotiations: [ID!]
-    reviews: [ID!]
-    adsRemaining: Int
+    hideContact: Boolean!
     producedWines: ProducedWinesInput
     ownedVineyards: OwnedVineyardsInput
   }
@@ -69,10 +68,12 @@ export const typeDefs = gql`
     pIva: String!
     phoneNumber: String!
     address: Address!
-    isVerified: Boolean! @authorized
-    isPremium: Boolean @authorized
+    isVerified: Boolean!
+    isPremium: Boolean
     isAdmin: Boolean!
+    hideContact: Boolean!
     ads: [Ad!]
+    messages: [Message!]
     negotiations: [Negotiation!]
     reviews: [Review!]
     adsRemaining: Int @authorized
@@ -88,12 +89,12 @@ export const typeDefs = gql`
 
   type AuthUserPayload {
     response: AuthUser
-    errors: [Error]
+    errors: [Errors]
   }
 
   type UserPayload {
     response: User
-    errors: [Error]
+    errors: [Errors]
   }
 
   extend type Query {
@@ -104,7 +105,7 @@ export const typeDefs = gql`
 
   extend type Mutation {
     createUser(user: UserInput!): AuthUserPayload
-    updateUser(user: UserInputUpdate, id: ID!): UserPayload
+    updateUser(user: UserInputUpdate!): UserPayload @authenticated
     deleteUser(id: ID!): UserPayload @authenticated
     login(email: String!, password: String!): AuthUserPayload
   }

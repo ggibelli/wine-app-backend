@@ -4,6 +4,7 @@ export const typeDefs = gql`
   input NegotiationInput {
     ad: ID!
     forUserAd: ID!
+    type: TypeAd!
     #messages: [ID!]
     #isConcluded: Boolean!
   }
@@ -25,23 +26,31 @@ export const typeDefs = gql`
     isConcluded: Boolean!
     dateCreated: Date! @date
     review: [Review]
+    type: TypeAd!
   }
 
   type NegotiationPayload {
     response: Negotiation
-    errors: [Error]
+    errors: [Errors]
   }
 
   extend type Query {
-    negotiation(_id: ID!): Negotiation @authenticated
+    negotiation(id: ID!): Negotiation @authenticated
     negotiations: [Negotiation!] @authenticated
+    negotiationsWithUser(forUserAd: ID!): [Negotiation!] @authenticated
+    negotiationsForAd(ad: ID!): [Negotiation!] @authenticated
   }
 
   extend type Mutation {
-    createNegotiation(negotiation: NegotiationInput): NegotiationPayload
+    createNegotiation(negotiation: NegotiationInput!): NegotiationPayload
       @authenticated
-    updateNegotiation(negotiation: NegotiationInputUpdate): NegotiationPayload
+    updateNegotiation(negotiation: NegotiationInputUpdate!): NegotiationPayload
       @authenticated
     deleteNegotiation(id: ID!): NegotiationPayload @authenticated
+  }
+
+  extend type Subscription {
+    negotiationCreated: Negotiation! @authenticated
+    negotiationClosed: Ad! @authenticated
   }
 `;

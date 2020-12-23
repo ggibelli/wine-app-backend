@@ -1,0 +1,237 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Integration test wines create wine mutation fails if logged in and not admin 1`] = `
+Object {
+  "data": Object {
+    "createWine": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "FORBIDDEN",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to be Admin to continue",
+      "path": Array [
+        "createWine",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test wines create wine mutation fails if not logged in 1`] = `
+Object {
+  "data": Object {
+    "createWine": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "createWine",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test wines create wine mutation successfull if logged in and admin 1`] = `
+Object {
+  "data": Object {
+    "createWine": Object {
+      "errors": Array [],
+      "response": Object {
+        "denominazioneVino": "ciccio",
+        "denominazioneZona": "DOC",
+        "espressioneComunitaria": "DOP",
+        "regione": Array [
+          "CALABRIA",
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`Integration test wines delete wine mutation fails if logged in and not admin 1`] = `
+Object {
+  "data": Object {
+    "deleteWine": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "FORBIDDEN",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to be Admin to continue",
+      "path": Array [
+        "deleteWine",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test wines delete wine mutation succeds if logged in and admin 1`] = `
+Object {
+  "data": Object {
+    "deleteWine": Object {
+      "errors": Array [],
+      "response": Object {
+        "denominazioneVino": "Caprotto",
+        "denominazioneZona": "DOC",
+        "espressioneComunitaria": "DOP",
+        "regione": Array [
+          "ABRUZZO",
+        ],
+      },
+    },
+  },
+}
+`;
+
+exports[`Integration test wines query single wine fails if not logged 1`] = `
+Object {
+  "data": Object {
+    "wine": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "wine",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test wines query single wine succeds if logged 1`] = `
+Object {
+  "data": Object {
+    "wine": Object {
+      "denominazioneVino": "Abruzzo",
+      "denominazioneZona": "DOC",
+      "espressioneComunitaria": "DOP",
+      "regione": Array [
+        "ABRUZZO",
+      ],
+    },
+  },
+}
+`;
+
+exports[`Integration test wines query wines fails if not logged in 1`] = `
+Object {
+  "data": Object {
+    "wines": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "wines",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test wines query wines succeds if logged in 1`] = `
+Object {
+  "data": Object {
+    "wines": Array [
+      Object {
+        "denominazioneVino": "Abruzzo",
+        "denominazioneZona": "DOC",
+        "espressioneComunitaria": "DOP",
+        "regione": Array [
+          "ABRUZZO",
+        ],
+      },
+    ],
+  },
+}
+`;
+
+exports[`Integration test wines update wine mutation fails if logged in and not admin 1`] = `
+Object {
+  "data": Object {
+    "updateWine": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "FORBIDDEN",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to be Admin to continue",
+      "path": Array [
+        "updateWine",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test wines update wine mutation succeds if logged in and admin 1`] = `
+Object {
+  "data": Object {
+    "updateWine": Object {
+      "errors": Array [],
+      "response": Object {
+        "denominazioneVino": "Caprotto",
+        "denominazioneZona": "DOC",
+        "espressioneComunitaria": "DOP",
+        "regione": Array [
+          "ABRUZZO",
+        ],
+      },
+    },
+  },
+}
+`;

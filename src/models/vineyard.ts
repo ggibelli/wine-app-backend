@@ -1,21 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import mongoose, { Schema, Document } from 'mongoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 
-enum Colore {
-  BIANCA = 'Bianca',
-  ROSSA = 'Rossa',
-}
+import { Colore } from '../types';
 
 export interface IVineyard {
   name: string;
-  colore: Colore;
+  colore?: Colore;
 }
 
 export interface IVineyardDoc extends IVineyard, Document {}
 
+export interface VineyardGraphQl extends IVineyard {
+  _id: mongoose.Types.ObjectId;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const vineyardSchemaFields: Record<keyof IVineyard, any> = {
   name: {
     type: String,
@@ -23,7 +22,7 @@ const vineyardSchemaFields: Record<keyof IVineyard, any> = {
   },
   colore: {
     type: String,
-    enum: ['Bianca', 'Rossa'],
+    enum: ['BIANCA', 'ROSSA'],
   },
 };
 

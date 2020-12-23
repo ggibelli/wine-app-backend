@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import mongoose, { Schema, Document } from 'mongoose';
 import { Address } from '../types';
 import {
@@ -34,18 +32,20 @@ export interface IAd {
   kgTo?: number;
   content?: string;
   address: Address;
-  negotiations?: Array<INegotiationDoc['_id']>; // trattative dell'annuncio, solo attive, solo graphql??
-  viewedBy?: Array<IUserDoc['_id']>;
+  negotiations?: mongoose.Types.Array<INegotiationDoc['_id']>; // trattative dell'annuncio, solo attive, solo graphql??
+  viewedBy?: mongoose.Types.Array<IUserDoc['_id']>;
   typeAd: TypeAd;
   typeProduct: TypeProduct;
+  needsFollowUp: boolean;
   isActive: boolean;
   datePosted: Date;
 }
 
 export interface AdGraphQl extends IAd {
-  _id: string;
+  _id: mongoose.Types.ObjectId;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const adSchemaFields: Record<keyof IAd, any> = {
   postedBy: {
     type: Schema.Types.ObjectId,
@@ -174,10 +174,12 @@ const adSchemaFields: Record<keyof IAd, any> = {
       ref: 'Negotiation',
     },
   ],
-  viewedBy: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  },
+  viewedBy: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
   content: {
     type: String,
     required: true,
@@ -185,6 +187,10 @@ const adSchemaFields: Record<keyof IAd, any> = {
   isActive: {
     type: Boolean,
     default: true,
+  },
+  needsFollowUp: {
+    type: Boolean,
+    default: false,
   },
   datePosted: {
     type: Date,
@@ -197,6 +203,6 @@ export interface IAdDoc extends IAd, Document {}
 
 const adSchema = new Schema(adSchemaFields);
 
-//adSchema.index({ 'createdBy': 1, 'typeAd': 1 }, { 'unique': true })
+adSchema.index({ typeProduct: 1, typeAd: 1, wineName: 1, vineyardName: 1 });
 
 export const Ad = mongoose.model<IAdDoc>('Ad', adSchema);

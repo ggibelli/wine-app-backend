@@ -1,46 +1,94 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import mongoose, { Schema, Document } from 'mongoose';
-import mongooseUniqueValidator from 'mongoose-unique-validator';
-import { Regioni, EspressioneComunitaria, DenomZona } from '../types';
-import { Regioni as MongooseRegioni } from '../utils/enumMongooseHelper';
 
-export interface IWine {
-  denominazioneVino: string;
-  aka?: string;
-  espressioneComunitaria: EspressioneComunitaria;
-  denominazioneZona: DenomZona;
-  regione: Regioni;
+import { MongoDataSource } from 'apollo-datasource-mongodb';
+import { Errors } from '../types';
+import { IWineDoc, WineGraphQl } from '../models/wine';
+import { UserGraphQl } from '../models/user';
+import { WineInput, WineInputUpdate } from '../generated/graphql';
+
+interface Context {
+  user: UserGraphQl;
+  createToken(user: UserGraphQl): string;
 }
 
-export interface IWineDoc extends Document {}
+interface Response {
+  response: IWineDoc | WineGraphQl | null;
+  errors: Errors[];
+}
 
-const wineSchemaFields: Record<keyof IWine, any> = {
-  denominazioneVino: {
-    type: String,
-    required: true,
-    minlength: 5,
-    unique: true,
-  },
-  aka: String,
-  espressioneComunitaria: {
-    type: String,
-    enum: ['DOP', 'IGP', 'ND'],
-  },
-  denominazioneZona: {
-    type: String,
-    enum: ['DOC', 'DOCG', 'IGT', 'Vino varietale', 'Vino generico'],
-  },
-  regione: {
-    type: String,
-    enum: Object.values(MongooseRegioni),
-    required: true,
-  },
-};
+export default class Wines extends MongoDataSource<IWineDoc, Context> {
+  async getWineByName(
+    wineName: string | undefined
+  ): Promise<WineGraphQl | null> {
+    //return this.model.findById(ad.postedBy).lean().exec();
+    return this.model.findOne({ denominazioneVino: wineName }).lean().exec();
+  }
+  async getWine(id: string): Promise<IWineDoc | null | undefined> {
+    return this.findOneById(id);
+  }
+  async getWines(): Promise<WineGraphQl[]> {
+    return this.model.find({}).lean().exec();
+  }
 
-const wineSchema = new Schema(wineSchemaFields);
+  async createWine(wine: WineInput): Promise<Response> {
+    const errors: Errors[] = [];
+    const createdWine = new this.model(wine);
+    try {
+      await createdWine.save();
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      errors.push({ name: 'General Error', text: e.message });
+      return {
+        response: null,
+        errors,
+      };
+    }
+    return {
+      response: createdWine,
+      errors,
+    };
+  }
 
-wineSchema.plugin(mongooseUniqueValidator);
+  async updateWine(wine: WineInputUpdate): Promise<Response> {
+    const errors: Errors[] = [];
+    const updatedWine = await this.model.findByIdAndUpdate(wine._id, wine, {
+      new: true,
+    });
+    if (!updatedWine) {
+      errors.push({
+        name: 'General error',
+        text: 'Errors during the wine update',
+      });
+      return {
+        response: null,
+        errors,
+      };
+    }
+    return {
+      response: updatedWine,
+      errors,
+    };
+  }
 
-export const Wine = mongoose.model<IWineDoc>('Wine', wineSchema);
+  async deleteWine(wineId: string): Promise<Response> {
+    const errors: Errors[] = [];
+    const deletedWine = await this.model
+      .findByIdAndDelete(wineId)
+      .lean()
+      .exec();
+    if (!deletedWine) {
+      errors.push({
+        name: 'General error',
+        text: 'Errors during the wine delete',
+      });
+      return {
+        response: null,
+        errors,
+      };
+    }
+    return {
+      response: deletedWine,
+      errors,
+    };
+  }
+}

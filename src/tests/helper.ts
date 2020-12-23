@@ -35,6 +35,7 @@ const createTestServer = (ctx: any) => {
       Scalars,
     ],
     dataSources: () => ({ ads, users }),
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     context: () => ctx,
     mocks: true,
     mockEntireSchema: false,
