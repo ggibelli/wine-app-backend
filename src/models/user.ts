@@ -10,7 +10,6 @@ import { IReviewDoc } from './review';
 import { IVineyardDoc } from './vineyard';
 import { MetodoProduttivo } from '../types';
 import { METODOPRODUTTIVO } from '../utils/enumMongooseHelper';
-import DataLoader from 'dataloader';
 
 import bcrypt from 'bcrypt';
 
@@ -50,11 +49,11 @@ export interface IUser {
 }
 
 export interface IUserDoc extends IUser, Document {
-  validatePassword(password: string): boolean;
+  validatePassword(password: string): Promise<boolean>;
 }
 
 export interface UserGraphQl extends IUser {
-  validatePassword(password: string): boolean;
+  validatePassword(password: string): Promise<boolean>;
   _id: mongoose.Types.ObjectId;
 }
 
@@ -200,8 +199,3 @@ userSchema.methods.validatePassword = async function (pass: string) {
 userSchema.plugin(mongooseUniqueValidator);
 
 export const User = mongoose.model<IUserDoc>('User', userSchema);
-
-export const getUserLoader = () =>
-  new DataLoader(async (userIds) => {
-    return User.find({ _id: { $in: userIds } }).exec();
-  });

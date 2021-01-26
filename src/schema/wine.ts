@@ -33,8 +33,8 @@ export const typeDefs = gql`
   }
 
   extend type Query {
-    wines: [Wine!] @authenticated
-    wine(id: ID!): Wine @authenticated
+    wines: [Wine!]
+    wine(id: ID!): Wine
   }
 
   extend type Mutation {

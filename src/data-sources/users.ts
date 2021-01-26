@@ -18,7 +18,7 @@ interface Context {
   createTokenMail(user: IUserDoc): string;
 }
 
-interface AuthResponse {
+export interface AuthResponse {
   response: {
     user: IUserDoc | UserGraphQl;
     token: string;
@@ -27,7 +27,7 @@ interface AuthResponse {
   errors: Errors[];
 }
 
-interface UserResponse {
+export interface UserResponse {
   response: UserGraphQl | null;
   errors: Errors[];
 }
@@ -185,7 +185,8 @@ export default class Users extends MongoDataSource<IUserDoc, Context> {
         errors,
       };
     }
-    if (!user?.validatePassword(password)) {
+    const passValid = await user?.validatePassword(password);
+    if (!passValid) {
       errors.push({ name: 'UserInputError', text: 'Wrong credentials' });
       return {
         response: null,

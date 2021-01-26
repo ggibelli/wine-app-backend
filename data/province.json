@@ -1,0 +1,430 @@
+[
+  {
+    "provincia": "TO",
+    "regione": "Piemonte"
+  },
+  {
+    "provincia": "VC",
+    "regione": "Piemonte"
+  },
+  {
+    "provincia": "NO",
+    "regione": "Piemonte"
+  },
+  {
+    "provincia": "CN",
+    "regione": "Piemonte"
+  },
+  {
+    "provincia": "AT",
+    "regione": "Piemonte"
+  },
+  {
+    "provincia": "AL",
+    "regione": "Piemonte"
+  },
+  {
+    "provincia": "BI",
+    "regione": "Piemonte"
+  },
+  {
+    "provincia": "VB",
+    "regione": "Piemonte"
+  },
+  {
+    "provincia": "AO",
+    "regione": "Valle d'Aosta/Vallée d'Aoste"
+  },
+  {
+    "provincia": "VA",
+    "regione": "Lombardia"
+  },
+  {
+    "provincia": "CO",
+    "regione": "Lombardia"
+  },
+  {
+    "provincia": "SO",
+    "regione": "Lombardia"
+  },
+  {
+    "provincia": "MI",
+    "regione": "Lombardia"
+  },
+  {
+    "provincia": "BG",
+    "regione": "Lombardia"
+  },
+  {
+    "provincia": "BS",
+    "regione": "Lombardia"
+  },
+  {
+    "provincia": "PV",
+    "regione": "Lombardia"
+  },
+  {
+    "provincia": "CR",
+    "regione": "Lombardia"
+  },
+  {
+    "provincia": "MN",
+    "regione": "Lombardia"
+  },
+  {
+    "provincia": "LC",
+    "regione": "Lombardia"
+  },
+  {
+    "provincia": "LO",
+    "regione": "Lombardia"
+  },
+  {
+    "provincia": "MB",
+    "regione": "Lombardia"
+  },
+  {
+    "provincia": "BZ",
+    "regione": "Trentino-Alto Adige/Südtirol"
+  },
+  {
+    "provincia": "TN",
+    "regione": "Trentino-Alto Adige/Südtirol"
+  },
+  {
+    "provincia": "VR",
+    "regione": "Veneto"
+  },
+  {
+    "provincia": "VI",
+    "regione": "Veneto"
+  },
+  {
+    "provincia": "BL",
+    "regione": "Veneto"
+  },
+  {
+    "provincia": "TV",
+    "regione": "Veneto"
+  },
+  {
+    "provincia": "VE",
+    "regione": "Veneto"
+  },
+  {
+    "provincia": "PD",
+    "regione": "Veneto"
+  },
+  {
+    "provincia": "RO",
+    "regione": "Veneto"
+  },
+  {
+    "provincia": "UD",
+    "regione": "Friuli-Venezia Giulia"
+  },
+  {
+    "provincia": "GO",
+    "regione": "Friuli-Venezia Giulia"
+  },
+  {
+    "provincia": "TS",
+    "regione": "Friuli-Venezia Giulia"
+  },
+  {
+    "provincia": "PN",
+    "regione": "Friuli-Venezia Giulia"
+  },
+  {
+    "provincia": "IM",
+    "regione": "Liguria"
+  },
+  {
+    "provincia": "SV",
+    "regione": "Liguria"
+  },
+  {
+    "provincia": "GE",
+    "regione": "Liguria"
+  },
+  {
+    "provincia": "SP",
+    "regione": "Liguria"
+  },
+  {
+    "provincia": "PC",
+    "regione": "Emilia-Romagna"
+  },
+  {
+    "provincia": "PR",
+    "regione": "Emilia-Romagna"
+  },
+  {
+    "provincia": "RE",
+    "regione": "Emilia-Romagna"
+  },
+  {
+    "provincia": "MO",
+    "regione": "Emilia-Romagna"
+  },
+  {
+    "provincia": "BO",
+    "regione": "Emilia-Romagna"
+  },
+  {
+    "provincia": "FE",
+    "regione": "Emilia-Romagna"
+  },
+  {
+    "provincia": "RA",
+    "regione": "Emilia-Romagna"
+  },
+  {
+    "provincia": "FC",
+    "regione": "Emilia-Romagna"
+  },
+  {
+    "provincia": "RN",
+    "regione": "Emilia-Romagna"
+  },
+  {
+    "provincia": "MS",
+    "regione": "Toscana"
+  },
+  {
+    "provincia": "LU",
+    "regione": "Toscana"
+  },
+  {
+    "provincia": "PT",
+    "regione": "Toscana"
+  },
+  {
+    "provincia": "FI",
+    "regione": "Toscana"
+  },
+  {
+    "provincia": "LI",
+    "regione": "Toscana"
+  },
+  {
+    "provincia": "PI",
+    "regione": "Toscana"
+  },
+  {
+    "provincia": "AR",
+    "regione": "Toscana"
+  },
+  {
+    "provincia": "SI",
+    "regione": "Toscana"
+  },
+  {
+    "provincia": "GR",
+    "regione": "Toscana"
+  },
+  {
+    "provincia": "PO",
+    "regione": "Toscana"
+  },
+  {
+    "provincia": "PG",
+    "regione": "Umbria"
+  },
+  {
+    "provincia": "TR",
+    "regione": "Umbria"
+  },
+  {
+    "provincia": "PU",
+    "regione": "Marche"
+  },
+  {
+    "provincia": "AN",
+    "regione": "Marche"
+  },
+  {
+    "provincia": "MC",
+    "regione": "Marche"
+  },
+  {
+    "provincia": "AP",
+    "regione": "Marche"
+  },
+  {
+    "provincia": "FM",
+    "regione": "Marche"
+  },
+  {
+    "provincia": "VT",
+    "regione": "Lazio"
+  },
+  {
+    "provincia": "RI",
+    "regione": "Lazio"
+  },
+  {
+    "provincia": "RM",
+    "regione": "Lazio"
+  },
+  {
+    "provincia": "LT",
+    "regione": "Lazio"
+  },
+  {
+    "provincia": "FR",
+    "regione": "Lazio"
+  },
+  {
+    "provincia": "AQ",
+    "regione": "Abruzzo"
+  },
+  {
+    "provincia": "TE",
+    "regione": "Abruzzo"
+  },
+  {
+    "provincia": "PE",
+    "regione": "Abruzzo"
+  },
+  {
+    "provincia": "CH",
+    "regione": "Abruzzo"
+  },
+  {
+    "provincia": "CB",
+    "regione": "Molise"
+  },
+  {
+    "provincia": "IS",
+    "regione": "Molise"
+  },
+  {
+    "provincia": "CE",
+    "regione": "Campania"
+  },
+  {
+    "provincia": "BN",
+    "regione": "Campania"
+  },
+  {
+    "provincia": "NA",
+    "regione": "Campania"
+  },
+  {
+    "provincia": "AV",
+    "regione": "Campania"
+  },
+  {
+    "provincia": "SA",
+    "regione": "Campania"
+  },
+  {
+    "provincia": "FG",
+    "regione": "Puglia"
+  },
+  {
+    "provincia": "BA",
+    "regione": "Puglia"
+  },
+  {
+    "provincia": "TA",
+    "regione": "Puglia"
+  },
+  {
+    "provincia": "BR",
+    "regione": "Puglia"
+  },
+  {
+    "provincia": "LE",
+    "regione": "Puglia"
+  },
+  {
+    "provincia": "BT",
+    "regione": "Puglia"
+  },
+  {
+    "provincia": "PZ",
+    "regione": "Basilicata"
+  },
+  {
+    "provincia": "MT",
+    "regione": "Basilicata"
+  },
+  {
+    "provincia": "CS",
+    "regione": "Calabria"
+  },
+  {
+    "provincia": "CZ",
+    "regione": "Calabria"
+  },
+  {
+    "provincia": "RC",
+    "regione": "Calabria"
+  },
+  {
+    "provincia": "KR",
+    "regione": "Calabria"
+  },
+  {
+    "provincia": "VV",
+    "regione": "Calabria"
+  },
+  {
+    "provincia": "TP",
+    "regione": "Sicilia"
+  },
+  {
+    "provincia": "PA",
+    "regione": "Sicilia"
+  },
+  {
+    "provincia": "ME",
+    "regione": "Sicilia"
+  },
+  {
+    "provincia": "AG",
+    "regione": "Sicilia"
+  },
+  {
+    "provincia": "CL",
+    "regione": "Sicilia"
+  },
+  {
+    "provincia": "EN",
+    "regione": "Sicilia"
+  },
+  {
+    "provincia": "CT",
+    "regione": "Sicilia"
+  },
+  {
+    "provincia": "RG",
+    "regione": "Sicilia"
+  },
+  {
+    "provincia": "SR",
+    "regione": "Sicilia"
+  },
+  {
+    "provincia": "SS",
+    "regione": "Sardegna"
+  },
+  {
+    "provincia": "NU",
+    "regione": "Sardegna"
+  },
+  {
+    "provincia": "CA",
+    "regione": "Sardegna"
+  },
+  {
+    "provincia": "OR",
+    "regione": "Sardegna"
+  },
+  {
+    "provincia": "SU",
+    "regione": "Sardegna"
+  }
+]

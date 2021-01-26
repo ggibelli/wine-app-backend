@@ -22,7 +22,7 @@ const wineSchemaFields: Record<keyof IWine, any> = {
   denominazioneVino: {
     type: String,
     required: true,
-    minlength: 5,
+    minlength: 2,
     unique: true,
   },
   aka: String,

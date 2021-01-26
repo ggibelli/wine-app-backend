@@ -33,9 +33,9 @@ export const resolver: StringIndexed<Resolvers> = {
   Query: {
     async messagesToUser(
       _,
-      { sentTo },
+      { sentTo }: { sentTo: string },
       { dataSources }: { dataSources: MongoDataSource }
-    ) {
+    ): Promise<MessageGraphQl[]> {
       return dataSources.messages.getMessagesTo(sentTo);
     },
     async messagesForNegotiation(

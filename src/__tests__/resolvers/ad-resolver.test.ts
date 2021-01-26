@@ -8,7 +8,6 @@ jest.mock('apollo-server-express', () => ({
 }));
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import resolvers from '../../resolvers';
-import { ObjectId } from 'mongodb';
 
 const mockContext = {
   dataSources: {
@@ -43,7 +42,6 @@ const { updateAd } = mockContext.dataSources.ads;
 const { getNegotiationsForAd } = mockContext.dataSources.negotiations;
 const { deleteAd } = mockContext.dataSources.ads;
 const { deleteMany } = mockContext.dataSources.negotiations;
-const { updateNegotiation } = mockContext.dataSources.negotiations;
 const { getUser } = mockContext.dataSources.users;
 const { getVineyardByName } = mockContext.dataSources.vineyards;
 const { getWineByName } = mockContext.dataSources.wines;

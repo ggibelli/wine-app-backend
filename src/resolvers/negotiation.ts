@@ -66,6 +66,7 @@ export const resolver: StringIndexed<Resolvers> = {
     },
   },
   Mutation: {
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     async createNegotiation(
       _,
       { negotiation }: { negotiation: NegotiationInput },

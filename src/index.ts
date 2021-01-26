@@ -34,6 +34,7 @@ import {
 
 import { createToken, getUserFromToken, createTokenMail } from './utils/auth';
 import { confirmationRouter } from './controllers/accountConfirmation';
+import cors from 'cors';
 
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
@@ -104,8 +105,7 @@ const server = new ApolloServer({
     return { user, createToken, createTokenMail };
   },
   subscriptions: {
-    async onConnect(connParams) {
-      // @ts-ignore
+    async onConnect(connParams: any) {
       const token = connParams.authorization;
       const user = await getUserFromToken(token);
       if (!user) throw new AuthenticationError('need to login');
@@ -119,6 +119,7 @@ const server = new ApolloServer({
 export const app = express();
 server.applyMiddleware({ app });
 app.use(confirmationRouter);
+app.use(cors);
 const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 

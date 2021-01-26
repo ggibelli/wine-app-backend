@@ -6,109 +6,109 @@ export const typeDefs = gql`
     AL
     AN
     AO
-    AR
     AP
+    AQ
+    AR
     AT
     AV
     BA
-    BL
-    BN
     BG
     BI
+    BL
+    BN
     BO
-    BZ
-    BS
     BR
+    BS
+    BT
+    BZ
     CA
-    CL
     CB
     CE
+    CH
+    CL
+    CN
+    CO
+    CR
+    CS
     CT
     CZ
-    CH
-    CO
-    CS
-    CR
-    KR
-    CN
     EN
-    FM
-    FE
-    FI
-    FG
-    FO
     FC
+    FE
+    FG
+    FI
+    FM
     FR
     GE
     GO
     GR
     IM
     IS
-    SP
-    AQ
-    LT
-    LE
+    KR
     LC
+    LE
     LI
     LO
+    LT
     LU
+    MB
     MC
-    MN
-    MS
-    MT
     ME
     MI
+    MN
     MO
-    MB
+    MS
+    MT
     NA
     NO
     NU
     OR
-    PD
     PA
-    PR
-    PV
-    PG
-    PS
-    PU
-    PE
     PC
+    PD
+    PE
+    PG
     PI
-    PT
     PN
-    PZ
     PO
-    RG
+    PR
+    PT
+    PU
+    PV
+    PZ
     RA
     RC
     RE
+    RG
     RI
-    RN
     RM
+    RN
     RO
     SA
-    SS
-    SV
     SI
-    SR
     SO
+    SP
+    SR
+    SS
+    SU
+    SV
     TA
     TE
-    TR
+    TN
     TO
     TP
-    TN
-    TV
+    TR
     TS
+    TV
     UD
     VA
-    VE
     VB
     VC
-    VR
-    VV
+    VE
     VI
+    VR
     VT
+    VV
   }
 
   enum Regioni {
@@ -128,8 +128,7 @@ export const typeDefs = gql`
     SARDEGNA
     SICILIA
     TOSCANA
-    BOLZANO
-    TRENTO
+    TRENTINO
     UMBRIA
     VALDAOSTA
     VENETO

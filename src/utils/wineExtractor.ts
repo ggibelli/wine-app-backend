@@ -3,8 +3,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import csvParse from 'csv-parse/lib/sync';
 import fs from 'fs/promises';
-import { IWine } from '../models/wine';
-import { DenomZona, EspressioneComunitaria, Regioni } from '../types';
+import { IWine, Wine } from '../models/wine';
+import {
+  DenomZona,
+  EspressioneComunitaria,
+  Regioni,
+} from '../generated/graphql';
 import mongoose from 'mongoose';
 
 interface WineDb {
@@ -36,6 +40,14 @@ const createWineDb = async (): Promise<IWine[]> => {
         denominazioneZona: wine[3],
         regione: wine[4],
       });
+    }
+  }
+  for (const wine of wineDb) {
+    const wineNew = new Wine(wine);
+    try {
+      await wineNew.save();
+    } catch (e) {
+      console.log(e);
     }
   }
   return wineDb;

@@ -12,7 +12,7 @@ import {
   QueryOrderBy,
   Colore,
   Rating,
-  //Errors,
+  Errors,
 } from '../types';
 import mongoose from 'mongoose';
 
@@ -55,7 +55,7 @@ export type Scalars = {
 export type Address = {
   __typename?: 'Address';
   via: Scalars['String'];
-  CAP: Scalars['Int'];
+  CAP: Scalars['String'];
   comune: Scalars['String'];
   provincia: Province;
   regione: Regioni;
@@ -63,7 +63,7 @@ export type Address = {
 
 export type AddressInput = {
   via: Scalars['String'];
-  CAP: Scalars['Int'];
+  CAP: Scalars['String'];
   comune: Scalars['String'];
   provincia: Province;
   regione: Regioni;
@@ -405,11 +405,11 @@ export { EspressioneComunitaria };
 
 export { DenomZona };
 
-export type Errors = {
-  __typename?: 'Errors';
-  name?: Maybe<Scalars['String']>;
-  text?: Maybe<Scalars['String']>;
-};
+// export type Errors = {
+//   __typename?: 'Errors';
+//   name?: Maybe<Scalars['String']>;
+//   text?: Maybe<Scalars['String']>;
+// };
 
 export type MessageInput = {
   content: Scalars['String'];
@@ -460,7 +460,7 @@ export type Negotiation = {
 export type NegotiationPayload = {
   __typename?: 'NegotiationPayload';
   response?: Maybe<Negotiation>;
-  errors?: Maybe<mongoose.Types.Array<Maybe<Errors>>>;
+  errors?: Maybe<Array<Maybe<Errors>>>;
 };
 
 export type ReviewInput = {
@@ -1479,109 +1479,109 @@ export type ProvinceResolvers = EnumResolverSignature<
     AL?: any;
     AN?: any;
     AO?: any;
-    AR?: any;
     AP?: any;
+    AQ?: any;
+    AR?: any;
     AT?: any;
     AV?: any;
     BA?: any;
-    BL?: any;
-    BN?: any;
     BG?: any;
     BI?: any;
+    BL?: any;
+    BN?: any;
     BO?: any;
-    BZ?: any;
-    BS?: any;
     BR?: any;
+    BS?: any;
+    BT?: any;
+    BZ?: any;
     CA?: any;
-    CL?: any;
     CB?: any;
     CE?: any;
+    CH?: any;
+    CL?: any;
+    CN?: any;
+    CO?: any;
+    CR?: any;
+    CS?: any;
     CT?: any;
     CZ?: any;
-    CH?: any;
-    CO?: any;
-    CS?: any;
-    CR?: any;
-    KR?: any;
-    CN?: any;
     EN?: any;
-    FM?: any;
-    FE?: any;
-    FI?: any;
-    FG?: any;
-    FO?: any;
     FC?: any;
+    FE?: any;
+    FG?: any;
+    FI?: any;
+    FM?: any;
     FR?: any;
     GE?: any;
     GO?: any;
     GR?: any;
     IM?: any;
     IS?: any;
-    SP?: any;
-    AQ?: any;
-    LT?: any;
-    LE?: any;
+    KR?: any;
     LC?: any;
+    LE?: any;
     LI?: any;
     LO?: any;
+    LT?: any;
     LU?: any;
+    MB?: any;
     MC?: any;
-    MN?: any;
-    MS?: any;
-    MT?: any;
     ME?: any;
     MI?: any;
+    MN?: any;
     MO?: any;
-    MB?: any;
+    MS?: any;
+    MT?: any;
     NA?: any;
     NO?: any;
     NU?: any;
     OR?: any;
-    PD?: any;
     PA?: any;
-    PR?: any;
-    PV?: any;
-    PG?: any;
-    PS?: any;
-    PU?: any;
-    PE?: any;
     PC?: any;
+    PD?: any;
+    PE?: any;
+    PG?: any;
     PI?: any;
-    PT?: any;
     PN?: any;
-    PZ?: any;
     PO?: any;
-    RG?: any;
+    PR?: any;
+    PT?: any;
+    PU?: any;
+    PV?: any;
+    PZ?: any;
     RA?: any;
     RC?: any;
     RE?: any;
+    RG?: any;
     RI?: any;
-    RN?: any;
     RM?: any;
+    RN?: any;
     RO?: any;
     SA?: any;
-    SS?: any;
-    SV?: any;
     SI?: any;
-    SR?: any;
     SO?: any;
+    SP?: any;
+    SR?: any;
+    SS?: any;
+    SU?: any;
+    SV?: any;
     TA?: any;
     TE?: any;
-    TR?: any;
+    TN?: any;
     TO?: any;
     TP?: any;
-    TN?: any;
-    TV?: any;
+    TR?: any;
     TS?: any;
+    TV?: any;
     UD?: any;
     VA?: any;
-    VE?: any;
     VB?: any;
     VC?: any;
-    VR?: any;
-    VV?: any;
+    VE?: any;
     VI?: any;
+    VR?: any;
     VT?: any;
+    VV?: any;
   },
   ResolversTypes['Province']
 >;
@@ -1604,8 +1604,7 @@ export type RegioniResolvers = EnumResolverSignature<
     SARDEGNA?: any;
     SICILIA?: any;
     TOSCANA?: any;
-    BOLZANO?: any;
-    TRENTO?: any;
+    TRENTINO?: any;
     UMBRIA?: any;
     VALDAOSTA?: any;
     VENETO?: any;

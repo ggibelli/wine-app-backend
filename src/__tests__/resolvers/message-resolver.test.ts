@@ -47,14 +47,7 @@ const mockContext = {
   },
   user: { _id: '321', email: 'a@a.a' },
 };
-const { getAd } = mockContext.dataSources.ads;
-const { getNegotiationsForUser } = mockContext.dataSources.negotiations;
-const { getNegotiationsForAd } = mockContext.dataSources.negotiations;
-const { getNegotiations } = mockContext.dataSources.negotiations;
 const { getNegotiation } = mockContext.dataSources.negotiations;
-const { createNegotiation } = mockContext.dataSources.negotiations;
-const { deleteNegotiation } = mockContext.dataSources.negotiations;
-const { updateNegotiation } = mockContext.dataSources.negotiations;
 const { getUser } = mockContext.dataSources.users;
 const { getMessagesForNegotiation } = mockContext.dataSources.messages;
 const { getMessagesTo } = mockContext.dataSources.messages;
