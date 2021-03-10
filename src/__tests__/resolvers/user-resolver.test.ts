@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 const publish = jest.fn();
 const filter = jest.fn();
 jest.mock('apollo-server-express', () => ({
@@ -110,6 +111,7 @@ describe('User resolvers', () => {
   });
 
   it('me query return user in context', async () => {
+    //@ts-ignore
     const res = await resolvers.Query?.me(null, null, mockContext);
     expect(res).toEqual({ _id: '123', email: 'a@a.a' });
   });
@@ -124,6 +126,7 @@ describe('User resolvers', () => {
       },
       errors: [],
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.createUser(
       null,
       {
@@ -153,6 +156,7 @@ describe('User resolvers', () => {
       },
       errors: [],
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.updateUser(
       null,
       {
@@ -182,6 +186,7 @@ describe('User resolvers', () => {
       },
       errors: [],
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.deleteUser(
       null,
       {
@@ -210,6 +215,7 @@ describe('User resolvers', () => {
       },
       errors: [],
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.login(
       null,
       {
@@ -231,12 +237,14 @@ describe('User resolvers', () => {
 
   it('User ads calls getAdsByUser', async () => {
     getAdsByUser.mockReturnValueOnce([{ id: 1 }]);
+    //@ts-ignore
     const res = await resolvers.User?.ads({ _id: '123' }, null, mockContext);
     expect(res).toEqual([{ id: 1 }]);
   });
 
   it('User messages calls getMessages if same user', async () => {
     getMessages.mockReturnValueOnce([{ id: 1 }]);
+    //@ts-ignore
     const res = await resolvers.User?.messages(
       { _id: '123' },
       null,
@@ -248,6 +256,7 @@ describe('User resolvers', () => {
   it('User messages throws error if not same user', async () => {
     expect.assertions(1);
     try {
+      //@ts-ignore
       await resolvers.User?.messages({ _id: '999' }, null, mockContext);
     } catch (e) {
       expect(e).toBeTruthy();
@@ -256,6 +265,7 @@ describe('User resolvers', () => {
 
   it('User negotiations calls getNegotiations if same user', async () => {
     getNegotiations.mockReturnValueOnce([{ id: 1 }]);
+    //@ts-ignore
     const res = await resolvers.User?.negotiations(
       { _id: '123' },
       null,
@@ -267,6 +277,7 @@ describe('User resolvers', () => {
   it('User negotiations throws error if not same user', async () => {
     expect.assertions(1);
     try {
+      //@ts-ignore
       await resolvers.User?.negotiations({ _id: '999' }, null, mockContext);
     } catch (e) {
       expect(e).toBeTruthy();
@@ -275,6 +286,7 @@ describe('User resolvers', () => {
 
   it('User reviews calls getReviews if same user', async () => {
     getReviews.mockReturnValueOnce([{ id: 1 }]);
+    //@ts-ignore
     const res = await resolvers.User?.reviews(
       { _id: '123' },
       null,
@@ -286,6 +298,7 @@ describe('User resolvers', () => {
   it('User reviews throws error if not same user', async () => {
     expect.assertions(1);
     try {
+      //@ts-ignore
       await resolvers.User?.reviews({ _id: '999' }, null, mockContext);
     } catch (e) {
       expect(e).toBeTruthy();
@@ -293,6 +306,7 @@ describe('User resolvers', () => {
   });
 
   it('User email is shown if public', () => {
+    //@ts-ignore
     const res = resolvers.User?.email(
       { _id: '13', hideContact: false, email: 'yoyoyo@yoyoyo.yo' },
       null,
@@ -302,6 +316,7 @@ describe('User resolvers', () => {
   });
 
   it('User email is not shown if private', () => {
+    //@ts-ignore
     const res = resolvers.User?.email(
       { _id: '13', hideContact: true, email: 'yoyoyo@yoyoyo.yo' },
       null,
@@ -311,6 +326,7 @@ describe('User resolvers', () => {
   });
 
   it('User phone number is shown if public', () => {
+    //@ts-ignore
     const res = resolvers.User?.phoneNumber(
       { _id: '13', hideContact: false, phoneNumber: '1234567890' },
       null,
@@ -320,6 +336,7 @@ describe('User resolvers', () => {
   });
 
   it('User phone number is not shown if private', () => {
+    //@ts-ignore
     const res = resolvers.User?.phoneNumber(
       { _id: '13', hideContact: true, phoneNumber: '1234567890' },
       null,

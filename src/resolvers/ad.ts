@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
+
 import Ads, { FollowUp } from '../data-sources/ads';
 import Users from '../data-sources/users';
 import Wines from '../data-sources/wines';
@@ -40,7 +40,10 @@ type StringIndexed<T> = T & StringIndexSignatureInterface;
 
 export const resolver: StringIndexed<Resolvers> = {
   Query: {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
     async ads(_, args, { dataSources }: { dataSources: MongoDataSource }) {
+      console.log(args);
       return dataSources.ads.getAds(args);
     },
     async ad(

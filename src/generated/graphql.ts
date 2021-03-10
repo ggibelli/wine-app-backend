@@ -192,10 +192,16 @@ export type AdPayload = {
   errors?: Maybe<Array<Maybe<Errors>>>;
 };
 
+export type AdsResult = {
+  __typename?: 'AdsResult';
+  ads?: Maybe<Array<Ad>>;
+  pageCount?: Maybe<Scalars['Int']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   ad?: Maybe<Ad>;
-  ads?: Maybe<mongoose.Types.Array<Maybe<Ad>>>;
+  ads?: Maybe<AdsResult>;
   me?: Maybe<User>;
   message?: Maybe<Message>;
   messages?: Maybe<mongoose.Types.Array<Message>>;
@@ -776,6 +782,13 @@ export type ResolversTypes = ResolversObject<{
   ID: ResolverTypeWrapper<Partial<Scalars['ID']>>;
   AdInputUpdate: ResolverTypeWrapper<Partial<AdInputUpdate>>;
   Ad: ResolverTypeWrapper<AdGraphQl>;
+  AdsResult: ResolverTypeWrapper<
+    Partial<
+      Omit<AdsResult, 'ads'> & {
+        ads?: Maybe<Array<Maybe<ResolversTypes['Ad']>>>;
+      }
+    >
+  >;
   Boolean: ResolverTypeWrapper<Partial<Scalars['Boolean']>>;
   AdWine: ResolverTypeWrapper<
     Partial<
@@ -908,6 +921,11 @@ export type ResolversParentTypes = ResolversObject<{
   ID: Partial<Scalars['ID']>;
   AdInputUpdate: Partial<AdInputUpdate>;
   Ad: AdGraphQl;
+  AdsResult: Partial<
+    Omit<AdsResult, 'ads'> & {
+      ads?: Maybe<Array<Maybe<ResolversParentTypes['Ad']>>>;
+    }
+  >;
   Boolean: Partial<Scalars['Boolean']>;
   AdWine: Partial<
     Omit<AdWine, 'postedBy' | 'wine'> & {
@@ -1183,6 +1201,19 @@ export type AdGrapeResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type AdsResultResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['AdsResult'] = ResolversParentTypes['AdsResult']
+> = ResolversObject<{
+  ads?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Ad']>>>,
+    ParentType,
+    ContextType
+  >;
+  pageCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type AdPayloadResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['AdPayload'] = ResolversParentTypes['AdPayload']
@@ -1207,7 +1238,7 @@ export type QueryResolvers<
     RequireFields<QueryAdArgs, 'id'>
   >;
   ads?: Resolver<
-    Maybe<Array<Maybe<ResolversTypes['Ad']>>>,
+    Maybe<Maybe<ResolversTypes['AdsResult']>>,
     ParentType,
     ContextType,
     RequireFields<QueryAdsArgs, 'typeAd' | 'typeProduct'>
@@ -1824,7 +1855,7 @@ export type UserResolvers<
   >;
   isAdmin?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   hideContact?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  ads?: Resolver<Maybe<Array<ResolversTypes['Ad']>>, ParentType, ContextType>;
+  ads?: Resolver<Maybe<Array<ResolversTypes['Ads']>>, ParentType, ContextType>;
   messages?: Resolver<
     Maybe<Array<ResolversTypes['Message']>>,
     ParentType,
@@ -1966,6 +1997,8 @@ export type WinePayloadResolvers<
 export type Resolvers<ContextType = any> = ResolversObject<{
   Address?: AddressResolvers<ContextType>;
   Ad?: AdResolvers<ContextType>;
+  AdsResult?: AdsResultResolvers<ContextType>;
+
   AdWine?: AdWineResolvers<ContextType>;
   AdGrape?: AdGrapeResolvers<ContextType>;
   AdPayload?: AdPayloadResolvers<ContextType>;

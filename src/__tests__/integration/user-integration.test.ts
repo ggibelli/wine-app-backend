@@ -22,7 +22,7 @@ import { Review } from '../../models/review';
 import { Vineyard } from '../../models/vineyard';
 import { Wine } from '../../models/wine';
 import createVineyardDb from '../../utils/vineyardExtractor';
-import createWineDb from '../../utils/wineExtractor';
+// import createWineDb from '../../utils/wineExtractor';
 import cron from 'cron';
 
 const fakeStart = jest.fn(() => fakeStop());
@@ -243,8 +243,8 @@ const USER = gql`
 
 const indirizzo = {
   via: 'asd asddasd',
-  CAP: 12345,
-  comune: 'aaaa',
+  CAP: '12345',
+  comune: 'aaaaa',
   provincia: Province.AT,
   regione: Regioni.PIEMONTE,
 };
@@ -254,7 +254,7 @@ beforeAll(async () => {
   await dropTestDb();
   const usersMock = users();
   const adsMock = ads();
-  const wineDb = await createWineDb();
+  // const wineDb = await createWineDb();
   const vineyardDb = createVineyardDb();
   const user = new User(usersMock[0]);
   const otherUser = new User(usersMock[1]);
@@ -291,7 +291,12 @@ beforeAll(async () => {
     content: 'very poor',
   });
   const vineyard = new Vineyard(vineyardDb[0]);
-  const wine = new Wine(wineDb[0]);
+  const wine = new Wine({
+    denominazioneVino: 'Abruzzo',
+    espressioneComunitaria: 'DOP',
+    denominazioneZona: 'DOC',
+    regione: [Regioni.ABRUZZO],
+  });
   const message = new Message({
     negotiation: negotiation,
     sentBy: negotiation.createdBy,

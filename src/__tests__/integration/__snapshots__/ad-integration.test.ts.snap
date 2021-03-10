@@ -174,9 +174,11 @@ Object {
 exports[`Integration test ads query ads wine in sale fails if not logged in 1`] = `
 Object {
   "data": Object {
-    "ads": Array [
-      null,
-    ],
+    "ads": Object {
+      "ads": Array [
+        null,
+      ],
+    },
   },
   "errors": Array [
     Object {
@@ -185,12 +187,13 @@ Object {
       },
       "locations": Array [
         Object {
-          "column": 3,
-          "line": 3,
+          "column": 7,
+          "line": 5,
         },
       ],
       "message": "You need to login to continue",
       "path": Array [
+        "ads",
         "ads",
         0,
         "postedBy",
@@ -203,19 +206,21 @@ Object {
 exports[`Integration test ads query ads wine in sale succeds if logged in 1`] = `
 Object {
   "data": Object {
-    "ads": Array [
-      Object {
-        "abv": 12,
-        "activeNegotiations": 0,
-        "datePosted": "17 Dec, 95",
-        "harvest": 2020,
-        "postedBy": Object {
-          "firstName": "Giovanni",
+    "ads": Object {
+      "ads": Array [
+        Object {
+          "abv": 12,
+          "activeNegotiations": 0,
+          "datePosted": "17 Dec, 95",
+          "harvest": 2020,
+          "postedBy": Object {
+            "firstName": "Giovanni",
+          },
+          "priceFrom": 1,
+          "priceTo": 1.5,
         },
-        "priceFrom": 1,
-        "priceTo": 1.5,
-      },
-    ],
+      ],
+    },
   },
 }
 `;

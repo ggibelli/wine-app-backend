@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 const publish = jest.fn();
 const filter = jest.fn();
 jest.mock('apollo-server-express', () => ({
@@ -113,6 +114,7 @@ describe('Ad resolvers', () => {
       errors: [],
       usersToNotify: [1],
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.createAd(
       null,
       {
@@ -153,6 +155,7 @@ describe('Ad resolvers', () => {
       response: null,
       errors: [{ name: 'error', text: 'error' }],
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.createAd(
       null,
       {
@@ -186,6 +189,7 @@ describe('Ad resolvers', () => {
       },
       { id: 5, createdBy: 7 },
     ]);
+    //@ts-ignore
     const res = await resolvers.Mutation?.updateAd(
       null,
       {
@@ -236,6 +240,7 @@ describe('Ad resolvers', () => {
       },
       errors: [],
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.updateAd(
       null,
       {
@@ -282,6 +287,7 @@ describe('Ad resolvers', () => {
       },
       { id: 5, createdBy: 7 },
     ]);
+    //@ts-ignore
     const res = await resolvers.Mutation?.deleteAd(
       null,
       {
@@ -317,6 +323,7 @@ describe('Ad resolvers', () => {
 
   it('ad type shows its type', async () => {
     const res = await resolvers.Ad?.__resolveType(
+      //@ts-ignore
       { typeProduct: 'AdWine' },
       null,
       mockContext
@@ -326,6 +333,7 @@ describe('Ad resolvers', () => {
 
   it('ad postedby succeeds', async () => {
     getUser.mockReturnValueOnce({ id: 1 });
+    //@ts-ignore
     const res = await resolvers.Ad?.postedBy(
       { postedBy: '123' },
       null,
@@ -342,6 +350,7 @@ describe('Ad resolvers', () => {
       },
       { id: 5, createdBy: 7 },
     ]);
+    //@ts-ignore
     const res = await resolvers.Ad?.activeNegotiations(
       { postedBy: '123' },
       null,
@@ -351,6 +360,7 @@ describe('Ad resolvers', () => {
   });
 
   it('ad numberViews shows number views ad', async () => {
+    //@ts-ignore
     const res = await resolvers.Ad?.numberViews(
       { postedBy: '123', viewedBy: [1, 2] },
       null,
@@ -364,6 +374,7 @@ describe('Ad resolvers', () => {
       { id: 3, createdBy: 4 },
       { id: 5, createdBy: 7 },
     ]);
+    //@ts-ignore
     const res = await resolvers.Ad?.negotiations(
       { postedBy: '123' },
       null,
@@ -380,6 +391,7 @@ describe('Ad resolvers', () => {
       wineName: 'vino',
       abv: 6.5,
     });
+    //@ts-ignore
     const res = await resolvers.AdWine?.wine(
       { wineName: 'vino' },
       null,
@@ -396,6 +408,7 @@ describe('Ad resolvers', () => {
       vineyardName: 'vigna',
       vendmmia: 2020,
     });
+    //@ts-ignore
     const res = await resolvers.AdGrape?.vineyard(
       { vineyardName: 'vigna' },
       null,

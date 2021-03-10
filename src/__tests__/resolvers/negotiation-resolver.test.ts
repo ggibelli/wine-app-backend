@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 const publish = jest.fn();
 const filter = jest.fn();
 jest.mock('apollo-server-express', () => ({
@@ -174,6 +175,7 @@ describe('Negotiation resolvers', () => {
       },
       errors: [],
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.createNegotiation(
       null,
       {
@@ -210,6 +212,7 @@ describe('Negotiation resolvers', () => {
       response: null,
       errors: [{ name: 'error', text: 'error' }],
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.createNegotiation(
       null,
       {
@@ -253,6 +256,7 @@ describe('Negotiation resolvers', () => {
       },
       { id: 5, createdBy: 7 },
     ]);
+    //@ts-ignore
     const res = await resolvers.Mutation?.updateNegotiation(
       null,
       {
@@ -289,7 +293,7 @@ describe('Negotiation resolvers', () => {
       response: null,
       errors: [{ name: 'error', text: 'text' }],
     });
-
+    //@ts-ignore
     const res = await resolvers.Mutation?.updateNegotiation(
       null,
       {
@@ -320,6 +324,7 @@ describe('Negotiation resolvers', () => {
       },
       errors: [],
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.deleteNegotiation(
       null,
       {
@@ -341,6 +346,7 @@ describe('Negotiation resolvers', () => {
 
   it('Negotiation createdBy calls getUser', async () => {
     getUser.mockReturnValueOnce({ id: 1 });
+    //@ts-ignore
     const res = await resolvers.Negotiation?.createdBy(
       { postedBy: '123' },
       null,
@@ -355,6 +361,7 @@ describe('Negotiation resolvers', () => {
       typeAd: 'SELL',
       postedBy: '123',
     });
+    //@ts-ignore
     const res = await resolvers.Negotiation?.ad(
       { ad: '123' },
       null,
@@ -365,6 +372,7 @@ describe('Negotiation resolvers', () => {
 
   it('Negotiation forUserAd calls getUser', async () => {
     getUser.mockReturnValueOnce({ id: 1 });
+    //@ts-ignore
     const res = await resolvers.Negotiation?.forUserAd(
       { forUserAd: { _id: '123' } },
       null,
@@ -375,6 +383,7 @@ describe('Negotiation resolvers', () => {
 
   it('Negotiation messages calls getMessagesForNegotiation', async () => {
     getMessagesForNegotiation.mockReturnValueOnce([{ id: 1 }, { id: 2 }]);
+    //@ts-ignore
     const res = await resolvers.Negotiation?.messages(
       { _id: '123' },
       null,

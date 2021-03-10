@@ -377,7 +377,7 @@ describe('Integration test negotiations', () => {
       forUserAd: ad[1].postedBy.toString(),
       type: ad[1].typeAd,
     };
-    const res = await mutate(CREATE_NEGOTIATION, {
+    const res: any = await mutate(CREATE_NEGOTIATION, {
       variables: { negotiation },
     });
     expect(res.data.createNegotiation.response).toBeNull();

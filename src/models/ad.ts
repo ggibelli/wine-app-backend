@@ -23,14 +23,14 @@ export interface IAd {
   vineyardName?: string;
   vineyard?: IVineyardDoc['_id'];
   harvest: number;
-  abv?: number;
+  abv: number;
   priceFrom: number; //se vendita priceFrom e priceTo settati a stesso numero
   priceTo: number;
   litersFrom?: number; //se vendite litersFrom e litersTo settati a stesso numero
   litersTo?: number;
   kgFrom?: number;
   kgTo?: number;
-  content?: string;
+  content: string;
   address: Address;
   negotiations?: mongoose.Types.Array<INegotiationDoc['_id']>; // trattative dell'annuncio, solo attive, solo graphql??
   viewedBy?: mongoose.Types.Array<IUserDoc['_id']>;
@@ -149,7 +149,7 @@ const adSchemaFields: Record<keyof IAd, any> = {
       minlength: 5,
     },
     CAP: {
-      type: Number,
+      type: String,
       required: true,
       minlength: 5,
     },

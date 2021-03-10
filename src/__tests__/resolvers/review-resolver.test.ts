@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 const publish = jest.fn();
 const filter = jest.fn();
 jest.mock('apollo-server-express', () => ({
@@ -122,6 +123,7 @@ describe('Review resolvers', () => {
       },
       errors: [],
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.createReview(
       null,
       {
@@ -158,6 +160,7 @@ describe('Review resolvers', () => {
       response: null,
       errors: [{ name: 'error', text: 'error' }],
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.createReview(
       null,
       {
@@ -187,6 +190,7 @@ describe('Review resolvers', () => {
       },
       errors: [],
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.updateReview(
       null,
       {
@@ -220,6 +224,7 @@ describe('Review resolvers', () => {
       },
       errors: [],
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.deleteReview(
       null,
       {
@@ -241,6 +246,7 @@ describe('Review resolvers', () => {
 
   it('Review createdBy calls getUser', async () => {
     getUser.mockReturnValueOnce({ id: 1 });
+    //@ts-ignore
     const res = await resolvers.Review?.createdBy(
       { createdBy: '123' },
       null,
@@ -257,6 +263,7 @@ describe('Review resolvers', () => {
       createdBy: '321',
       ad: '322',
     });
+    //@ts-ignore
     const res = await resolvers.Review?.negotiation(
       { ad: '123' },
       null,
@@ -273,6 +280,7 @@ describe('Review resolvers', () => {
 
   it('Review forUser calls getUser', async () => {
     getUser.mockReturnValueOnce({ id: 1 });
+    //@ts-ignore
     const res = await resolvers.Review?.forUser(
       { forUser: { _id: '123' } },
       null,

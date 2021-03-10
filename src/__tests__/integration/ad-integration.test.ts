@@ -23,7 +23,7 @@ import {
   Regioni,
   MetodoProduttivo,
 } from '../../types';
-import createWineDb from '../../utils/wineExtractor';
+// import createWineDb from '../../utils/wineExtractor';
 import { Wine } from '../../models/wine';
 //import { ObjectId } from 'mongodb';
 import cron from 'cron';
@@ -44,7 +44,7 @@ const FakeCron = jest.fn(() => ({
 cron.CronJob = FakeCron;
 const indirizzo = {
   via: 'asd asddasd',
-  CAP: 12345,
+  CAP: '12345',
   comune: 'aaaa',
   provincia: Province.AT,
   regione: Regioni.PIEMONTE,
@@ -53,20 +53,19 @@ const indirizzo = {
 const { query, mutate, setOptions } = testClient;
 
 const ADS = gql`
-  fragment AdPreview on Ad {
-    datePosted
-    postedBy {
-      firstName
-    }
-    activeNegotiations
-    harvest
-    abv
-    priceFrom
-    priceTo
-  }
   {
     ads(typeAd: BUY, typeProduct: AdWine) {
-      ...AdPreview
+      ads {
+        datePosted
+        postedBy {
+          firstName
+        }
+        activeNegotiations
+        harvest
+        abv
+        priceFrom
+        priceTo
+      }
     }
   }
 `;
@@ -198,13 +197,18 @@ beforeAll(async () => {
   await dropTestDb();
   const usersMock = users();
   const adsMock = ads();
-  const wineDb = await createWineDb();
+  // const wineDb = await createWineDb();
   const user = new User(usersMock[0]);
   const otherUser = new User(usersMock[1]);
   const thirdUser = new User(usersMock[2]);
 
   const ad = new Ad({ ...adsMock[0], postedBy: user });
-  const wine = new Wine(wineDb[0]);
+  const wine = new Wine({
+    denominazioneVino: 'Abruzzo',
+    espressioneComunitaria: 'DOP',
+    denominazioneZona: 'DOC',
+    regione: [Regioni.ABRUZZO],
+  });
   await user.save();
   await otherUser.save();
   await thirdUser.save();
@@ -219,7 +223,7 @@ describe('Integration test ads', () => {
   it('query ads wine in sale fails if not logged in', async () => {
     const res = await query(ADS);
     expect(res).toMatchSnapshot();
-  });
+  }, 10000);
 
   it('query single ad does not show 0 number visit if not logged', async () => {
     const ad: AdGraphQl[] = await Ad.find({}).lean().exec();
@@ -227,7 +231,7 @@ describe('Integration test ads', () => {
       variables: { id: ad[0]._id.toString() },
     });
     expect(res).toMatchSnapshot();
-  });
+  }, 10000);
 
   it('create adGrape mutation it fails if not logged in', async () => {
     const ad: AdInput = {
@@ -246,7 +250,7 @@ describe('Integration test ads', () => {
       variables: { ad },
     });
     expect(res).toMatchSnapshot();
-  });
+  }, 10000);
 
   it('create adWine mutation fails if user not verified', async () => {
     const data: any = await mutate(LOGIN_VALID_NOT_VERIFIED);
@@ -279,7 +283,7 @@ describe('Integration test ads', () => {
       variables: { ad },
     });
     expect(res).toMatchSnapshot();
-  });
+  }, 10000);
 
   it('query ads wine in sale succeds if logged in', async () => {
     const data: any = await mutate(LOGIN_VALID);
@@ -294,7 +298,7 @@ describe('Integration test ads', () => {
     });
     const res = await query(ADS);
     expect(res).toMatchSnapshot();
-  });
+  }, 10000);
 
   it('create adWine mutation successfull', async () => {
     const wine: WineType[] = await Wine.find({}).lean().exec();
@@ -317,7 +321,7 @@ describe('Integration test ads', () => {
       variables: { ad },
     });
     expect(res).toMatchSnapshot();
-  });
+  }, 10000);
 
   it('update adWine mutation succeds if logged in and same user', async () => {
     const adToUpdate: AdGraphQl[] = await Ad.find({}).lean().exec();
@@ -329,7 +333,7 @@ describe('Integration test ads', () => {
       variables: { ad },
     });
     expect(res).toMatchSnapshot();
-  });
+  }, 10000);
 
   it('delete adWine mutation succeds if logged in and same user', async () => {
     const adToDelete: AdGraphQl[] = await Ad.find({}).lean().exec();
@@ -337,7 +341,7 @@ describe('Integration test ads', () => {
       variables: { id: adToDelete[0]._id.toString() },
     });
     expect(res).toMatchSnapshot();
-  });
+  }, 10000);
 
   it('update adWine mutation fails if logged in and other user', async () => {
     const data: any = await mutate(LOGIN_VALID_OTHER);
@@ -359,7 +363,7 @@ describe('Integration test ads', () => {
       variables: { ad },
     });
     expect(res).toMatchSnapshot();
-  });
+  }, 10000);
 
   it('delete adWine mutation fails if logged in and other user', async () => {
     const data: any = await mutate(LOGIN_VALID_OTHER);
@@ -377,7 +381,7 @@ describe('Integration test ads', () => {
       variables: { id: adToDelete[0]._id.toString() },
     });
     expect(res).toMatchSnapshot();
-  });
+  }, 10000);
 
   it('create adWine mutation successfull, followup sent to user looking to buy wine', async () => {
     const wine: WineType[] = await Wine.find({}).lean().exec();
@@ -401,7 +405,7 @@ describe('Integration test ads', () => {
     expect(res).toMatchSnapshot();
     expect(fakeStart).toBeCalledTimes(1);
     expect(fakeStop).toBeCalledTimes(1);
-  });
+  }, 10000);
 
   it('create adGrape mutation successfull', async () => {
     const ad: AdInput = {
@@ -422,7 +426,7 @@ describe('Integration test ads', () => {
       variables: { ad },
     });
     expect(res).toMatchSnapshot();
-  });
+  }, 10000);
 
   it('create adGrape mutation it fails if kgs are missing', async () => {
     const ad: AdInput = {
@@ -444,7 +448,7 @@ describe('Integration test ads', () => {
       variables: { ad },
     });
     expect(res).toMatchSnapshot();
-  });
+  }, 10000);
 
   it('query single ad shows number visit if logged', async () => {
     const ad: AdGraphQl[] = await Ad.find({}).lean().exec();
@@ -452,7 +456,7 @@ describe('Integration test ads', () => {
       variables: { id: ad[0]._id.toString() },
     });
     expect(res).toMatchSnapshot();
-  });
+  }, 10000);
 });
 
 afterAll(async () => {

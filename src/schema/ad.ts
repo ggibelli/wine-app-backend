@@ -132,6 +132,11 @@ export const typeDefs = gql`
     needsFollowUp: Boolean
   }
 
+  type AdsResult {
+    ads: [Ad]
+    pageCount: Int
+  }
+
   type AdPayload {
     response: Ad
     errors: [Errors]
@@ -147,7 +152,7 @@ export const typeDefs = gql`
       skip: Int
       orderBy: QueryOrderBy
       limit: Int
-    ): [Ad]
+    ): AdsResult
   }
 
   type Mutation {

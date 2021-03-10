@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 const publish = jest.fn();
 const filter = jest.fn();
 jest.mock('apollo-server-express', () => ({
@@ -181,6 +182,7 @@ describe('Message resolvers', () => {
       createdBy: '321',
       ad: '322',
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.createMessage(
       null,
       {
@@ -218,6 +220,7 @@ describe('Message resolvers', () => {
       createdBy: '777',
       ad: '322',
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.createMessage(
       null,
       {
@@ -250,6 +253,7 @@ describe('Message resolvers', () => {
       createdBy: '321',
       ad: '322',
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.createMessage(
       null,
       {
@@ -267,6 +271,7 @@ describe('Message resolvers', () => {
 
   it('Message sentBy calls getUser', async () => {
     getUser.mockReturnValueOnce({ id: 1 });
+    //@ts-ignore
     const res = await resolvers.Message?.sentBy(
       { sentBy: '123' },
       null,
@@ -277,6 +282,7 @@ describe('Message resolvers', () => {
 
   it('Message sentTo calls getUser', async () => {
     getUser.mockReturnValueOnce({ id: 1 });
+    //@ts-ignore
     const res = await resolvers.Message?.sentTo(
       { sentTo: '123' },
       null,
@@ -293,6 +299,7 @@ describe('Message resolvers', () => {
       createdBy: '321',
       ad: '322',
     });
+    //@ts-ignore
     const res = await resolvers.Message?.negotiation(
       { negotiation: '123' },
       null,

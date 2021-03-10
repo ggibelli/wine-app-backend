@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 const publish = jest.fn();
 const filter = jest.fn();
 jest.mock('apollo-server-express', () => ({
@@ -77,6 +78,7 @@ describe('Review resolvers', () => {
       },
       errors: [],
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.createVineyard(
       null,
       {
@@ -102,6 +104,7 @@ describe('Review resolvers', () => {
       },
       errors: [],
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.updateVineyard(
       null,
       {
@@ -128,6 +131,7 @@ describe('Review resolvers', () => {
       },
       errors: [],
     });
+    //@ts-ignore
     const res = await resolvers.Mutation?.deleteVineyard(
       null,
       {

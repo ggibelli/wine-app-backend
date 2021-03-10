@@ -288,7 +288,7 @@ describe('Integration test reviews', () => {
       rating: Rating.AVERAGE,
       content: 'average',
     };
-    const res = await mutate(CREATE_REVIEW, {
+    const res: any = await mutate(CREATE_REVIEW, {
       variables: { review },
     });
     expect(res.data.createReview.response).toBeNull();

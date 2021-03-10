@@ -40,7 +40,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -112,16 +112,6 @@
         "possibleTypes": null
       },
       {
-        "kind": "SCALAR",
-        "name": "Int",
-        "description": "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.",
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
         "kind": "INPUT_OBJECT",
         "name": "AddressInput",
         "description": null,
@@ -149,7 +139,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Int",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -293,11 +283,31 @@
             "defaultValue": null
           },
           {
+            "name": "wine",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "wineName",
             "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "vineyard",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
               "ofType": null
             },
             "defaultValue": null
@@ -409,6 +419,16 @@
               "ofType": null
             },
             "defaultValue": null
+          },
+          {
+            "name": "needsFollowUp",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -417,8 +437,38 @@
       },
       {
         "kind": "SCALAR",
+        "name": "Int",
+        "description": "The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
         "name": "Float",
         "description": "The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
+        "name": "ID",
+        "description": "The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `\"4\"`) or integer (such as `4`) input value will be accepted as an ID.",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
+        "name": "Boolean",
+        "description": "The `Boolean` scalar type represents `true` or `false`.",
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -446,11 +496,31 @@
             "defaultValue": null
           },
           {
+            "name": "wine",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "wineName",
             "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "vineyard",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "ID",
               "ofType": null
             },
             "defaultValue": null
@@ -574,18 +644,28 @@
               "ofType": null
             },
             "defaultValue": null
+          },
+          {
+            "name": "isActive",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "needsFollowUp",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "defaultValue": null
           }
         ],
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "SCALAR",
-        "name": "ID",
-        "description": "The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `\"4\"`) or integer (such as `4`) input value will be accepted as an ID.",
-        "fields": null,
-        "inputFields": null,
         "interfaces": null,
         "enumValues": null,
         "possibleTypes": null
@@ -724,8 +804,28 @@
             "deprecationReason": null
           },
           {
+            "name": "negotiations",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Negotiation",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "activeNegotiations",
-            "description": "negotiations: [Negotiation]",
+            "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -810,6 +910,18 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "needsFollowUp",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -827,16 +939,6 @@
             "ofType": null
           }
         ]
-      },
-      {
-        "kind": "SCALAR",
-        "name": "Boolean",
-        "description": "The `Boolean` scalar type represents `true` or `false`.",
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
       },
       {
         "kind": "OBJECT",
@@ -896,13 +998,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Wine",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Wine",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1064,8 +1162,28 @@
             "deprecationReason": null
           },
           {
+            "name": "negotiations",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Negotiation",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "activeNegotiations",
-            "description": "negotiations: [Negotiation]",
+            "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -1150,6 +1268,18 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "needsFollowUp",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -1221,13 +1351,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Vineyard",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Vineyard",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1361,8 +1487,28 @@
             "deprecationReason": null
           },
           {
+            "name": "negotiations",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Negotiation",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "activeNegotiations",
-            "description": "negotiations: [Negotiation]",
+            "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
@@ -1447,6 +1593,18 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "needsFollowUp",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -1457,6 +1615,45 @@
             "ofType": null
           }
         ],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "AdsResult",
+        "description": null,
+        "fields": [
+          {
+            "name": "ads",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "INTERFACE",
+                "name": "Ad",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pageCount",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -1486,7 +1683,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "Error",
+                "name": "Errors",
                 "ofType": null
               }
             },
@@ -1509,7 +1706,7 @@
             "description": null,
             "args": [
               {
-                "name": "_id",
+                "name": "id",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -1615,13 +1812,9 @@
               }
             ],
             "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "INTERFACE",
-                "name": "Ad",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "AdsResult",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1639,11 +1832,128 @@
             "deprecationReason": null
           },
           {
+            "name": "message",
+            "description": null,
+            "args": [
+              {
+                "name": "id",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Message",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "messages",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Message",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "messagesForNegotiation",
+            "description": null,
+            "args": [
+              {
+                "name": "negotiation",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Message",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "messagesToUser",
+            "description": null,
+            "args": [
+              {
+                "name": "sentTo",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Message",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "negotiation",
             "description": null,
             "args": [
               {
-                "name": "_id",
+                "name": "id",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -1669,6 +1979,76 @@
             "name": "negotiations",
             "description": null,
             "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Negotiation",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "negotiationsForAd",
+            "description": null,
+            "args": [
+              {
+                "name": "ad",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Negotiation",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "negotiationsWithUser",
+            "description": null,
+            "args": [
+              {
+                "name": "forUserAd",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "ID",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
             "type": {
               "kind": "LIST",
               "name": null,
@@ -1715,28 +2095,7 @@
           {
             "name": "reviews",
             "description": null,
-            "args": [
-              {
-                "name": "forUser",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
-                "name": "type",
-                "description": null,
-                "type": {
-                  "kind": "ENUM",
-                  "name": "TypeAd",
-                  "ofType": null
-                },
-                "defaultValue": null
-              }
-            ],
+            "args": [],
             "type": {
               "kind": "LIST",
               "name": null,
@@ -1830,28 +2189,7 @@
           {
             "name": "vineyards",
             "description": null,
-            "args": [
-              {
-                "name": "name",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
-                "name": "colore",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null
-              }
-            ],
+            "args": [],
             "type": {
               "kind": "LIST",
               "name": null,
@@ -1873,7 +2211,7 @@
             "description": null,
             "args": [
               {
-                "name": "_id",
+                "name": "id",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -1898,48 +2236,7 @@
           {
             "name": "wines",
             "description": null,
-            "args": [
-              {
-                "name": "name",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
-                "name": "espressioneComunitaria",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
-                "name": "denomZona",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
-                "name": "regione",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null
-              }
-            ],
+            "args": [],
             "type": {
               "kind": "LIST",
               "name": null,
@@ -2002,16 +2299,20 @@
                 "name": "message",
                 "description": null,
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "MessageInput",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "MessageInput",
+                    "ofType": null
+                  }
                 },
                 "defaultValue": null
               }
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Message",
+              "name": "MessagePayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2025,16 +2326,20 @@
                 "name": "negotiation",
                 "description": null,
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "NegotiationInput",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "NegotiationInput",
+                    "ofType": null
+                  }
                 },
                 "defaultValue": null
               }
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Negotiation",
+              "name": "NegotiationPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2048,16 +2353,20 @@
                 "name": "review",
                 "description": null,
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "ReviewInput",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ReviewInput",
+                    "ofType": null
+                  }
                 },
                 "defaultValue": null
               }
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Review",
+              "name": "ReviewPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2098,16 +2407,20 @@
                 "name": "vineyard",
                 "description": null,
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "VineyardInput",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "VineyardInput",
+                    "ofType": null
+                  }
                 },
                 "defaultValue": null
               }
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Vineyard",
+              "name": "VineyardPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2121,16 +2434,20 @@
                 "name": "wine",
                 "description": null,
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "WineInput",
-                  "ofType": null
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "WineInput",
+                    "ofType": null
+                  }
                 },
                 "defaultValue": null
               }
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Wine",
+              "name": "WinePayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2184,7 +2501,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Negotiation",
+              "name": "NegotiationPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2211,7 +2528,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Review",
+              "name": "ReviewPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2265,7 +2582,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Vineyard",
+              "name": "VineyardPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2292,7 +2609,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Wine",
+              "name": "WinePayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2374,21 +2691,11 @@
                 "name": "negotiation",
                 "description": null,
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "NegotiationInputUpdate",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
-                "name": "id",
-                "description": null,
-                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
+                    "kind": "INPUT_OBJECT",
+                    "name": "NegotiationInputUpdate",
                     "ofType": null
                   }
                 },
@@ -2397,7 +2704,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Negotiation",
+              "name": "NegotiationPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2411,21 +2718,11 @@
                 "name": "review",
                 "description": null,
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "ReviewInputUpdate",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
-                "name": "id",
-                "description": null,
-                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
+                    "kind": "INPUT_OBJECT",
+                    "name": "ReviewInputUpdate",
                     "ofType": null
                   }
                 },
@@ -2434,7 +2731,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Review",
+              "name": "ReviewPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2448,21 +2745,11 @@
                 "name": "user",
                 "description": null,
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "UserInputUpdate",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
-                "name": "id",
-                "description": null,
-                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
+                    "kind": "INPUT_OBJECT",
+                    "name": "UserInputUpdate",
                     "ofType": null
                   }
                 },
@@ -2485,21 +2772,11 @@
                 "name": "vineyard",
                 "description": null,
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "VineyardInputUpdate",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
-                "name": "id",
-                "description": null,
-                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
+                    "kind": "INPUT_OBJECT",
+                    "name": "VineyardInputUpdate",
                     "ofType": null
                   }
                 },
@@ -2508,7 +2785,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Vineyard",
+              "name": "VineyardPayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2522,21 +2799,11 @@
                 "name": "wine",
                 "description": null,
                 "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "WineInputUpdate",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
-                "name": "id",
-                "description": null,
-                "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
+                    "kind": "INPUT_OBJECT",
+                    "name": "WineInputUpdate",
                     "ofType": null
                   }
                 },
@@ -2545,7 +2812,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Wine",
+              "name": "WinePayload",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2563,7 +2830,23 @@
         "description": null,
         "fields": [
           {
-            "name": "adPosted",
+            "name": "adPostedFollowUp",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "INTERFACE",
+                "name": "Ad",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "adRemoved",
             "description": null,
             "args": [],
             "type": {
@@ -2588,6 +2871,54 @@
               "ofType": {
                 "kind": "OBJECT",
                 "name": "Message",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "negotiationClosed",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "INTERFACE",
+                "name": "Ad",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "negotiationCreated",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Negotiation",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "reviewCreated",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Review",
                 "ofType": null
               }
             },
@@ -2633,19 +2964,25 @@
             "deprecationReason": null
           },
           {
-            "name": "AR",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "AP",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "ASTI",
+            "name": "AQ",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "AR",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "AT",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -2663,18 +3000,6 @@
             "deprecationReason": null
           },
           {
-            "name": "BL",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "BN",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "BG",
             "description": null,
             "isDeprecated": false,
@@ -2687,19 +3012,19 @@
             "deprecationReason": null
           },
           {
+            "name": "BL",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "BN",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "BO",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "BZ",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "BS",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -2711,13 +3036,25 @@
             "deprecationReason": null
           },
           {
-            "name": "CA",
+            "name": "BS",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "CL",
+            "name": "BT",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "BZ",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "CA",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -2735,6 +3072,42 @@
             "deprecationReason": null
           },
           {
+            "name": "CH",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "CL",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "CN",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "CO",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "CR",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "CS",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "CT",
             "description": null,
             "isDeprecated": false,
@@ -2747,49 +3120,13 @@
             "deprecationReason": null
           },
           {
-            "name": "CH",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "CO",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "CS",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "CR",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "KR",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "CN",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "EN",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "FM",
+            "name": "FC",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -2801,25 +3138,19 @@
             "deprecationReason": null
           },
           {
-            "name": "FI",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "FG",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "FO",
+            "name": "FI",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "FC",
+            "name": "FM",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -2861,31 +3192,19 @@
             "deprecationReason": null
           },
           {
-            "name": "SP",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "AQ",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "LT",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "LE",
+            "name": "KR",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "LC",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "LE",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -2903,31 +3222,25 @@
             "deprecationReason": null
           },
           {
+            "name": "LT",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "LU",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
+            "name": "MB",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "MC",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "MN",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "MS",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "MT",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -2945,13 +3258,25 @@
             "deprecationReason": null
           },
           {
+            "name": "MN",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "MO",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "MB",
+            "name": "MS",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "MT",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -2981,49 +3306,7 @@
             "deprecationReason": null
           },
           {
-            "name": "PD",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "PA",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "PR",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "PV",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "PG",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "PS",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "PU",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "PE",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -3035,13 +3318,25 @@
             "deprecationReason": null
           },
           {
-            "name": "PI",
+            "name": "PD",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "PT",
+            "name": "PE",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PG",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PI",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -3053,19 +3348,37 @@
             "deprecationReason": null
           },
           {
-            "name": "PZ",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "PO",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "RG",
+            "name": "PR",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PT",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PU",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PV",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PZ",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -3089,19 +3402,25 @@
             "deprecationReason": null
           },
           {
+            "name": "RG",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "RI",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "RN",
+            "name": "RM",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "RM",
+            "name": "RN",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -3119,19 +3438,19 @@
             "deprecationReason": null
           },
           {
-            "name": "SS",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "SV",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "SI",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SO",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SP",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -3143,7 +3462,19 @@
             "deprecationReason": null
           },
           {
-            "name": "SO",
+            "name": "SS",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SU",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "SV",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -3161,7 +3492,7 @@
             "deprecationReason": null
           },
           {
-            "name": "TR",
+            "name": "TN",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -3179,19 +3510,19 @@
             "deprecationReason": null
           },
           {
-            "name": "TN",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "TV",
+            "name": "TR",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "TS",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "TV",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -3209,12 +3540,6 @@
             "deprecationReason": null
           },
           {
-            "name": "VE",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "VB",
             "description": null,
             "isDeprecated": false,
@@ -3227,13 +3552,7 @@
             "deprecationReason": null
           },
           {
-            "name": "VR",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "VV",
+            "name": "VE",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -3245,7 +3564,19 @@
             "deprecationReason": null
           },
           {
+            "name": "VR",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "VT",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "VV",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -3358,13 +3689,7 @@
             "deprecationReason": null
           },
           {
-            "name": "BOLZANO",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "TRENTO",
+            "name": "TRENTINO",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -3683,7 +4008,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "Error",
+        "name": "Errors",
         "description": null,
         "fields": [
           {
@@ -3738,6 +4063,20 @@
           },
           {
             "name": "sentTo",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "negotiation",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -3825,6 +4164,22 @@
             "deprecationReason": null
           },
           {
+            "name": "negotiation",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Negotiation",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "dateSent",
             "description": null,
             "args": [],
@@ -3834,6 +4189,45 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "Date",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "MessagePayload",
+        "description": null,
+        "fields": [
+          {
+            "name": "response",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Message",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "errors",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Errors",
                 "ofType": null
               }
             },
@@ -3879,6 +4273,20 @@
               }
             },
             "defaultValue": null
+          },
+          {
+            "name": "type",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "TypeAd",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -3891,6 +4299,20 @@
         "description": null,
         "fields": null,
         "inputFields": [
+          {
+            "name": "_id",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          },
           {
             "name": "isConcluded",
             "description": null,
@@ -4042,6 +4464,61 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "type",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "TypeAd",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "NegotiationPayload",
+        "description": null,
+        "fields": [
+          {
+            "name": "response",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Negotiation",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "errors",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Errors",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -4070,7 +4547,7 @@
             "defaultValue": null
           },
           {
-            "name": "forUserAd",
+            "name": "forUser",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -4090,8 +4567,8 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
+                "kind": "ENUM",
+                "name": "Rating",
                 "ofType": null
               }
             },
@@ -4137,11 +4614,25 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "_id",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          },
+          {
             "name": "rating",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "ID",
+              "kind": "ENUM",
+              "name": "Rating",
               "ofType": null
             },
             "defaultValue": null
@@ -4215,7 +4706,7 @@
             "deprecationReason": null
           },
           {
-            "name": "forUserAd",
+            "name": "forUser",
             "description": null,
             "args": [],
             "type": {
@@ -4301,6 +4792,45 @@
         "possibleTypes": null
       },
       {
+        "kind": "OBJECT",
+        "name": "ReviewPayload",
+        "description": null,
+        "fields": [
+          {
+            "name": "response",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Review",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "errors",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Errors",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
         "kind": "SCALAR",
         "name": "Date",
         "description": null,
@@ -4336,9 +4866,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -4348,9 +4882,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "ENUM",
-              "name": "MetodoProduttivo",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "MetodoProduttivo",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -4387,9 +4925,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -4399,9 +4941,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "ENUM",
-              "name": "MetodoProduttivo",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "MetodoProduttivo",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -4607,6 +5153,20 @@
             "defaultValue": null
           },
           {
+            "name": "hideContact",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          },
+          {
             "name": "producedWines",
             "description": null,
             "type": {
@@ -4653,6 +5213,16 @@
           },
           {
             "name": "email",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "password",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4732,66 +5302,16 @@
             "defaultValue": null
           },
           {
-            "name": "ads",
+            "name": "hideContact",
             "description": null,
             "type": {
-              "kind": "LIST",
+              "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
               }
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "negotiations",
-            "description": null,
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "reviews",
-            "description": null,
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                }
-              }
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "adsRemaining",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
             },
             "defaultValue": null
           },
@@ -4982,6 +5502,22 @@
             "deprecationReason": null
           },
           {
+            "name": "hideContact",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "ads",
             "description": null,
             "args": [],
@@ -4994,6 +5530,26 @@
                 "ofType": {
                   "kind": "INTERFACE",
                   "name": "Ad",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "messages",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "Message",
                   "ofType": null
                 }
               }
@@ -5168,7 +5724,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "Error",
+                "name": "Errors",
                 "ofType": null
               }
             },
@@ -5207,7 +5763,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "Error",
+                "name": "Errors",
                 "ofType": null
               }
             },
@@ -5262,13 +5818,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "Colore",
-                "ofType": null
-              }
+              "kind": "ENUM",
+              "name": "Colore",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -5303,13 +5855,9 @@
             "name": "colore",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "Colore",
-                "ofType": null
-              }
+              "kind": "ENUM",
+              "name": "Colore",
+              "ofType": null
             },
             "defaultValue": null
           }
@@ -5324,6 +5872,20 @@
         "description": null,
         "fields": null,
         "inputFields": [
+          {
+            "name": "_id",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          },
           {
             "name": "name",
             "description": null,
@@ -5346,6 +5908,45 @@
           }
         ],
         "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "VineyardPayload",
+        "description": null,
+        "fields": [
+          {
+            "name": "response",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Vineyard",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "errors",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Errors",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -5414,9 +6015,17 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "ENUM",
-                "name": "Regioni",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "Regioni",
+                    "ofType": null
+                  }
+                }
               }
             },
             "defaultValue": null
@@ -5432,6 +6041,20 @@
         "description": null,
         "fields": null,
         "inputFields": [
+          {
+            "name": "_id",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "ID",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          },
           {
             "name": "denominazioneVino",
             "description": null,
@@ -5476,9 +6099,13 @@
             "name": "regione",
             "description": null,
             "type": {
-              "kind": "ENUM",
-              "name": "Regioni",
-              "ofType": null
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "Regioni",
+                "ofType": null
+              }
             },
             "defaultValue": null
           }
@@ -5576,8 +6203,55 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "ENUM",
-                "name": "Regioni",
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "Regioni",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "WinePayload",
+        "description": null,
+        "fields": [
+          {
+            "name": "response",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Wine",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "errors",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Errors",
                 "ofType": null
               }
             },
@@ -6482,7 +7156,9 @@
         "name": "date",
         "description": null,
         "isRepeatable": false,
-        "locations": ["FIELD_DEFINITION"],
+        "locations": [
+          "FIELD_DEFINITION"
+        ],
         "args": [
           {
             "name": "defaultFormat",
@@ -6492,7 +7168,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "\"dd MMM, yyyy\""
+            "defaultValue": "\"dd MMM, yy\""
           }
         ]
       },
@@ -6500,28 +7176,29 @@
         "name": "authenticated",
         "description": null,
         "isRepeatable": false,
-        "locations": ["FIELD_DEFINITION"],
+        "locations": [
+          "FIELD_DEFINITION"
+        ],
         "args": []
       },
       {
         "name": "authorized",
         "description": null,
         "isRepeatable": false,
-        "locations": ["FIELD_DEFINITION"],
-        "args": []
-      },
-      {
-        "name": "authorizeda",
-        "description": null,
-        "isRepeatable": false,
-        "locations": ["FIELD_DEFINITION"],
+        "locations": [
+          "FIELD_DEFINITION"
+        ],
         "args": []
       },
       {
         "name": "include",
         "description": "Directs the executor to include this field or fragment only when the `if` argument is true.",
         "isRepeatable": false,
-        "locations": ["FIELD", "FRAGMENT_SPREAD", "INLINE_FRAGMENT"],
+        "locations": [
+          "FIELD",
+          "FRAGMENT_SPREAD",
+          "INLINE_FRAGMENT"
+        ],
         "args": [
           {
             "name": "if",
@@ -6543,7 +7220,11 @@
         "name": "skip",
         "description": "Directs the executor to skip this field or fragment when the `if` argument is true.",
         "isRepeatable": false,
-        "locations": ["FIELD", "FRAGMENT_SPREAD", "INLINE_FRAGMENT"],
+        "locations": [
+          "FIELD",
+          "FRAGMENT_SPREAD",
+          "INLINE_FRAGMENT"
+        ],
         "args": [
           {
             "name": "if",
@@ -6588,7 +7269,9 @@
         "name": "specifiedBy",
         "description": "Exposes a URL that specifies the behaviour of this scalar.",
         "isRepeatable": false,
-        "locations": ["SCALAR"],
+        "locations": [
+          "SCALAR"
+        ],
         "args": [
           {
             "name": "url",

@@ -13,8 +13,8 @@ export type NegotiationTest = Omit<
 
 const indirizzo = {
   via: 'asd asddasd',
-  CAP: 12345,
-  comune: 'aaaa',
+  CAP: '12345',
+  comune: 'aaaaaa',
   provincia: Province.AG,
   regione: Regioni.ABRUZZO,
 };

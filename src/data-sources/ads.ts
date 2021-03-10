@@ -8,7 +8,13 @@ import { QueryOrderBy, TypeProduct, Errors, TypeAd } from '../types';
 import { ObjectId } from 'mongodb';
 
 import { assertNever } from '../utils/helpersTypeScript';
-import { AdInput, AdInputUpdate, QueryAdsArgs } from '../generated/graphql';
+import {
+  Ad,
+  AdInput,
+  AdInputUpdate,
+  AdsResult,
+  QueryAdsArgs,
+} from '../generated/graphql';
 import { UserInputError } from 'apollo-server-express';
 import { UserGraphQl } from '../models/user';
 import { sendMail } from '../utils/mailServer';
@@ -157,7 +163,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
     wineName,
     typeAd,
     typeProduct,
-  }: QueryAdsArgs): Promise<AdGraphQl[]> {
+  }: QueryAdsArgs): Promise<AdsResult> {
     const LIMIT_MAX = 100;
     if (limit < 1 || skip < 0 || limit > LIMIT_MAX) {
       throw new UserInputError(
@@ -182,38 +188,68 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
         assertNever(orderBy);
     }
     if (vineyardName) {
-      return this.model
-        .find({
+      const pageCount = await this.model
+        .countDocuments({
           typeAd: typeAd,
           vineyardName: vineyardName,
         })
-        .skip(skip)
-        .limit(limit)
-        .sort(sortQuery)
-        .lean()
         .exec();
+      return {
+        pageCount,
+
+        ads: ((await this.model
+          .find({
+            typeAd: typeAd,
+            vineyardName: vineyardName,
+          })
+          .skip(skip)
+          .limit(limit)
+          .sort(sortQuery)
+          .lean()
+          .exec()) as unknown) as Ad[],
+      };
     } else if (wineName) {
-      return this.model
-        .find({
+      const pageCount = await this.model
+        .countDocuments({
           typeAd: typeAd,
           wineName: wineName,
+        })
+        .exec();
+      return {
+        pageCount,
+
+        ads: ((await this.model
+          .find({
+            typeAd: typeAd,
+            wineName: wineName,
+          })
+          .skip(skip)
+          .limit(limit)
+          .sort(sortQuery)
+          .lean()
+          .exec()) as unknown) as Ad[],
+      };
+    }
+    const pageCount = await this.model
+      .countDocuments({
+        typeAd: typeAd,
+        typeProduct: typeProduct,
+      })
+      .exec();
+    return {
+      pageCount,
+
+      ads: ((await this.model
+        .find({
+          typeAd: typeAd,
+          typeProduct: typeProduct,
         })
         .skip(skip)
         .limit(limit)
         .sort(sortQuery)
         .lean()
-        .exec();
-    }
-    return this.model
-      .find({
-        typeAd: typeAd,
-        typeProduct: typeProduct,
-      })
-      .skip(skip)
-      .limit(limit)
-      .sort(sortQuery)
-      .lean()
-      .exec();
+        .exec()) as unknown) as Ad[],
+    };
   }
 
   async createAd(ad: AdInput): Promise<AdResponse> {

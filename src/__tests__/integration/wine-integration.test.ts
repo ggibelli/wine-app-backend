@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { gql } from 'apollo-server-express';
@@ -12,7 +13,7 @@ import { User } from '../../models/user';
 import { users } from '../../tests/mocksTests';
 import { WineInput, WineInputUpdate } from '../../generated/graphql';
 import { Regioni, EspressioneComunitaria, DenomZona } from '../../types';
-import createWineDb from '../../utils/wineExtractor';
+// import createWineDb from '../../utils/wineExtractor';
 import { Wine, WineGraphQl } from '../../models/wine';
 
 const { query, mutate, setOptions } = testClient;
@@ -122,10 +123,14 @@ beforeAll(async () => {
   await connectToDb();
   await dropTestDb();
   const usersMock = users();
-  const wineDb = await createWineDb();
   const user = new User(usersMock[0]);
   const otherUser = new User(usersMock[1]);
-  const wine = new Wine(wineDb[0]);
+  const wine = new Wine({
+    denominazioneVino: 'Abruzzo',
+    espressioneComunitaria: 'DOP',
+    denominazioneZona: 'DOC',
+    regione: [Regioni.ABRUZZO],
+  });
   await user.save();
   await otherUser.save();
   await wine.save();
@@ -149,6 +154,7 @@ describe('Integration test wines', () => {
     const wine: WineInput = {
       denominazioneVino: 'ciccio',
       espressioneComunitaria: EspressioneComunitaria.DOP,
+      //@ts-ignore
       regione: [Regioni.CALABRIA],
       denominazioneZona: DenomZona.DOC,
     };
@@ -185,6 +191,7 @@ describe('Integration test wines', () => {
     const wine: WineInput = {
       denominazioneVino: 'ciccio',
       espressioneComunitaria: EspressioneComunitaria.DOP,
+      //@ts-ignore
       regione: [Regioni.CALABRIA],
       denominazioneZona: DenomZona.DOC,
     };
@@ -248,6 +255,7 @@ describe('Integration test wines', () => {
     const wine: WineInput = {
       denominazioneVino: 'ciccio',
       espressioneComunitaria: EspressioneComunitaria.DOP,
+      //@ts-ignore
       regione: [Regioni.CALABRIA],
       denominazioneZona: DenomZona.DOC,
     };
