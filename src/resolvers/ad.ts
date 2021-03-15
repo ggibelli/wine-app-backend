@@ -128,6 +128,20 @@ export const resolver: StringIndexed<Resolvers> = {
       }
       return adResponse;
     },
+    async saveAd(
+      _,
+      { id }: { id: string },
+      { dataSources }: { dataSources: MongoDataSource }
+    ) {
+      const ad = await dataSources.ads.getAd(id);
+      if (!ad) {
+        return {
+          response: null,
+          errors: [{ text: 'Ad not found', name: 'General error' }],
+        };
+      }
+      return await dataSources.users.saveAd(ad);
+    },
   },
 
   Subscription: {

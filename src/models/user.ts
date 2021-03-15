@@ -40,6 +40,8 @@ export interface IUser {
   isAdmin: boolean;
   hideContact: boolean;
   ads?: mongoose.Types.Array<IAdDoc['_id'] | IAdDoc>; // annunci postati dall'utente
+  savedAds?: mongoose.Types.Array<IAdDoc['_id'] | IAdDoc>; // annunci postati dall'utente
+
   negotiations?: mongoose.Types.Array<INegotiationDoc['_id'] | INegotiationDoc>; // trattative dell'utente, attive e non, concluse e non
   reviews?: mongoose.Types.Array<IReviewDoc['_id'] | IReviewDoc>; // recensioni fatte e ricevute dall'utente
   adsRemaining?: number;
@@ -121,6 +123,12 @@ const userSchemaFields: Record<keyof IUser, any> = {
     default: true,
   },
   ads: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Ad',
+    },
+  ],
+  savedAds: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Ad',

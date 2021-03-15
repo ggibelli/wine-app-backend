@@ -285,6 +285,7 @@ export type Mutation = {
   createVineyard?: Maybe<VineyardPayload>;
   createWine?: Maybe<WinePayload>;
   deleteAd?: Maybe<AdPayload>;
+  saveAd?: Maybe<AdPayload>;
   deleteNegotiation?: Maybe<NegotiationPayload>;
   deleteReview?: Maybe<ReviewPayload>;
   deleteUser?: Maybe<UserPayload>;
@@ -328,6 +329,10 @@ export type MutationCreateWineArgs = {
 };
 
 export type MutationDeleteAdArgs = {
+  id: Scalars['ID'];
+};
+
+export type MutationSaveAdArgs = {
   id: Scalars['ID'];
 };
 
@@ -570,6 +575,7 @@ export type User = {
   isAdmin: Scalars['Boolean'];
   hideContact: Scalars['Boolean'];
   ads?: Maybe<mongoose.Types.Array<Ad>>;
+  savedAds?: Maybe<mongoose.Types.Array<Ad>>;
   messages?: Maybe<mongoose.Types.Array<Message>>;
   negotiations?: Maybe<mongoose.Types.Array<Negotiation>>;
   reviews?: Maybe<mongoose.Types.Array<Review>>;
@@ -1388,6 +1394,12 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationDeleteAdArgs, 'id'>
   >;
+  saveAd?: Resolver<
+    Maybe<ResolversTypes['AdPayload']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationSaveAdArgs, 'id'>
+  >;
   deleteNegotiation?: Resolver<
     Maybe<ResolversTypes['NegotiationPayload']>,
     ParentType,
@@ -1856,6 +1868,12 @@ export type UserResolvers<
   isAdmin?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   hideContact?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   ads?: Resolver<Maybe<Array<ResolversTypes['Ads']>>, ParentType, ContextType>;
+  savedAds?: Resolver<
+    Maybe<Array<ResolversTypes['Ads']>>,
+    ParentType,
+    ContextType
+  >;
+
   messages?: Resolver<
     Maybe<Array<ResolversTypes['Message']>>,
     ParentType,

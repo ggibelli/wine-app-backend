@@ -73,6 +73,7 @@ export const typeDefs = gql`
     isAdmin: Boolean!
     hideContact: Boolean!
     ads: [Ad!]
+    savedAds: [Ad!]
     messages: [Message!]
     negotiations: [Negotiation!]
     reviews: [Review!]

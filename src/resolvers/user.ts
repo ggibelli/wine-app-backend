@@ -6,7 +6,7 @@ import Messages from '../data-sources/messages';
 import Negotiations from '../data-sources/negotiations';
 import { ForbiddenError } from 'apollo-server-express';
 import Reviews from '../data-sources/reviews';
-import { AdGraphQl } from '../models/ad';
+import { AdGraphQl, IAdDoc } from '../models/ad';
 import { MessageGraphQl } from '../models/message';
 import { NegotiationGraphQl } from '../models/negotiation';
 import { ReviewGraphQl } from '../models/review';
@@ -105,6 +105,20 @@ export const resolver: StringIndexed<Resolvers> = {
         return dataSources.negotiations.getNegotiations();
       }
       throw new ForbiddenError('You can only see your own negotiations');
+    },
+    async savedAds(
+      root: UserGraphQl,
+      _,
+      { dataSources, user }: { dataSources: MongoDataSource; user: UserGraphQl }
+    ): Promise<IAdDoc[]> {
+      if (root._id.toString() === user._id.toString()) {
+        if (user.savedAds?.length) {
+          return dataSources.ads.findManyByIds(user.savedAds) as Promise<
+            IAdDoc[]
+          >;
+        }
+      }
+      throw new ForbiddenError('You can only see your own saved ads');
     },
     async reviews(
       root: UserGraphQl,

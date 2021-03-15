@@ -159,6 +159,7 @@ export const typeDefs = gql`
     createAd(input: AdInput!): AdPayload @authenticated
     updateAd(input: AdInputUpdate!): AdPayload @authenticated
     deleteAd(id: ID!): AdPayload @authenticated
+    saveAd(id: ID!): AdPayload @authenticated
   }
   type Subscription {
     adPostedFollowUp: Ad! @authenticated
