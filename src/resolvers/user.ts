@@ -110,12 +110,14 @@ export const resolver: StringIndexed<Resolvers> = {
       _,
       { dataSources, user }: { dataSources: MongoDataSource; user: UserGraphQl }
     ): Promise<IAdDoc[]> {
+      console.log(root._id.toString() === user._id.toString());
       if (root._id.toString() === user._id.toString()) {
         if (user.savedAds?.length) {
           return dataSources.ads.findManyByIds(user.savedAds) as Promise<
             IAdDoc[]
           >;
         }
+        return [];
       }
       throw new ForbiddenError('You can only see your own saved ads');
     },
