@@ -149,6 +149,11 @@ Object {
           "rating": "POOR",
         },
       ],
+      "savedAds": Array [
+        Object {
+          "content": "wow",
+        },
+      ],
     },
   },
 }
@@ -199,6 +204,11 @@ Object {
             "firstName": "Mariuccio",
           },
           "rating": "PERFECT",
+        },
+      ],
+      "savedAds": Array [
+        Object {
+          "content": "waaow",
         },
       ],
     },

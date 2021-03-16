@@ -9,6 +9,7 @@ jest.mock('apollo-server-express', () => ({
 }));
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import resolvers from '../../resolvers';
+import { ObjectId } from 'mongodb';
 
 const mockContext = {
   dataSources: {
@@ -21,6 +22,7 @@ const mockContext = {
     },
     users: {
       getUser: jest.fn(),
+      saveAd: jest.fn(),
     },
     negotiations: {
       getNegotiationsForAd: jest.fn(),
@@ -46,6 +48,7 @@ const { deleteMany } = mockContext.dataSources.negotiations;
 const { getUser } = mockContext.dataSources.users;
 const { getVineyardByName } = mockContext.dataSources.vineyards;
 const { getWineByName } = mockContext.dataSources.wines;
+const { saveAd } = mockContext.dataSources.users;
 
 describe('Ad resolvers', () => {
   afterEach(() => {
@@ -400,6 +403,30 @@ describe('Ad resolvers', () => {
     expect(res).toEqual({
       wineName: 'vino',
       abv: 6.5,
+    });
+  });
+
+  it('saveAd calls datasource and returns right data', async () => {
+    saveAd.mockReturnValueOnce({
+      _id: '602daa91cdc6630673a9fc0e',
+      content: '11212121212',
+    });
+    getAd.mockReturnValueOnce({
+      _id: new ObjectId('5fdd925d9cc5800455e1855e'),
+      typeAd: 'SELL',
+      typeProduct: 'AdWine',
+      wineName: 'wine',
+      createdBy: 2,
+    });
+    //@ts-ignore
+    const res = await resolvers.Mutation?.saveAd(
+      null,
+      { id: '602daa91cdc6630673a9fc0e' },
+      mockContext
+    );
+    expect(res).toEqual({
+      _id: '602daa91cdc6630673a9fc0e',
+      content: '11212121212',
     });
   });
 

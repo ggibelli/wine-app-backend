@@ -151,6 +151,9 @@ const ME_FULL = gql`
         }
         rating
       }
+      savedAds {
+        content
+      }
     }
   }
 `;
@@ -309,6 +312,8 @@ beforeAll(async () => {
     sentTo: otherNegotiation.forUserAd,
     content: 'ciao di nuovo',
   });
+  user.savedAds?.addToSet(ad);
+  otherUser.savedAds?.addToSet(otherAd);
   await message.save();
   await otherMessage.save();
   await otherUser.save();

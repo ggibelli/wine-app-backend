@@ -247,6 +247,44 @@ Object {
 }
 `;
 
+exports[`Integration test ads saveAd mutation it fails if not logged in 1`] = `
+Object {
+  "data": Object {
+    "saveAd": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "code": "UNAUTHENTICATED",
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 2,
+        },
+      ],
+      "message": "You need to login to continue",
+      "path": Array [
+        "saveAd",
+      ],
+    },
+  ],
+}
+`;
+
+exports[`Integration test ads saveAd mutation succeds if logged in 1`] = `
+Object {
+  "data": Object {
+    "saveAd": Object {
+      "errors": Array [],
+      "response": Object {
+        "content": "wow",
+      },
+    },
+  },
+}
+`;
+
 exports[`Integration test ads update adWine mutation fails if logged in and other user 1`] = `
 Object {
   "data": Object {

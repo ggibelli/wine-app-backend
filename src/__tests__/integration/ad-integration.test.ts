@@ -80,6 +80,19 @@ const AD = gql`
   }
 `;
 
+const SAVE_AD = gql`
+  mutation SaveAd($id: ID!) {
+    saveAd(id: $id) {
+      response {
+        content
+      }
+      errors {
+        text
+      }
+    }
+  }
+`;
+
 const CREATE_AD = gql`
   mutation CreateAd($ad: AdInput!) {
     createAd(input: $ad) {
@@ -252,6 +265,13 @@ describe('Integration test ads', () => {
     expect(res).toMatchSnapshot();
   }, 10000);
 
+  it('saveAd mutation it fails if not logged in', async () => {
+    const res = await mutate(SAVE_AD, {
+      variables: { id: '602daa91cdc6630673a9fc0e' },
+    });
+    expect(res).toMatchSnapshot();
+  }, 10000);
+
   it('create adWine mutation fails if user not verified', async () => {
     const data: any = await mutate(LOGIN_VALID_NOT_VERIFIED);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -297,6 +317,14 @@ describe('Integration test ads', () => {
       },
     });
     const res = await query(ADS);
+    expect(res).toMatchSnapshot();
+  }, 10000);
+
+  it('saveAd mutation succeds if logged in', async () => {
+    const ads: AdGraphQl[] = await Ad.find({}).lean().exec();
+    const res = await mutate(SAVE_AD, {
+      variables: { id: ads[0]._id.toHexString() },
+    });
     expect(res).toMatchSnapshot();
   }, 10000);
 

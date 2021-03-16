@@ -8103,7 +8103,6 @@ interface Vineyard {
 const createVineyardDb = (): Vineyard[] => {
   const vineyardDb: Vineyard[] = [];
   $('a').each(function (_i, el) {
-    //console.log(_);
     const link = $(el).attr('href');
     if (link?.startsWith('https://www.quattrocalici.it/vitigni/')) {
       const vineyardName = $(el).text();

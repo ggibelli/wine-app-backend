@@ -43,7 +43,6 @@ export const resolver: StringIndexed<Resolvers> = {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     async ads(_, args, { dataSources }: { dataSources: MongoDataSource }) {
-      console.log(args);
       return dataSources.ads.getAds(args);
     },
     async ad(
