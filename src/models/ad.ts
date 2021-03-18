@@ -7,11 +7,11 @@ import {
   METODOPRODUTTIVO,
 } from '../utils/enumMongooseHelper';
 import { IUserDoc } from './user';
-import { INegotiationDoc } from './negotiation';
 import { IWineDoc } from './wine';
 import { TypeAd, TypeProduct, Menzione } from '../types';
 import { IVineyardDoc } from './vineyard';
 import { MetodoProduttivo } from '../types';
+import { Negotiation } from '../generated/graphql';
 
 export interface IAd {
   postedBy: IUserDoc['_id'];
@@ -32,7 +32,7 @@ export interface IAd {
   kgTo?: number;
   content: string;
   address: Address;
-  negotiations?: mongoose.Types.Array<INegotiationDoc['_id']>; // trattative dell'annuncio, solo attive, solo graphql??
+  negotiations?: mongoose.Types.Array<Negotiation>; // trattative dell'annuncio, solo attive, solo graphql??
   viewedBy?: mongoose.Types.Array<IUserDoc['_id']>;
   typeAd: TypeAd;
   typeProduct: TypeProduct;
@@ -42,7 +42,7 @@ export interface IAd {
 }
 
 export interface AdGraphQl extends IAd {
-  _id: mongoose.Types.ObjectId;
+  _id: mongoose.Types.ObjectId | string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

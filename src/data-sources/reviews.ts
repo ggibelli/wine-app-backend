@@ -2,13 +2,21 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
 import { MongoDataSource } from 'apollo-datasource-mongodb';
-import { Errors } from '../types';
+import { Errors, QueryOrderBy } from '../types';
 import { IReviewDoc, ReviewGraphQl } from '../models/review';
 import { UserGraphQl } from '../models/user';
-import { ReviewInput, ReviewInputUpdate } from '../generated/graphql';
+import {
+  Review,
+  ReviewInput,
+  ReviewInputUpdate,
+  ReviewResult,
+  UserReviewsArgs,
+} from '../generated/graphql';
 import { sendMail } from '../utils/mailServer';
 import { CronJob } from 'cron';
 import { loggerError } from '../utils/logger';
+import { UserInputError } from 'apollo-server-express';
+import { sortQueryHelper } from './ads';
 
 interface Context {
   user: UserGraphQl;
@@ -24,19 +32,51 @@ export default class Reviews extends MongoDataSource<IReviewDoc, Context> {
   async getReview(id: string): Promise<IReviewDoc | null | undefined> {
     return this.findOneById(id);
   }
-  async getReviews(): Promise<ReviewGraphQl[]> {
+  async getReviews({
+    limit = 10,
+    skip = 0,
+    orderBy = QueryOrderBy.createdAt_DESC,
+  }: UserReviewsArgs): Promise<ReviewResult> {
     const userCtx = this.context.user;
+    const LIMIT_MAX = 100;
+    if (limit < 1 || skip < 0 || limit > LIMIT_MAX) {
+      throw new UserInputError(
+        `${limit} must be greater than 1 and less than 100 ${skip} must be positive `
+      );
+    }
+    const sortQuery = sortQueryHelper(orderBy);
     if (userCtx.isAdmin) {
-      return this.model.find({}).lean().exec();
+      const pageCount = await this.model.countDocuments().exec();
+      return {
+        reviews: (this.model
+          .find({})
+          .sort(sortQuery)
+          .skip(skip)
+          .limit(limit)
+          .lean()
+          .exec() as unknown) as Review[],
+        pageCount,
+      };
     }
     await this.collection.createIndex({ createdBy: 1 });
     await this.collection.createIndex({ forUser: 1 });
-    return this.model
-      .find({
+    const pageCount = await this.model
+      .countDocuments({
         $or: [{ createdBy: userCtx._id }, { forUser: userCtx._id }],
       })
-      .lean()
       .exec();
+    return {
+      reviews: (this.model
+        .find({
+          $or: [{ createdBy: userCtx._id }, { forUser: userCtx._id }],
+        })
+        .sort(sortQuery)
+        .skip(skip)
+        .limit(limit)
+        .lean()
+        .exec() as unknown) as Review[],
+      pageCount,
+    };
   }
 
   async createReview(review: ReviewInput): Promise<Response> {

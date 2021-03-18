@@ -14,6 +14,7 @@ import {
   AdInputUpdate,
   AdsResult,
   QueryAdsArgs,
+  UserAdsArgs,
 } from '../generated/graphql';
 import { UserInputError } from 'apollo-server-express';
 import { UserGraphQl } from '../models/user';
@@ -67,6 +68,27 @@ interface Context {
   user: UserGraphQl;
   createToken(user: UserGraphQl): string;
 }
+
+export const sortQueryHelper = (orderBy: QueryOrderBy) => {
+  let sortQuery;
+  switch (orderBy) {
+    case QueryOrderBy.createdAt_ASC:
+      sortQuery = { _id: 1 };
+      break;
+    case QueryOrderBy.createdAt_DESC:
+      sortQuery = { _id: -1 };
+      break;
+    case QueryOrderBy.price_ASC:
+      sortQuery = { priceFrom: 1 };
+      break;
+    case QueryOrderBy.price_DESC:
+      sortQuery = { priceFrom: -1 };
+      break;
+    default:
+      assertNever(orderBy);
+  }
+  return sortQuery;
+};
 
 const parseGrapeAd = (params: RestParams, errors: Errors[]): GrapeAdParams => {
   if (!params.vineyardName) {
@@ -150,8 +172,32 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
     return ad;
   }
 
-  async getAdsByUser(userId: ObjectId): Promise<AdGraphQl[]> {
-    return this.model.find({ postedBy: userId }).lean().exec();
+  async getAdsByUser(
+    userId: ObjectId,
+    { limit = 10, skip = 0, orderBy = QueryOrderBy.createdAt_DESC }: UserAdsArgs
+  ): Promise<AdsResult> {
+    const LIMIT_MAX = 100;
+    if (limit < 1 || skip < 0 || limit > LIMIT_MAX) {
+      throw new UserInputError(
+        `${limit} must be greater than 1 and less than 100 ${skip} must be positive `
+      );
+    }
+    const sortQuery = sortQueryHelper(orderBy);
+    const pageCount = await this.model
+      .countDocuments({
+        postedBy: userId,
+      })
+      .exec();
+    return {
+      ads: (this.model
+        .find({ postedBy: userId })
+        .skip(skip)
+        .limit(limit)
+        .sort(sortQuery)
+        .lean()
+        .exec() as unknown) as Ad[],
+      pageCount,
+    };
   }
 
   // un metodo solo con tipo prodotto e nome vino o nome vigna
@@ -170,23 +216,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
         `${limit} must be greater than 1 and less than 100 ${skip} must be positive `
       );
     }
-    let sortQuery;
-    switch (orderBy) {
-      case QueryOrderBy.createdAt_ASC:
-        sortQuery = { _id: 1 };
-        break;
-      case QueryOrderBy.createdAt_DESC:
-        sortQuery = { _id: -1 };
-        break;
-      case QueryOrderBy.price_ASC:
-        sortQuery = { priceFrom: 1 };
-        break;
-      case QueryOrderBy.price_DESC:
-        sortQuery = { priceFrom: -1 };
-        break;
-      default:
-        assertNever(orderBy);
-    }
+    const sortQuery = sortQueryHelper(orderBy);
     if (vineyardName) {
       const pageCount = await this.model
         .countDocuments({

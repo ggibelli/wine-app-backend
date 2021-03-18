@@ -4,7 +4,6 @@ import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { Address } from '../types';
 import { Province, Regioni } from '../utils/enumMongooseHelper';
 import { IAdDoc } from './ad';
-import { INegotiationDoc } from './negotiation';
 import { IWineDoc } from './wine';
 import { IReviewDoc } from './review';
 import { IVineyardDoc } from './vineyard';
@@ -12,6 +11,8 @@ import { MetodoProduttivo } from '../types';
 import { METODOPRODUTTIVO } from '../utils/enumMongooseHelper';
 
 import bcrypt from 'bcrypt';
+import { IMessageDoc } from './message';
+import { Negotiation } from '../generated/graphql';
 
 const HASH_ROUNDS = 10;
 
@@ -41,8 +42,8 @@ export interface IUser {
   hideContact: boolean;
   ads?: mongoose.Types.Array<IAdDoc['_id'] | IAdDoc>; // annunci postati dall'utente
   savedAds?: mongoose.Types.Array<IAdDoc['_id'] | IAdDoc>; // annunci postati dall'utente
-
-  negotiations?: mongoose.Types.Array<INegotiationDoc['_id'] | INegotiationDoc>; // trattative dell'utente, attive e non, concluse e non
+  messages?: mongoose.Types.Array<IMessageDoc['_id'] | IMessageDoc>;
+  negotiations?: mongoose.Types.Array<Negotiation>; // trattative dell'utente, attive e non, concluse e non
   reviews?: mongoose.Types.Array<IReviewDoc['_id'] | IReviewDoc>; // recensioni fatte e ricevute dall'utente
   adsRemaining?: number;
   dateCreated: Date;
@@ -132,6 +133,12 @@ const userSchemaFields: Record<keyof IUser, any> = {
     {
       type: Schema.Types.ObjectId,
       ref: 'Ad',
+    },
+  ],
+  messages: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Message',
     },
   ],
   negotiations: [

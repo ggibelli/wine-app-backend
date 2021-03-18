@@ -15,7 +15,7 @@ export interface IReview {
 }
 
 export interface ReviewGraphQl extends IReview {
-  _id: mongoose.Types.ObjectId;
+  _id: mongoose.Types.ObjectId | string;
 }
 
 export interface IReviewDoc extends IReview, Document {}

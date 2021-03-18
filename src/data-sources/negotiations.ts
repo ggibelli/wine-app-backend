@@ -2,14 +2,22 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
 import { MongoDataSource } from 'apollo-datasource-mongodb';
-import { Errors } from '../types';
+import { Errors, QueryOrderBy } from '../types';
 import { INegotiationDoc, NegotiationGraphQl } from '../models/negotiation';
 import { UserGraphQl } from '../models/user';
-import { NegotiationInput, NegotiationInputUpdate } from '../generated/graphql';
+import {
+  Negotiation,
+  NegotiationInput,
+  NegotiationInputUpdate,
+  NegotiationResult,
+  UserNegotiationsArgs,
+} from '../generated/graphql';
 import { sendMail } from '../utils/mailServer';
 import { CronJob } from 'cron';
 import { loggerError } from '../utils/logger';
 import { ObjectId } from 'mongodb';
+import { UserInputError } from 'apollo-server-express';
+import { sortQueryHelper } from './ads';
 
 interface Context {
   user: UserGraphQl;
@@ -30,19 +38,52 @@ export default class Negotiations extends MongoDataSource<
   ): Promise<INegotiationDoc | null | undefined> {
     return this.findOneById(id);
   }
-  async getNegotiations(): Promise<NegotiationGraphQl[]> {
+  async getNegotiations({
+    limit = 10,
+    skip = 0,
+    orderBy = QueryOrderBy.createdAt_DESC,
+  }: UserNegotiationsArgs): Promise<NegotiationResult> {
     const userCtx = this.context.user;
-    if (userCtx.isAdmin) {
-      return this.model.find({}).lean().exec();
+    const LIMIT_MAX = 100;
+    if (limit < 1 || skip < 0 || limit > LIMIT_MAX) {
+      throw new UserInputError(
+        `${limit} must be greater than 1 and less than 100 ${skip} must be positive `
+      );
     }
+    const sortQuery = sortQueryHelper(orderBy);
+    if (userCtx.isAdmin) {
+      const pageCount = await this.model.countDocuments().exec();
+      return {
+        negotiations: (this.model
+          .find({})
+          .sort(sortQuery)
+          .skip(skip)
+          .limit(limit)
+          .lean()
+          .exec() as unknown) as Negotiation[],
+        pageCount,
+      };
+    }
+
     await this.collection.createIndex({ createdBy: 1 });
     await this.collection.createIndex({ forUserAd: 1 });
-    return this.model
-      .find({
+    const pageCount = await this.model
+      .countDocuments({
         $or: [{ createdBy: userCtx._id }, { forUserAd: userCtx._id }],
       })
-      .lean()
       .exec();
+    return {
+      negotiations: (this.model
+        .find({
+          $or: [{ createdBy: userCtx._id }, { forUserAd: userCtx._id }],
+        })
+        .lean()
+        .sort(sortQuery)
+        .skip(skip)
+        .limit(limit)
+        .exec() as unknown) as Negotiation[],
+      pageCount,
+    };
   }
 
   async getNegotiationsForUser(forUser: string): Promise<NegotiationGraphQl[]> {

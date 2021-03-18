@@ -29,6 +29,11 @@ export const typeDefs = gql`
     type: TypeAd!
   }
 
+  type NegotiationResult {
+    negotiations: [Negotiation]
+    pageCount: Int
+  }
+
   type NegotiationPayload {
     response: Negotiation
     errors: [Errors]

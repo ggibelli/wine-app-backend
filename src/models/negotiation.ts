@@ -9,14 +9,14 @@ export interface INegotiation {
   createdBy: IUserDoc['_id'];
   ad: IAdDoc['_id'];
   forUserAd: IUserDoc['_id'];
-  messages?: mongoose.Types.Array<IMessageDoc['_id']>;
+  messages?: mongoose.Types.Array<IMessageDoc['_id']> | null;
   isConcluded: boolean;
   dateCreated: Date;
   type: TypeAd;
 }
 
 export interface NegotiationGraphQl extends INegotiation {
-  _id: mongoose.Types.ObjectId;
+  _id: mongoose.Types.ObjectId | string;
 }
 
 export interface INegotiationDoc extends INegotiation, Document {}

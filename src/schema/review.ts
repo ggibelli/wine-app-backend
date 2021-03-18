@@ -18,6 +18,11 @@ export const typeDefs = gql`
     #type: Type!
   }
 
+  type ReviewResult {
+    reviews: [Review]
+    pageCount: Int
+  }
+
   type Review {
     _id: ID!
     createdBy: User!
