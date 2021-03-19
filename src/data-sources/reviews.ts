@@ -34,14 +34,14 @@ export default class Reviews extends MongoDataSource<IReviewDoc, Context> {
   }
   async getReviews({
     limit = 10,
-    skip = 0,
+    offset = 0,
     orderBy = QueryOrderBy.createdAt_DESC,
   }: UserReviewsArgs): Promise<ReviewResult> {
     const userCtx = this.context.user;
     const LIMIT_MAX = 100;
-    if (limit < 1 || skip < 0 || limit > LIMIT_MAX) {
+    if (limit < 1 || offset < 0 || limit > LIMIT_MAX) {
       throw new UserInputError(
-        `${limit} must be greater than 1 and less than 100 ${skip} must be positive `
+        `${limit} must be greater than 1 and less than 100 ${offset} must be positive `
       );
     }
     const sortQuery = sortQueryHelper(orderBy);
@@ -51,7 +51,7 @@ export default class Reviews extends MongoDataSource<IReviewDoc, Context> {
         reviews: (this.model
           .find({})
           .sort(sortQuery)
-          .skip(skip)
+          .skip(offset)
           .limit(limit)
           .lean()
           .exec() as unknown) as Review[],
@@ -71,7 +71,7 @@ export default class Reviews extends MongoDataSource<IReviewDoc, Context> {
           $or: [{ createdBy: userCtx._id }, { forUser: userCtx._id }],
         })
         .sort(sortQuery)
-        .skip(skip)
+        .skip(offset)
         .limit(limit)
         .lean()
         .exec() as unknown) as Review[],

@@ -14,7 +14,7 @@ import {
   Rating,
   Errors,
 } from '../types';
-import mongoose, { Mongoose } from 'mongoose';
+import mongoose from 'mongoose';
 
 import {
   GraphQLResolveInfo,
@@ -242,7 +242,7 @@ export type QueryAdsArgs = {
   typeProduct: TypeProduct;
   wineName?: Maybe<Scalars['String']>;
   vineyardName?: Maybe<Scalars['String']>;
-  skip?: Scalars['Int'];
+  offset?: Scalars['Int'];
   orderBy?: QueryOrderBy;
   limit?: Scalars['Int'];
 };
@@ -599,19 +599,19 @@ export type User = {
 };
 
 export type UserAdsArgs = {
-  skip?: Scalars['Int'];
+  offset?: Scalars['Int'];
   orderBy?: QueryOrderBy;
   limit?: Scalars['Int'];
 };
 
 export type UserNegotiationsArgs = {
-  skip?: Scalars['Int'];
+  offset?: Scalars['Int'];
   orderBy?: QueryOrderBy;
   limit?: Scalars['Int'];
 };
 
 export type UserReviewsArgs = {
-  skip?: Scalars['Int'];
+  offset?: Scalars['Int'];
   orderBy?: QueryOrderBy;
   limit?: Scalars['Int'];
 };

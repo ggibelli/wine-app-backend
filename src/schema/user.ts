@@ -72,15 +72,15 @@ export const typeDefs = gql`
     isPremium: Boolean
     isAdmin: Boolean!
     hideContact: Boolean!
-    ads(skip: Int, orderBy: QueryOrderBy, limit: Int): AdsResult
+    ads(offset: Int, orderBy: QueryOrderBy, limit: Int): AdsResult
     savedAds: [Ad!]
     messages: [Message!]
     negotiations(
-      skip: Int
+      offset: Int
       orderBy: QueryOrderBy
       limit: Int
     ): NegotiationResult
-    reviews(skip: Int, orderBy: QueryOrderBy, limit: Int): ReviewResult
+    reviews(offset: Int, orderBy: QueryOrderBy, limit: Int): ReviewResult
     adsRemaining: Int @authorized
     dateCreated: Date! @date
     producedWines: ProducedWines

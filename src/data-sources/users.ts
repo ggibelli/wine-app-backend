@@ -179,7 +179,19 @@ export default class Users extends MongoDataSource<IUserDoc, Context> {
   async saveAd(ad: AdGraphQl) {
     const errors: Errors[] = [];
     const user = await this.model.findById(this.context.user._id);
-    user?.savedAds?.addToSet(ad);
+
+    const isSaved =
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      user?.savedAds?.findIndex(
+        (adSaved) => adSaved._id.toString() === ad._id.toString()
+      ) !== -1;
+    if (isSaved) {
+      console.log('yo');
+      user?.savedAds?.pull({ _id: ad._id });
+    } else {
+      user?.savedAds?.addToSet(ad);
+    }
+
     try {
       await user?.save();
     } catch (e) {

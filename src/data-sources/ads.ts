@@ -60,7 +60,7 @@ interface WineAdParams {
 
 export interface QueryAdsArgsPag extends QueryAdsArgs {
   limit: number;
-  skip: number;
+  offset: number;
   orderBy: QueryOrderBy;
 }
 
@@ -174,12 +174,16 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
 
   async getAdsByUser(
     userId: ObjectId,
-    { limit = 10, skip = 0, orderBy = QueryOrderBy.createdAt_DESC }: UserAdsArgs
+    {
+      limit = 10,
+      offset = 0,
+      orderBy = QueryOrderBy.createdAt_DESC,
+    }: UserAdsArgs
   ): Promise<AdsResult> {
     const LIMIT_MAX = 100;
-    if (limit < 1 || skip < 0 || limit > LIMIT_MAX) {
+    if (limit < 1 || offset < 0 || limit > LIMIT_MAX) {
       throw new UserInputError(
-        `${limit} must be greater than 1 and less than 100 ${skip} must be positive `
+        `${limit} must be greater than 1 and less than 100 ${offset} must be positive `
       );
     }
     const sortQuery = sortQueryHelper(orderBy);
@@ -191,7 +195,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
     return {
       ads: (this.model
         .find({ postedBy: userId })
-        .skip(skip)
+        .skip(offset)
         .limit(limit)
         .sort(sortQuery)
         .lean()
@@ -203,7 +207,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
   // un metodo solo con tipo prodotto e nome vino o nome vigna
   async getAds({
     limit = 10,
-    skip = 0,
+    offset = 0,
     orderBy = QueryOrderBy.createdAt_DESC,
     vineyardName,
     wineName,
@@ -211,9 +215,9 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
     typeProduct,
   }: QueryAdsArgs): Promise<AdsResult> {
     const LIMIT_MAX = 100;
-    if (limit < 1 || skip < 0 || limit > LIMIT_MAX) {
+    if (limit < 1 || offset < 0 || limit > LIMIT_MAX) {
       throw new UserInputError(
-        `${limit} must be greater than 1 and less than 100 ${skip} must be positive `
+        `${limit} must be greater than 1 and less than 100 ${offset} must be positive `
       );
     }
     const sortQuery = sortQueryHelper(orderBy);
@@ -232,7 +236,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
             typeAd: typeAd,
             vineyardName: vineyardName,
           })
-          .skip(skip)
+          .skip(offset)
           .limit(limit)
           .sort(sortQuery)
           .lean()
@@ -253,7 +257,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
             typeAd: typeAd,
             wineName: wineName,
           })
-          .skip(skip)
+          .skip(offset)
           .limit(limit)
           .sort(sortQuery)
           .lean()
@@ -274,7 +278,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
           typeAd: typeAd,
           typeProduct: typeProduct,
         })
-        .skip(skip)
+        .skip(offset)
         .limit(limit)
         .sort(sortQuery)
         .lean()

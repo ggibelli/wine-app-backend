@@ -149,7 +149,7 @@ export const typeDefs = gql`
       typeProduct: TypeProduct!
       wineName: String
       vineyardName: String
-      skip: Int
+      offset: Int
       orderBy: QueryOrderBy
       limit: Int
     ): AdsResult
