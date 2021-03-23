@@ -41,7 +41,8 @@ export const typeDefs = gql`
 
   extend type Query {
     review(id: ID!): Review @authenticated
-    reviews: [Review!] @authenticated
+    reviews(offset: Int, orderBy: QueryOrderBy, limit: Int): ReviewResult
+      @authenticated
   }
 
   extend type Mutation {

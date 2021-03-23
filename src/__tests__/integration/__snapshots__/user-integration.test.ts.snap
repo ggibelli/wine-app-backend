@@ -80,14 +80,16 @@ exports[`Integration test users query me is successfull if logged in, shows para
 Object {
   "data": Object {
     "me": Object {
-      "ads": Array [
-        Object {
-          "postedBy": Object {
-            "firstName": "Giovanni",
+      "ads": Object {
+        "ads": Array [
+          Object {
+            "postedBy": Object {
+              "firstName": "Giovanni",
+            },
+            "wineName": "Vino",
           },
-          "wineName": "Vino",
-        },
-      ],
+        ],
+      },
       "isVerified": true,
       "messages": Array [
         Object {
@@ -109,46 +111,50 @@ Object {
           },
         },
       ],
-      "negotiations": Array [
-        Object {
-          "createdBy": Object {
-            "firstName": "Giovanni",
+      "negotiations": Object {
+        "negotiations": Array [
+          Object {
+            "createdBy": Object {
+              "firstName": "Luigetto",
+            },
+            "forUserAd": Object {
+              "firstName": "Giovanni",
+            },
           },
-          "forUserAd": Object {
-            "firstName": "Mariuccio",
+          Object {
+            "createdBy": Object {
+              "firstName": "Giovanni",
+            },
+            "forUserAd": Object {
+              "firstName": "Mariuccio",
+            },
           },
-        },
-        Object {
-          "createdBy": Object {
-            "firstName": "Luigetto",
-          },
-          "forUserAd": Object {
-            "firstName": "Giovanni",
-          },
-        },
-      ],
+        ],
+      },
       "pIva": "12345678901",
       "phoneNumber": "1234567890",
-      "reviews": Array [
-        Object {
-          "createdBy": Object {
-            "firstName": "Giovanni",
+      "reviews": Object {
+        "reviews": Array [
+          Object {
+            "createdBy": Object {
+              "firstName": "Luigetto",
+            },
+            "forUser": Object {
+              "firstName": "Giovanni",
+            },
+            "rating": "POOR",
           },
-          "forUser": Object {
-            "firstName": "Mariuccio",
+          Object {
+            "createdBy": Object {
+              "firstName": "Giovanni",
+            },
+            "forUser": Object {
+              "firstName": "Mariuccio",
+            },
+            "rating": "PERFECT",
           },
-          "rating": "PERFECT",
-        },
-        Object {
-          "createdBy": Object {
-            "firstName": "Luigetto",
-          },
-          "forUser": Object {
-            "firstName": "Giovanni",
-          },
-          "rating": "POOR",
-        },
-      ],
+        ],
+      },
       "savedAds": Array [
         Object {
           "content": "wow",
@@ -163,14 +169,16 @@ exports[`Integration test users query me is successfull if logged in, shows para
 Object {
   "data": Object {
     "me": Object {
-      "ads": Array [
-        Object {
-          "postedBy": Object {
-            "firstName": "Mariuccio",
+      "ads": Object {
+        "ads": Array [
+          Object {
+            "postedBy": Object {
+              "firstName": "Mariuccio",
+            },
+            "wineName": "Vino vendo",
           },
-          "wineName": "Vino vendo",
-        },
-      ],
+        ],
+      },
       "isVerified": true,
       "messages": Array [
         Object {
@@ -183,29 +191,33 @@ Object {
           },
         },
       ],
-      "negotiations": Array [
-        Object {
-          "createdBy": Object {
-            "firstName": "Giovanni",
+      "negotiations": Object {
+        "negotiations": Array [
+          Object {
+            "createdBy": Object {
+              "firstName": "Giovanni",
+            },
+            "forUserAd": Object {
+              "firstName": "Mariuccio",
+            },
           },
-          "forUserAd": Object {
-            "firstName": "Mariuccio",
-          },
-        },
-      ],
+        ],
+      },
       "pIva": "12345678301",
       "phoneNumber": "1234567830",
-      "reviews": Array [
-        Object {
-          "createdBy": Object {
-            "firstName": "Giovanni",
+      "reviews": Object {
+        "reviews": Array [
+          Object {
+            "createdBy": Object {
+              "firstName": "Giovanni",
+            },
+            "forUser": Object {
+              "firstName": "Mariuccio",
+            },
+            "rating": "PERFECT",
           },
-          "forUser": Object {
-            "firstName": "Mariuccio",
-          },
-          "rating": "PERFECT",
-        },
-      ],
+        ],
+      },
       "savedAds": Array [
         Object {
           "content": "waaow",
@@ -220,14 +232,16 @@ exports[`Integration test users query single user is successfull if logged in, s
 Object {
   "data": Object {
     "user": Object {
-      "ads": Array [
-        Object {
-          "postedBy": Object {
-            "firstName": "Giovanni",
+      "ads": Object {
+        "ads": Array [
+          Object {
+            "postedBy": Object {
+              "firstName": "Giovanni",
+            },
+            "wineName": "Vino",
           },
-          "wineName": "Vino",
-        },
-      ],
+        ],
+      },
       "firstName": "Giovanni",
       "messages": Array [
         Object {
@@ -249,44 +263,48 @@ Object {
           },
         },
       ],
-      "negotiations": Array [
-        Object {
-          "createdBy": Object {
-            "firstName": "Giovanni",
+      "negotiations": Object {
+        "negotiations": Array [
+          Object {
+            "createdBy": Object {
+              "firstName": "Luigetto",
+            },
+            "forUserAd": Object {
+              "firstName": "Giovanni",
+            },
           },
-          "forUserAd": Object {
-            "firstName": "Mariuccio",
+          Object {
+            "createdBy": Object {
+              "firstName": "Giovanni",
+            },
+            "forUserAd": Object {
+              "firstName": "Mariuccio",
+            },
           },
-        },
-        Object {
-          "createdBy": Object {
-            "firstName": "Luigetto",
+        ],
+      },
+      "reviews": Object {
+        "reviews": Array [
+          Object {
+            "createdBy": Object {
+              "firstName": "Luigetto",
+            },
+            "forUser": Object {
+              "firstName": "Giovanni",
+            },
+            "rating": "POOR",
           },
-          "forUserAd": Object {
-            "firstName": "Giovanni",
+          Object {
+            "createdBy": Object {
+              "firstName": "Giovanni",
+            },
+            "forUser": Object {
+              "firstName": "Mariuccio",
+            },
+            "rating": "PERFECT",
           },
-        },
-      ],
-      "reviews": Array [
-        Object {
-          "createdBy": Object {
-            "firstName": "Giovanni",
-          },
-          "forUser": Object {
-            "firstName": "Mariuccio",
-          },
-          "rating": "PERFECT",
-        },
-        Object {
-          "createdBy": Object {
-            "firstName": "Luigetto",
-          },
-          "forUser": Object {
-            "firstName": "Giovanni",
-          },
-          "rating": "POOR",
-        },
-      ],
+        ],
+      },
     },
   },
 }
@@ -296,14 +314,16 @@ exports[`Integration test users query single user is successfull if logged in, s
 Object {
   "data": Object {
     "user": Object {
-      "ads": Array [
-        Object {
-          "postedBy": Object {
-            "firstName": "Mariuccio",
+      "ads": Object {
+        "ads": Array [
+          Object {
+            "postedBy": Object {
+              "firstName": "Mariuccio",
+            },
+            "wineName": "Vino vendo",
           },
-          "wineName": "Vino vendo",
-        },
-      ],
+        ],
+      },
       "firstName": "Mariuccio",
       "messages": null,
       "negotiations": null,
@@ -318,7 +338,7 @@ Object {
       "locations": Array [
         Object {
           "column": 5,
-          "line": 12,
+          "line": 14,
         },
       ],
       "message": "You can only see your own negotiations",
@@ -334,7 +354,7 @@ Object {
       "locations": Array [
         Object {
           "column": 5,
-          "line": 20,
+          "line": 24,
         },
       ],
       "message": "You can only see your own messages",
@@ -350,7 +370,7 @@ Object {
       "locations": Array [
         Object {
           "column": 5,
-          "line": 29,
+          "line": 33,
         },
       ],
       "message": "You can only see your own negotiations",
@@ -393,14 +413,16 @@ Object {
   "data": Object {
     "users": Array [
       Object {
-        "ads": Array [
-          Object {
-            "postedBy": Object {
-              "firstName": "Mariuccio",
+        "ads": Object {
+          "ads": Array [
+            Object {
+              "postedBy": Object {
+                "firstName": "Mariuccio",
+              },
+              "wineName": "Vino vendo",
             },
-            "wineName": "Vino vendo",
-          },
-        ],
+          ],
+        },
         "email": "The user prefers to hide the email",
         "firstName": "Mariuccio",
         "messages": null,
@@ -409,7 +431,9 @@ Object {
         "reviews": null,
       },
       Object {
-        "ads": Array [],
+        "ads": Object {
+          "ads": Array [],
+        },
         "email": "The user prefers to hide the email",
         "firstName": "Luigetto",
         "messages": null,
@@ -418,14 +442,16 @@ Object {
         "reviews": null,
       },
       Object {
-        "ads": Array [
-          Object {
-            "postedBy": Object {
-              "firstName": "Giovanni",
+        "ads": Object {
+          "ads": Array [
+            Object {
+              "postedBy": Object {
+                "firstName": "Giovanni",
+              },
+              "wineName": "Vino",
             },
-            "wineName": "Vino",
-          },
-        ],
+          ],
+        },
         "email": "gio@prova.it",
         "firstName": "Giovanni",
         "messages": Array [
@@ -448,48 +474,54 @@ Object {
             },
           },
         ],
-        "negotiations": Array [
-          Object {
-            "createdBy": Object {
-              "firstName": "Giovanni",
+        "negotiations": Object {
+          "negotiations": Array [
+            Object {
+              "createdBy": Object {
+                "firstName": "Luigetto",
+              },
+              "forUserAd": Object {
+                "firstName": "Giovanni",
+              },
             },
-            "forUserAd": Object {
-              "firstName": "Mariuccio",
+            Object {
+              "createdBy": Object {
+                "firstName": "Giovanni",
+              },
+              "forUserAd": Object {
+                "firstName": "Mariuccio",
+              },
             },
-          },
-          Object {
-            "createdBy": Object {
-              "firstName": "Luigetto",
-            },
-            "forUserAd": Object {
-              "firstName": "Giovanni",
-            },
-          },
-        ],
+          ],
+        },
         "phoneNumber": "1234567890",
-        "reviews": Array [
-          Object {
-            "createdBy": Object {
-              "firstName": "Giovanni",
+        "reviews": Object {
+          "reviews": Array [
+            Object {
+              "createdBy": Object {
+                "firstName": "Luigetto",
+              },
+              "forUser": Object {
+                "firstName": "Giovanni",
+              },
+              "rating": "POOR",
             },
-            "forUser": Object {
-              "firstName": "Mariuccio",
+            Object {
+              "createdBy": Object {
+                "firstName": "Giovanni",
+              },
+              "forUser": Object {
+                "firstName": "Mariuccio",
+              },
+              "rating": "PERFECT",
             },
-            "rating": "PERFECT",
-          },
-          Object {
-            "createdBy": Object {
-              "firstName": "Luigetto",
-            },
-            "forUser": Object {
-              "firstName": "Giovanni",
-            },
-            "rating": "POOR",
-          },
-        ],
+          ],
+        },
       },
       Object {
-        "ads": Array [],
+        "ads": Object {
+          "ads": Array [],
+        },
         "email": "giollo@ollo.it",
         "firstName": "Giova",
         "messages": null,
@@ -507,7 +539,7 @@ Object {
       "locations": Array [
         Object {
           "column": 5,
-          "line": 14,
+          "line": 16,
         },
       ],
       "message": "You can only see your own negotiations",
@@ -524,7 +556,7 @@ Object {
       "locations": Array [
         Object {
           "column": 5,
-          "line": 22,
+          "line": 26,
         },
       ],
       "message": "You can only see your own messages",
@@ -541,7 +573,7 @@ Object {
       "locations": Array [
         Object {
           "column": 5,
-          "line": 31,
+          "line": 35,
         },
       ],
       "message": "You can only see your own negotiations",
@@ -558,7 +590,7 @@ Object {
       "locations": Array [
         Object {
           "column": 5,
-          "line": 14,
+          "line": 16,
         },
       ],
       "message": "You can only see your own negotiations",
@@ -575,7 +607,7 @@ Object {
       "locations": Array [
         Object {
           "column": 5,
-          "line": 22,
+          "line": 26,
         },
       ],
       "message": "You can only see your own messages",
@@ -592,7 +624,7 @@ Object {
       "locations": Array [
         Object {
           "column": 5,
-          "line": 31,
+          "line": 35,
         },
       ],
       "message": "You can only see your own negotiations",
@@ -609,7 +641,7 @@ Object {
       "locations": Array [
         Object {
           "column": 5,
-          "line": 14,
+          "line": 16,
         },
       ],
       "message": "You can only see your own negotiations",
@@ -626,7 +658,7 @@ Object {
       "locations": Array [
         Object {
           "column": 5,
-          "line": 22,
+          "line": 26,
         },
       ],
       "message": "You can only see your own messages",
@@ -643,7 +675,7 @@ Object {
       "locations": Array [
         Object {
           "column": 5,
-          "line": 31,
+          "line": 35,
         },
       ],
       "message": "You can only see your own negotiations",

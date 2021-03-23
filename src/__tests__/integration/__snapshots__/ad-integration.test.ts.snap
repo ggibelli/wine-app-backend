@@ -285,6 +285,32 @@ Object {
 }
 `;
 
+exports[`Integration test ads saveAd mutation succeds if logged in and if ad is already saved it gets removed 1`] = `
+Object {
+  "data": Object {
+    "saveAd": Object {
+      "errors": Array [],
+      "response": Object {
+        "content": "wow",
+      },
+    },
+  },
+}
+`;
+
+exports[`Integration test ads saveAd mutation succeds if logged in and savedAd shows up in user savedads 1`] = `
+Object {
+  "data": Object {
+    "saveAd": Object {
+      "errors": Array [],
+      "response": Object {
+        "content": "wow",
+      },
+    },
+  },
+}
+`;
+
 exports[`Integration test ads update adWine mutation fails if logged in and other user 1`] = `
 Object {
   "data": Object {

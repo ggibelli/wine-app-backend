@@ -14,6 +14,7 @@ import Messages from '../data-sources/messages';
 import { PubSub, withFilter } from 'apollo-server-express';
 import { NegotiationGraphQl } from '../models/negotiation';
 import { UserGraphQl } from '../models/user';
+// import { AdGraphQl } from '../models/ad';
 
 const pubsub = new PubSub();
 
@@ -52,10 +53,11 @@ export const resolver: StringIndexed<Resolvers> = {
     },
     async negotiations(
       _,
-      __,
+      args,
       { dataSources }: { dataSources: MongoDataSource }
     ) {
-      return dataSources.negotiations.getNegotiations();
+      console.log('negs');
+      return dataSources.negotiations.getNegotiations(args);
     },
     async negotiation(
       _,
@@ -86,7 +88,7 @@ export const resolver: StringIndexed<Resolvers> = {
     async updateNegotiation(
       _,
       { negotiation }: { negotiation: NegotiationInputUpdate },
-      { dataSources }: { dataSources: MongoDataSource; user: UserGraphQl }
+      { dataSources, user }: { dataSources: MongoDataSource; user: UserGraphQl }
     ) {
       const updatedNegotiationResponse = await dataSources.negotiations.updateNegotiation(
         negotiation
@@ -98,13 +100,25 @@ export const resolver: StringIndexed<Resolvers> = {
         const negotiations = await dataSources.negotiations.getNegotiationsForAd(
           ad?._id
         );
-        const users = negotiations
-          .filter((negotiation) => !negotiation.isConcluded)
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          .map((negotiation) => negotiation.createdBy.toString());
+        const openNegotiations = negotiations.filter(
+          (negotiation) => !negotiation.isConcluded
+        );
+        const usersToNotifySet = new Set();
+        console.log(openNegotiations);
+        openNegotiations.forEach((neg) => {
+          usersToNotifySet.add(neg.createdBy.toString());
+          usersToNotifySet.add(neg.forUserAd.toString());
+        });
+        negotiations.forEach((neg) => {
+          usersToNotifySet.add(neg.forUserAd.toString());
+          usersToNotifySet.add(neg.createdBy.toString());
+        });
+
+        const usersToNotify = Array.from(usersToNotifySet);
         await pubsub.publish(NEGOTIATION_CLOSED, {
-          adRemoved: ad,
-          usersToNotify: users,
+          negotiationClosed: ad,
+          usersToNotify,
+          userToNotNotify: user._id.toString(),
         });
       }
       return updatedNegotiationResponse;
@@ -128,12 +142,21 @@ export const resolver: StringIndexed<Resolvers> = {
           _,
           { user }: { user: UserGraphQl }
         ) => {
-          //payload.negotiationCreated.
           return Boolean(
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             payload.negotiationCreated.forUserAd._id.toString() ===
               user._id.toHexString()
           );
+        }
+      ),
+    },
+    negotiationClosed: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator([NEGOTIATION_CLOSED]),
+        (payload, _, { user }: { user: UserGraphQl }) => {
+          console.log(payload);
+          if (user._id.toHexString() === payload.userToNotNotify) return false;
+          return payload.usersToNotify.includes(user._id.toHexString());
         }
       ),
     },

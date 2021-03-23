@@ -69,16 +69,18 @@ const NEGOTIATIONS_AD = gql`
 const NEGOTIATIONS = gql`
   {
     negotiations {
-      createdBy {
-        firstName
+      negotiations {
+        createdBy {
+          firstName
+        }
+        ad {
+          content
+        }
+        forUserAd {
+          firstName
+        }
+        isConcluded
       }
-      ad {
-        content
-      }
-      forUserAd {
-        firstName
-      }
-      isConcluded
     }
   }
 `;

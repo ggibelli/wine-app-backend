@@ -186,7 +186,6 @@ export default class Users extends MongoDataSource<IUserDoc, Context> {
         (adSaved) => adSaved._id.toString() === ad._id.toString()
       ) !== -1;
     if (isSaved) {
-      console.log('yo');
       user?.savedAds?.pull({ _id: ad._id });
     } else {
       user?.savedAds?.addToSet(ad);

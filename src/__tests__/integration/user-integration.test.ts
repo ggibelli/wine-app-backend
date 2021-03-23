@@ -117,20 +117,27 @@ const ME_FULL = gql`
       pIva
       phoneNumber
       isVerified
+      savedAds {
+        content
+      }
       ads {
-        postedBy {
-          firstName
-        }
-        ... on AdWine {
-          wineName
+        ads {
+          postedBy {
+            firstName
+          }
+          ... on AdWine {
+            wineName
+          }
         }
       }
       negotiations {
-        createdBy {
-          firstName
-        }
-        forUserAd {
-          firstName
+        negotiations {
+          createdBy {
+            firstName
+          }
+          forUserAd {
+            firstName
+          }
         }
       }
       messages {
@@ -143,16 +150,15 @@ const ME_FULL = gql`
         }
       }
       reviews {
-        createdBy {
-          firstName
+        reviews {
+          createdBy {
+            firstName
+          }
+          forUser {
+            firstName
+          }
+          rating
         }
-        forUser {
-          firstName
-        }
-        rating
-      }
-      savedAds {
-        content
       }
     }
   }
@@ -165,19 +171,23 @@ const USERS = gql`
       phoneNumber
       email
       ads {
-        postedBy {
-          firstName
-        }
-        ... on AdWine {
-          wineName
+        ads {
+          postedBy {
+            firstName
+          }
+          ... on AdWine {
+            wineName
+          }
         }
       }
       negotiations {
-        createdBy {
-          firstName
-        }
-        forUserAd {
-          firstName
+        negotiations {
+          createdBy {
+            firstName
+          }
+          forUserAd {
+            firstName
+          }
         }
       }
       messages {
@@ -190,13 +200,15 @@ const USERS = gql`
         }
       }
       reviews {
-        createdBy {
-          firstName
+        reviews {
+          createdBy {
+            firstName
+          }
+          forUser {
+            firstName
+          }
+          rating
         }
-        forUser {
-          firstName
-        }
-        rating
       }
     }
   }
@@ -207,19 +219,23 @@ const USER = gql`
     user(id: $id) {
       firstName
       ads {
-        postedBy {
-          firstName
-        }
-        ... on AdWine {
-          wineName
+        ads {
+          postedBy {
+            firstName
+          }
+          ... on AdWine {
+            wineName
+          }
         }
       }
       negotiations {
-        createdBy {
-          firstName
-        }
-        forUserAd {
-          firstName
+        negotiations {
+          createdBy {
+            firstName
+          }
+          forUserAd {
+            firstName
+          }
         }
       }
       messages {
@@ -232,13 +248,15 @@ const USER = gql`
         }
       }
       reviews {
-        createdBy {
-          firstName
+        reviews {
+          createdBy {
+            firstName
+          }
+          forUser {
+            firstName
+          }
+          rating
         }
-        forUser {
-          firstName
-        }
-        rating
       }
     }
   }

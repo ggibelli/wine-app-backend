@@ -28,6 +28,7 @@ const mockContext = {
       getNegotiationsForAd: jest.fn(),
       deleteMany: jest.fn(),
       updateNegotiation: jest.fn(),
+      negotiationsActive: jest.fn(),
     },
     vineyards: {
       getVineyardByName: jest.fn(),
@@ -45,6 +46,7 @@ const { updateAd } = mockContext.dataSources.ads;
 const { getNegotiationsForAd } = mockContext.dataSources.negotiations;
 const { deleteAd } = mockContext.dataSources.ads;
 const { deleteMany } = mockContext.dataSources.negotiations;
+const { negotiationsActive } = mockContext.dataSources.negotiations;
 const { getUser } = mockContext.dataSources.users;
 const { getVineyardByName } = mockContext.dataSources.vineyards;
 const { getWineByName } = mockContext.dataSources.wines;
@@ -346,16 +348,10 @@ describe('Ad resolvers', () => {
   });
 
   it('ad activeNegotiation shows number negotiation ad', async () => {
-    getNegotiationsForAd.mockReturnValueOnce([
-      {
-        id: 3,
-        createdBy: 4,
-      },
-      { id: 5, createdBy: 7 },
-    ]);
+    negotiationsActive.mockReturnValueOnce(2);
     //@ts-ignore
     const res = await resolvers.Ad?.activeNegotiations(
-      { postedBy: '123' },
+      { _id: '123' },
       null,
       mockContext
     );
@@ -374,8 +370,8 @@ describe('Ad resolvers', () => {
 
   it('ad negotiations shows negotiations ad', async () => {
     getNegotiationsForAd.mockReturnValueOnce([
-      { id: 3, createdBy: 4 },
-      { id: 5, createdBy: 7 },
+      { _id: 3, createdBy: 4 },
+      { _id: 5, createdBy: 7 },
     ]);
     //@ts-ignore
     const res = await resolvers.Ad?.negotiations(
@@ -384,8 +380,8 @@ describe('Ad resolvers', () => {
       mockContext
     );
     expect(res).toEqual([
-      { id: 3, createdBy: 4 },
-      { id: 5, createdBy: 7 },
+      { _id: 3, createdBy: 4 },
+      { _id: 5, createdBy: 7 },
     ]);
   });
 

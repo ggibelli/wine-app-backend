@@ -41,7 +41,11 @@ export const typeDefs = gql`
 
   extend type Query {
     negotiation(id: ID!): Negotiation @authenticated
-    negotiations: [Negotiation!] @authenticated
+    negotiations(
+      offset: Int
+      orderBy: QueryOrderBy
+      limit: Int
+    ): NegotiationResult @authenticated
     negotiationsWithUser(forUserAd: ID!): [Negotiation!] @authenticated
     negotiationsForAd(ad: ID!): [Negotiation!] @authenticated
   }

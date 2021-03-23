@@ -150,7 +150,7 @@ export type AdWine = Ad & {
   litersTo?: Maybe<Scalars['Int']>;
   content: Scalars['String'];
   address: Address;
-  negotiations: mongoose.Types.Array<Negotiation>;
+  negotiations: NegotiationResult;
   activeNegotiations?: Maybe<Scalars['Int']>;
   /** viewedBy: [User] */
   numberViews?: Maybe<Scalars['Int']>;
@@ -220,11 +220,11 @@ export type Query = {
   messagesForNegotiation?: Maybe<mongoose.Types.Array<Message>>;
   messagesToUser?: Maybe<mongoose.Types.Array<Message>>;
   negotiation?: Maybe<Negotiation>;
-  negotiations?: Maybe<mongoose.Types.Array<Negotiation>>;
+  negotiations?: Maybe<NegotiationResult>;
   negotiationsForAd?: Maybe<mongoose.Types.Array<Negotiation>>;
   negotiationsWithUser?: Maybe<mongoose.Types.Array<Negotiation>>;
   review?: Maybe<Review>;
-  reviews?: Maybe<mongoose.Types.Array<Review>>;
+  reviews?: Maybe<ReviewResult>;
   user?: Maybe<User>;
   users?: Maybe<mongoose.Types.Array<User>>;
   vineyard?: Maybe<Vineyard>;
@@ -242,6 +242,18 @@ export type QueryAdsArgs = {
   typeProduct: TypeProduct;
   wineName?: Maybe<Scalars['String']>;
   vineyardName?: Maybe<Scalars['String']>;
+  offset?: Scalars['Int'];
+  orderBy?: QueryOrderBy;
+  limit?: Scalars['Int'];
+};
+
+export type QueryNegotiationsArgs = {
+  offset?: Scalars['Int'];
+  orderBy?: QueryOrderBy;
+  limit?: Scalars['Int'];
+};
+
+export type QueryReviewsArgs = {
   offset?: Scalars['Int'];
   orderBy?: QueryOrderBy;
   limit?: Scalars['Int'];
@@ -1366,9 +1378,10 @@ export type QueryResolvers<
     RequireFields<QueryNegotiationArgs, 'id'>
   >;
   negotiations?: Resolver<
-    Maybe<Array<ResolversTypes['Negotiation']>>,
+    Maybe<Maybe<ResolversTypes['NegotiationResult']>>,
     ParentType,
-    ContextType
+    ContextType,
+    RequireFields<QueryNegotiationsArgs, never>
   >;
   negotiationsForAd?: Resolver<
     Maybe<Array<ResolversTypes['Negotiation']>>,
@@ -1389,9 +1402,10 @@ export type QueryResolvers<
     RequireFields<QueryReviewArgs, 'id'>
   >;
   reviews?: Resolver<
-    Maybe<Array<ResolversTypes['Review']>>,
+    Maybe<ResolversTypes['ReviewResult']>,
     ParentType,
-    ContextType
+    ContextType,
+    RequireFields<QueryReviewsArgs, never>
   >;
   user?: Resolver<
     Maybe<ResolversTypes['User']>,

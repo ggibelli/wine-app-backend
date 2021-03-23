@@ -129,44 +129,46 @@ Object {
 exports[`Integration test reviews query reviews succeds if logged in and admin, all are shown 1`] = `
 Object {
   "data": Object {
-    "reviews": Array [
-      Object {
-        "createdBy": Object {
-          "firstName": "Mariuccio",
+    "reviews": Object {
+      "reviews": Array [
+        Object {
+          "createdBy": Object {
+            "firstName": "Giovanni",
+          },
+          "forUser": Object {
+            "firstName": "Mariuccio",
+          },
+          "negotiation": Object {
+            "type": "SELL",
+          },
+          "rating": "AVERAGE",
         },
-        "forUser": Object {
-          "firstName": "Giovanni",
+        Object {
+          "createdBy": Object {
+            "firstName": "Luigetto",
+          },
+          "forUser": Object {
+            "firstName": "Mariuccio",
+          },
+          "negotiation": Object {
+            "type": "SELL",
+          },
+          "rating": "POOR",
         },
-        "negotiation": Object {
-          "type": "BUY",
+        Object {
+          "createdBy": Object {
+            "firstName": "Mariuccio",
+          },
+          "forUser": Object {
+            "firstName": "Giovanni",
+          },
+          "negotiation": Object {
+            "type": "BUY",
+          },
+          "rating": "PERFECT",
         },
-        "rating": "PERFECT",
-      },
-      Object {
-        "createdBy": Object {
-          "firstName": "Luigetto",
-        },
-        "forUser": Object {
-          "firstName": "Mariuccio",
-        },
-        "negotiation": Object {
-          "type": "SELL",
-        },
-        "rating": "POOR",
-      },
-      Object {
-        "createdBy": Object {
-          "firstName": "Giovanni",
-        },
-        "forUser": Object {
-          "firstName": "Mariuccio",
-        },
-        "negotiation": Object {
-          "type": "SELL",
-        },
-        "rating": "AVERAGE",
-      },
-    ],
+      ],
+    },
   },
 }
 `;
@@ -174,32 +176,34 @@ Object {
 exports[`Integration test reviews query reviews succeds if logged in and not admin, only user review shown 1`] = `
 Object {
   "data": Object {
-    "reviews": Array [
-      Object {
-        "createdBy": Object {
-          "firstName": "Mariuccio",
+    "reviews": Object {
+      "reviews": Array [
+        Object {
+          "createdBy": Object {
+            "firstName": "Luigetto",
+          },
+          "forUser": Object {
+            "firstName": "Mariuccio",
+          },
+          "negotiation": Object {
+            "type": "SELL",
+          },
+          "rating": "POOR",
         },
-        "forUser": Object {
-          "firstName": "Giovanni",
+        Object {
+          "createdBy": Object {
+            "firstName": "Mariuccio",
+          },
+          "forUser": Object {
+            "firstName": "Giovanni",
+          },
+          "negotiation": Object {
+            "type": "BUY",
+          },
+          "rating": "PERFECT",
         },
-        "negotiation": Object {
-          "type": "BUY",
-        },
-        "rating": "PERFECT",
-      },
-      Object {
-        "createdBy": Object {
-          "firstName": "Luigetto",
-        },
-        "forUser": Object {
-          "firstName": "Mariuccio",
-        },
-        "negotiation": Object {
-          "type": "SELL",
-        },
-        "rating": "POOR",
-      },
-    ],
+      ],
+    },
   },
 }
 `;

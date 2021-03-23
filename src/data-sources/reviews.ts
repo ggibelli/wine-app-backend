@@ -6,6 +6,7 @@ import { Errors, QueryOrderBy } from '../types';
 import { IReviewDoc, ReviewGraphQl } from '../models/review';
 import { UserGraphQl } from '../models/user';
 import {
+  QueryReviewsArgs,
   Review,
   ReviewInput,
   ReviewInputUpdate,
@@ -36,7 +37,7 @@ export default class Reviews extends MongoDataSource<IReviewDoc, Context> {
     limit = 10,
     offset = 0,
     orderBy = QueryOrderBy.createdAt_DESC,
-  }: UserReviewsArgs): Promise<ReviewResult> {
+  }: UserReviewsArgs | QueryReviewsArgs): Promise<ReviewResult> {
     const userCtx = this.context.user;
     const LIMIT_MAX = 100;
     if (limit < 1 || offset < 0 || limit > LIMIT_MAX) {

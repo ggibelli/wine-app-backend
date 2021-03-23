@@ -43,7 +43,7 @@ const mockContext = {
       getMessagesForNegotiation: jest.fn(),
     },
   },
-  user: { id: 1, email: 'a@a.a' },
+  user: { _id: '1', email: 'a@a.a' },
 };
 const { getAd } = mockContext.dataSources.ads;
 const { getNegotiationsForUser } = mockContext.dataSources.negotiations;
@@ -253,8 +253,9 @@ describe('Negotiation resolvers', () => {
       {
         id: 3,
         createdBy: 4,
+        forUserAd: 5,
       },
-      { id: 5, createdBy: 7 },
+      { id: 5, createdBy: 7, forUserAd: 8 },
     ]);
     //@ts-ignore
     const res = await resolvers.Mutation?.updateNegotiation(
@@ -267,14 +268,15 @@ describe('Negotiation resolvers', () => {
     );
     expect(publish).toHaveBeenCalledTimes(1);
     expect(publish).toHaveBeenCalledWith('NEGOTIATION_CLOSED', {
-      adRemoved: {
+      negotiationClosed: {
         _id: new ObjectId('5fdd925d9cc5800455e1855e'),
         typeAd: 'SELL',
         typeProduct: 'AdWine',
         wineName: 'wine',
         createdBy: 2,
       },
-      usersToNotify: ['4', '7'],
+      usersToNotify: ['4', '5', '7', '8'],
+      userToNotNotify: '1',
     });
     expect(res).toEqual({
       response: {

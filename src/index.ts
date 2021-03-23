@@ -106,7 +106,7 @@ const server = new ApolloServer({
   },
   subscriptions: {
     async onConnect(connParams: any) {
-      const token = connParams.authorization;
+      const token = connParams.authToken;
       const user = await getUserFromToken(token);
       if (!user) throw new AuthenticationError('need to login');
       return { user, dataSources: dataSources() };

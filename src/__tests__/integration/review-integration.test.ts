@@ -36,16 +36,18 @@ const { query, mutate, setOptions } = testClient;
 const REVIEWS = gql`
   {
     reviews {
-      createdBy {
-        firstName
+      reviews {
+        createdBy {
+          firstName
+        }
+        negotiation {
+          type
+        }
+        forUser {
+          firstName
+        }
+        rating
       }
-      negotiation {
-        type
-      }
-      forUser {
-        firstName
-      }
-      rating
     }
   }
 `;

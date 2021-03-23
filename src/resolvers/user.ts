@@ -52,7 +52,6 @@ export const resolver: StringIndexed<Resolvers> = {
       return dataSources.users.getUser(id);
     },
     me(_, __, { user }: { user: UserGraphQl }): UserGraphQl {
-      console.log('chiamata');
       return user;
     },
   },

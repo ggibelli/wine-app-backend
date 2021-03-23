@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import {
+  QueryReviewsArgs,
   Resolvers,
   ReviewInput,
   ReviewInputUpdate,
@@ -34,8 +35,13 @@ interface MongoDataSource {
 
 export const resolver: StringIndexed<Resolvers> = {
   Query: {
-    async reviews(_, __, { dataSources }: { dataSources: MongoDataSource }) {
-      return dataSources.reviews.getReviews();
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    async reviews(
+      _,
+      args: QueryReviewsArgs,
+      { dataSources }: { dataSources: MongoDataSource }
+    ) {
+      return dataSources.reviews.getReviews(args);
     },
     async review(_, { id }, { dataSources }: { dataSources: MongoDataSource }) {
       return dataSources.reviews.getReview(id);

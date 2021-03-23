@@ -7,8 +7,8 @@ import {
   dropTestDb,
   closeDbConnection,
 } from '../../tests/integrationSetup';
-//import { ObjectId } from 'mongodb';
-import { User } from '../../models/user';
+import { ObjectId } from 'mongodb';
+import { IUserDoc, User } from '../../models/user';
 import { Ad, AdGraphQl } from '../../models/ad';
 import { users, ads } from '../../tests/mocksTests';
 import {
@@ -27,6 +27,7 @@ import {
 import { Wine } from '../../models/wine';
 //import { ObjectId } from 'mongodb';
 import cron from 'cron';
+import { DocumentDefinition } from 'mongoose';
 
 const fakeStart = jest.fn(() => {
   fakeStop();
@@ -320,11 +321,55 @@ describe('Integration test ads', () => {
     expect(res).toMatchSnapshot();
   }, 10000);
 
-  it('saveAd mutation succeds if logged in', async () => {
+  it('saveAd mutation succeds if logged in and savedAd shows up in user savedads', async () => {
     const ads: AdGraphQl[] = await Ad.find({}).lean().exec();
     const res = await mutate(SAVE_AD, {
-      variables: { id: ads[0]._id.toHexString() },
+      variables: { id: ads[0]._id.toString() },
     });
+    const user: DocumentDefinition<IUserDoc> | null = await User.findOne({
+      email: 'gio@prova.it',
+    })
+      .lean()
+      .exec();
+    expect(
+      user?.savedAds &&
+        user.savedAds
+          .map((id: ObjectId) => id.toString())
+          .includes(ads[0]._id.toString())
+    ).toBeTruthy();
+    expect(res).toMatchSnapshot();
+  }, 10000);
+
+  it('saveAd mutation succeds if logged in and if ad is already saved it gets removed', async () => {
+    const ads: AdGraphQl[] = await Ad.find({}).lean().exec();
+    const user: DocumentDefinition<IUserDoc> | null = await User.findOne({
+      email: 'gio@prova.it',
+    })
+      .lean()
+      .exec();
+
+    expect(
+      user?.savedAds &&
+        user.savedAds
+          .map((id: ObjectId) => id.toString())
+          .includes(ads[0]._id.toString())
+    ).toBeTruthy();
+    const res = await mutate(SAVE_AD, {
+      variables: { id: ads[0]._id.toString() },
+    });
+    const userAfterMutation: DocumentDefinition<IUserDoc> | null = await User.findOne(
+      {
+        email: 'gio@prova.it',
+      }
+    )
+      .lean()
+      .exec();
+    expect(
+      userAfterMutation?.savedAds &&
+        userAfterMutation.savedAds
+          .map((id: ObjectId) => id.toString())
+          .includes(ads[0]._id.toString())
+    ).toBeFalsy();
     expect(res).toMatchSnapshot();
   }, 10000);
 

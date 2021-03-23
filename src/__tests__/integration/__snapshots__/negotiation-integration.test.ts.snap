@@ -129,44 +129,46 @@ Object {
 exports[`Integration test negotiations query negotiations succeds if logged in and admin, all are shown 1`] = `
 Object {
   "data": Object {
-    "negotiations": Array [
-      Object {
-        "ad": Object {
-          "content": "wow",
+    "negotiations": Object {
+      "negotiations": Array [
+        Object {
+          "ad": Object {
+            "content": "waaow",
+          },
+          "createdBy": Object {
+            "firstName": "Giovanni",
+          },
+          "forUserAd": Object {
+            "firstName": "Mariuccio",
+          },
+          "isConcluded": false,
         },
-        "createdBy": Object {
-          "firstName": "Mariuccio",
+        Object {
+          "ad": Object {
+            "content": "waaow",
+          },
+          "createdBy": Object {
+            "firstName": "Luigetto",
+          },
+          "forUserAd": Object {
+            "firstName": "Mariuccio",
+          },
+          "isConcluded": false,
         },
-        "forUserAd": Object {
-          "firstName": "Giovanni",
+        Object {
+          "ad": Object {
+            "content": "wow",
+          },
+          "createdBy": Object {
+            "firstName": "Mariuccio",
+          },
+          "forUserAd": Object {
+            "firstName": "Giovanni",
+          },
+          "isConcluded": false,
         },
-        "isConcluded": false,
-      },
-      Object {
-        "ad": Object {
-          "content": "waaow",
-        },
-        "createdBy": Object {
-          "firstName": "Luigetto",
-        },
-        "forUserAd": Object {
-          "firstName": "Mariuccio",
-        },
-        "isConcluded": false,
-      },
-      Object {
-        "ad": Object {
-          "content": "waaow",
-        },
-        "createdBy": Object {
-          "firstName": "Giovanni",
-        },
-        "forUserAd": Object {
-          "firstName": "Mariuccio",
-        },
-        "isConcluded": false,
-      },
-    ],
+      ],
+    },
   },
 }
 `;
@@ -174,32 +176,34 @@ Object {
 exports[`Integration test negotiations query negotiations succeds if logged in and not admin, only user negotiation shown 1`] = `
 Object {
   "data": Object {
-    "negotiations": Array [
-      Object {
-        "ad": Object {
-          "content": "wow",
+    "negotiations": Object {
+      "negotiations": Array [
+        Object {
+          "ad": Object {
+            "content": "waaow",
+          },
+          "createdBy": Object {
+            "firstName": "Luigetto",
+          },
+          "forUserAd": Object {
+            "firstName": "Mariuccio",
+          },
+          "isConcluded": false,
         },
-        "createdBy": Object {
-          "firstName": "Mariuccio",
+        Object {
+          "ad": Object {
+            "content": "wow",
+          },
+          "createdBy": Object {
+            "firstName": "Mariuccio",
+          },
+          "forUserAd": Object {
+            "firstName": "Giovanni",
+          },
+          "isConcluded": false,
         },
-        "forUserAd": Object {
-          "firstName": "Giovanni",
-        },
-        "isConcluded": false,
-      },
-      Object {
-        "ad": Object {
-          "content": "waaow",
-        },
-        "createdBy": Object {
-          "firstName": "Luigetto",
-        },
-        "forUserAd": Object {
-          "firstName": "Mariuccio",
-        },
-        "isConcluded": false,
-      },
-    ],
+      ],
+    },
   },
 }
 `;

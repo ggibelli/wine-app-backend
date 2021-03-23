@@ -21,7 +21,7 @@ const pubsub = new PubSub();
 
 const AD_POSTED = 'AD_POSTED';
 const AD_REMOVED = 'AD_REMOVED';
-const NEGOTIATION_CLOSED = 'NEGOTIATION_CLOSED';
+// const NEGOTIATION_CLOSED = 'NEGOTIATION_CLOSED';
 
 interface StringIndexSignatureInterface {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -161,16 +161,34 @@ export const resolver: StringIndexed<Resolvers> = {
     },
     adRemoved: {
       subscribe: withFilter(
-        () => pubsub.asyncIterator([AD_REMOVED, NEGOTIATION_CLOSED]),
-        (
+        () => pubsub.asyncIterator([AD_REMOVED]),
+        async (
           payload: {
             adRemoved: AdGraphQl;
             usersToNotify: string[];
           },
           _,
-          { user }: { user: UserGraphQl }
+          {
+            user,
+            dataSources,
+          }: { user: UserGraphQl; dataSources: MongoDataSource }
         ) => {
-          return payload.usersToNotify.includes(user._id.toHexString());
+          if (
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            payload.adRemoved.postedBy.toString() === user._id.toHexString()
+          ) {
+            return false;
+          }
+          const negotiations = await dataSources.negotiations.getNegotiationsForAd(
+            payload.adRemoved._id
+          );
+          const usersToNotifySet = new Set();
+          negotiations.forEach((neg) => {
+            usersToNotifySet.add(neg.createdBy);
+            usersToNotifySet.add(neg.forUserAd);
+          });
+          const usersToNotify = Array.from(usersToNotifySet);
+          return usersToNotify.includes(user._id.toHexString());
         }
       ),
     },
@@ -188,8 +206,9 @@ export const resolver: StringIndexed<Resolvers> = {
       _,
       { dataSources }: { dataSources: MongoDataSource }
     ) {
-      return (await dataSources.negotiations.getNegotiationsForAd(ad._id))
-        .length;
+      return await dataSources.negotiations.negotiationsActive(
+        ad._id.toString()
+      );
     },
     numberViews(ad) {
       if (!ad.viewedBy) {

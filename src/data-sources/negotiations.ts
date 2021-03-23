@@ -39,7 +39,7 @@ export default class Negotiations extends MongoDataSource<
     return this.findOneById(id);
   }
   async getNegotiations({
-    limit = 10,
+    limit = 100,
     offset = 0,
     orderBy = QueryOrderBy.createdAt_DESC,
   }: UserNegotiationsArgs): Promise<NegotiationResult> {
@@ -107,6 +107,10 @@ export default class Negotiations extends MongoDataSource<
       })
       .lean()
       .exec();
+  }
+
+  async negotiationsActive(id: string): Promise<number> {
+    return this.model.countDocuments({ ad: id, isConcluded: false });
   }
 
   async createNegotiation(negotiation: NegotiationInput): Promise<Response> {
