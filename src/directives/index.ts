@@ -14,7 +14,6 @@ export class FormatDateDirective extends SchemaDirectiveVisitor {
   visitFieldDefinition(field: GraphQLField<any, any>) {
     const { resolve = defaultFieldResolver } = field;
     const { defaultFormat } = this.args;
-
     field.args.push({
       name: 'format',
       type: GraphQLString,
@@ -32,6 +31,7 @@ export class FormatDateDirective extends SchemaDirectiveVisitor {
       info
     ) {
       const date = await resolve.call(this, root, otherArgs, context, info);
+      if (!date) return;
       return formatDate(date, format || defaultFormat);
     };
     field.type = GraphQLString;

@@ -193,13 +193,13 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
       })
       .exec();
     return {
-      ads: (this.model
+      ads: ((await this.model
         .find({ postedBy: userId })
         .skip(offset)
         .limit(limit)
         .sort(sortQuery)
         .lean()
-        .exec() as unknown) as Ad[],
+        .exec()) as unknown) as Ad[],
       pageCount,
     };
   }
@@ -226,6 +226,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
         .countDocuments({
           typeAd: typeAd,
           vineyardName: vineyardName,
+          isActive: true,
         })
         .exec();
       return {
@@ -235,6 +236,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
           .find({
             typeAd: typeAd,
             vineyardName: vineyardName,
+            isActive: true,
           })
           .skip(offset)
           .limit(limit)
@@ -247,6 +249,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
         .countDocuments({
           typeAd: typeAd,
           wineName: wineName,
+          isActive: true,
         })
         .exec();
       return {
@@ -256,6 +259,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
           .find({
             typeAd: typeAd,
             wineName: wineName,
+            isActive: true,
           })
           .skip(offset)
           .limit(limit)
@@ -268,6 +272,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
       .countDocuments({
         typeAd: typeAd,
         typeProduct: typeProduct,
+        isActive: true,
       })
       .exec();
     return {
@@ -277,6 +282,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
         .find({
           typeAd: typeAd,
           typeProduct: typeProduct,
+          isActive: true,
         })
         .skip(offset)
         .limit(limit)
@@ -376,7 +382,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
             vineyardName: createdAd.vineyardName,
           },
         ],
-        $and: [{ needsFollowUp: true, typeAd: SellOrBuy }],
+        $and: [{ needsFollowUp: true, typeAd: SellOrBuy, isActive: true }],
       })
       .populate('postedBy', { email: 1 })
       .lean()
@@ -399,7 +405,11 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
       .map((user) => user.userMail);
     const uniqueRecipients = [...new Set(recipients)];
     const uniqueUsersToNotifiy = [
-      ...new Set(followUpUsersToNotify.map((user) => user.userId.toString())),
+      ...new Set(
+        followUpUsersToNotify
+          .map((user) => user.userId.toString())
+          .filter((u) => u !== user._id.toString())
+      ),
     ];
     const jobMail = new CronJob('*/3 * * * *', () => {
       if (countDeliveryTries >= 2) {

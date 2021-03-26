@@ -54,16 +54,16 @@ export type Scalars = {
 
 export type Address = {
   __typename?: 'Address';
-  via: Scalars['String'];
-  CAP: Scalars['String'];
+  via?: Scalars['String'];
+  CAP?: Scalars['String'];
   comune: Scalars['String'];
   provincia: Province;
   regione: Regioni;
 };
 
 export type AddressInput = {
-  via: Scalars['String'];
-  CAP: Scalars['String'];
+  via?: Scalars['String'];
+  CAP?: Scalars['String'];
   comune: Scalars['String'];
   provincia: Province;
   regione: Regioni;
@@ -251,6 +251,7 @@ export type QueryNegotiationsArgs = {
   offset?: Scalars['Int'];
   orderBy?: QueryOrderBy;
   limit?: Scalars['Int'];
+  isConcluded?: Scalars['Boolean'];
 };
 
 export type QueryReviewsArgs = {
@@ -460,6 +461,7 @@ export type Message = {
   sentTo: User;
   negotiation: Negotiation;
   dateSent: Scalars['Date'];
+  isViewed: Scalars['Boolean'];
 };
 
 export type MessagePayload = {
@@ -489,6 +491,8 @@ export type Negotiation = {
   messages?: Maybe<mongoose.Types.Array<Message>>;
   isConcluded: Scalars['Boolean'];
   dateCreated: Scalars['Date'];
+  dateConcluded?: Maybe<Scalars['Date']>;
+
   review?: Maybe<mongoose.Types.Array<Maybe<Review>>>;
 };
 
@@ -1814,6 +1818,8 @@ export type MessageResolvers<
     ContextType
   >;
   dateSent?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  isViewed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1849,7 +1855,13 @@ export type NegotiationResolvers<
   >;
   type?: Resolver<ResolversTypes['TypeAd'], ParentType, ContextType>;
   isConcluded?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  dateCreated?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  dateCreated?: Resolver<
+    Maybe<ResolversTypes['Date']>,
+    ParentType,
+    ContextType
+  >;
+  dateConcluded?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+
   review?: Resolver<
     Maybe<Array<Maybe<ResolversTypes['Review']>>>,
     ParentType,

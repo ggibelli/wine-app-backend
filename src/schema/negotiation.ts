@@ -25,6 +25,7 @@ export const typeDefs = gql`
     messages: [Message!]
     isConcluded: Boolean!
     dateCreated: Date! @date
+    dateConcluded: Date @date
     review: [Review]
     type: TypeAd!
   }
@@ -45,6 +46,7 @@ export const typeDefs = gql`
       offset: Int
       orderBy: QueryOrderBy
       limit: Int
+      isConcluded: Boolean
     ): NegotiationResult @authenticated
     negotiationsWithUser(forUserAd: ID!): [Negotiation!] @authenticated
     negotiationsForAd(ad: ID!): [Negotiation!] @authenticated

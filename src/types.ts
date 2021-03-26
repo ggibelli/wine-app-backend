@@ -133,8 +133,8 @@ export enum Regioni {
 }
 
 export interface Address {
-  via: string;
-  CAP: string;
+  via?: string;
+  CAP?: string;
   comune: string;
   provincia: Province;
   regione: Regioni;

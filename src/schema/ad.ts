@@ -2,16 +2,16 @@ import { gql } from 'apollo-server-express';
 
 export const typeDefs = gql`
   type Address {
-    via: String!
-    CAP: String!
+    via: String
+    CAP: String
     comune: String!
     provincia: Province!
     regione: Regioni!
   }
 
   input AddressInput {
-    via: String!
-    CAP: String!
+    via: String
+    CAP: String
     comune: String!
     provincia: Province!
     regione: Regioni!

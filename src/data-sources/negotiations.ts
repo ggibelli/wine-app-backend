@@ -10,7 +10,7 @@ import {
   NegotiationInput,
   NegotiationInputUpdate,
   NegotiationResult,
-  UserNegotiationsArgs,
+  QueryNegotiationsArgs,
 } from '../generated/graphql';
 import { sendMail } from '../utils/mailServer';
 import { CronJob } from 'cron';
@@ -29,6 +29,10 @@ interface Response {
   errors: Errors[];
 }
 
+interface NegotiationInputAndDate extends NegotiationInputUpdate {
+  dateConcluded?: Date;
+}
+
 export default class Negotiations extends MongoDataSource<
   INegotiationDoc,
   Context
@@ -42,7 +46,8 @@ export default class Negotiations extends MongoDataSource<
     limit = 100,
     offset = 0,
     orderBy = QueryOrderBy.createdAt_DESC,
-  }: UserNegotiationsArgs): Promise<NegotiationResult> {
+    isConcluded = false,
+  }: QueryNegotiationsArgs): Promise<NegotiationResult> {
     const userCtx = this.context.user;
     const LIMIT_MAX = 100;
     if (limit < 1 || offset < 0 || limit > LIMIT_MAX) {
@@ -54,13 +59,13 @@ export default class Negotiations extends MongoDataSource<
     if (userCtx.isAdmin) {
       const pageCount = await this.model.countDocuments().exec();
       return {
-        negotiations: (this.model
+        negotiations: ((await this.model
           .find({})
           .sort(sortQuery)
           .skip(offset)
           .limit(limit)
           .lean()
-          .exec() as unknown) as Negotiation[],
+          .exec()) as unknown) as Negotiation[],
         pageCount,
       };
     }
@@ -73,15 +78,16 @@ export default class Negotiations extends MongoDataSource<
       })
       .exec();
     return {
-      negotiations: (this.model
+      negotiations: ((await this.model
         .find({
           $or: [{ createdBy: userCtx._id }, { forUserAd: userCtx._id }],
+          $and: [{ isConcluded }],
         })
         .lean()
         .sort(sortQuery)
         .skip(offset)
         .limit(limit)
-        .exec() as unknown) as Negotiation[],
+        .exec()) as unknown) as Negotiation[],
       pageCount,
     };
   }
@@ -183,10 +189,13 @@ export default class Negotiations extends MongoDataSource<
   }
 
   async updateNegotiation(
-    negotiation: NegotiationInputUpdate
+    negotiation: NegotiationInputAndDate
   ): Promise<Response> {
     const userCtx = this.context.user;
     const errors: Errors[] = [];
+    if (negotiation.isConcluded) {
+      negotiation.dateConcluded = new Date(Date.now());
+    }
     const updatedNegotiation = await this.model.findOneAndUpdate(
       {
         $or: [{ createdBy: userCtx }, { forUserAd: userCtx }],
@@ -197,6 +206,7 @@ export default class Negotiations extends MongoDataSource<
         new: true,
       }
     );
+
     if (!updatedNegotiation) {
       errors.push({
         name: 'General error',

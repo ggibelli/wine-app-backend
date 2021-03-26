@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 
@@ -16,6 +17,7 @@ import { PubSub, withFilter } from 'apollo-server-express';
 import { AdGraphQl } from '../models/ad';
 import { UserGraphQl } from '../models/user';
 import { loggerError } from '../utils/logger';
+import Messages from '../data-sources/messages';
 
 const pubsub = new PubSub();
 
@@ -31,6 +33,7 @@ interface StringIndexSignatureInterface {
 interface MongoDataSource {
   ads: Ads;
   negotiations: Negotiations;
+  messages: Messages;
   users: Users;
   wines: Wines;
   vineyards: Vineyards;
@@ -71,6 +74,10 @@ export const resolver: StringIndexed<Resolvers> = {
     ) {
       const adResponse = await dataSources.ads.createAd(input);
       if (!adResponse.errors.length) {
+        await dataSources.messages.messageAdmin(
+          adResponse.usersToNotify,
+          `Un annuncio per il vino: ${input.wineName} e stato creato`
+        );
         await pubsub.publish(AD_POSTED, {
           adPostedFollowUp: adResponse.response,
           usersToNotify: adResponse.usersToNotify,
@@ -92,6 +99,10 @@ export const resolver: StringIndexed<Resolvers> = {
           .filter((negotiation) => !negotiation.isConcluded)
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           .map((negotiation) => negotiation.createdBy.toString());
+        await dataSources.messages.messageAdmin(
+          users,
+          `Un annuncio per il vino: ${input.wineName} e stato creato`
+        );
         await pubsub.publish(AD_REMOVED, {
           adRemoved: adResponse.response,
           usersToNotify: users,
@@ -112,6 +123,10 @@ export const resolver: StringIndexed<Resolvers> = {
         .filter((negotiation) => !negotiation.isConcluded)
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         .map((negotiation) => negotiation.createdBy.toString());
+      await dataSources.messages.messageAdmin(
+        users,
+        `L annuncio per il vino ${adResponse.response?.wineName} e stato rimosso`
+      );
       await pubsub.publish(AD_REMOVED, {
         adRemoved: adResponse.response,
         usersToNotify: users,
@@ -153,7 +168,7 @@ export const resolver: StringIndexed<Resolvers> = {
             usersToNotify: Array<FollowUp['userId']>;
           },
           _,
-          { user }: { user: UserGraphQl }
+          { user }: { user: UserGraphQl; dataSources: MongoDataSource }
         ) => {
           return payload.usersToNotify.includes(user._id.toHexString());
         }
@@ -162,16 +177,13 @@ export const resolver: StringIndexed<Resolvers> = {
     adRemoved: {
       subscribe: withFilter(
         () => pubsub.asyncIterator([AD_REMOVED]),
-        async (
+        (
           payload: {
             adRemoved: AdGraphQl;
             usersToNotify: string[];
           },
           _,
-          {
-            user,
-            dataSources,
-          }: { user: UserGraphQl; dataSources: MongoDataSource }
+          { user }: { user: UserGraphQl; dataSources: MongoDataSource }
         ) => {
           if (
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -179,16 +191,8 @@ export const resolver: StringIndexed<Resolvers> = {
           ) {
             return false;
           }
-          const negotiations = await dataSources.negotiations.getNegotiationsForAd(
-            payload.adRemoved._id
-          );
-          const usersToNotifySet = new Set();
-          negotiations.forEach((neg) => {
-            usersToNotifySet.add(neg.createdBy);
-            usersToNotifySet.add(neg.forUserAd);
-          });
-          const usersToNotify = Array.from(usersToNotifySet);
-          return usersToNotify.includes(user._id.toHexString());
+
+          return payload.usersToNotify.includes(user._id.toHexString());
         }
       ),
     },

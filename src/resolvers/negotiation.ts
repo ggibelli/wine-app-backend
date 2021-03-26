@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -14,6 +15,8 @@ import Messages from '../data-sources/messages';
 import { PubSub, withFilter } from 'apollo-server-express';
 import { NegotiationGraphQl } from '../models/negotiation';
 import { UserGraphQl } from '../models/user';
+import { AdGraphQl } from '../models/ad';
+import { loggerError } from '../utils/logger';
 // import { AdGraphQl } from '../models/ad';
 
 const pubsub = new PubSub();
@@ -56,7 +59,6 @@ export const resolver: StringIndexed<Resolvers> = {
       args,
       { dataSources }: { dataSources: MongoDataSource }
     ) {
-      console.log('negs');
       return dataSources.negotiations.getNegotiations(args);
     },
     async negotiation(
@@ -78,9 +80,24 @@ export const resolver: StringIndexed<Resolvers> = {
         negotiation
       );
       if (!negotiationResponse.errors.length) {
+        await dataSources.messages.messageAdmin(
+          [negotiation.forUserAd],
+          `Trattativa creata per il tuo annuncio ${negotiation.ad}`
+        );
+
         await pubsub.publish(NEGOTIATION_CREATED, {
           negotiationCreated: negotiationResponse.response,
         });
+      }
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        await dataSources.messages.createMessage({
+          negotiation: negotiationResponse.response?._id,
+          sentTo: negotiation.forUserAd,
+          content: 'negoziazione aperta',
+        });
+      } catch (e) {
+        loggerError(e);
       }
       return negotiationResponse;
     },
@@ -97,26 +114,49 @@ export const resolver: StringIndexed<Resolvers> = {
         const ad = await dataSources.ads.getAd(
           updatedNegotiationResponse.response.ad
         );
+        if (!ad) {
+          return {
+            response: null,
+            errors: [
+              { text: 'General error ad not found', name: 'General Error' },
+            ],
+          };
+        }
+        ad.isActive = false;
+        try {
+          await ad.save();
+        } catch (e) {
+          return {
+            response: null,
+            errors: [{ name: 'General Error', text: 'Error updating the ad' }],
+          };
+        }
         const negotiations = await dataSources.negotiations.getNegotiationsForAd(
-          ad?._id
+          ad._id
         );
-        const openNegotiations = negotiations.filter(
-          (negotiation) => !negotiation.isConcluded
-        );
-        const usersToNotifySet = new Set();
-        console.log(openNegotiations);
-        openNegotiations.forEach((neg) => {
-          usersToNotifySet.add(neg.createdBy.toString());
-          usersToNotifySet.add(neg.forUserAd.toString());
-        });
+
+        const usersToNotifySet: Set<string> = new Set();
+
         negotiations.forEach((neg) => {
           usersToNotifySet.add(neg.forUserAd.toString());
           usersToNotifySet.add(neg.createdBy.toString());
         });
-
-        const usersToNotify = Array.from(usersToNotifySet);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const userToNotify: string =
+          updatedNegotiationResponse.response.createdBy.toString() ===
+          user._id.toString()
+            ? updatedNegotiationResponse.response.forUserAd.toString()
+            : updatedNegotiationResponse.response.createdBy.toString();
+        const usersToNotify: string[] = Array.from(usersToNotifySet).filter(
+          (u) => u !== user._id.toString()
+        );
+        await dataSources.messages.messageAdmin(
+          usersToNotify,
+          `L'annuncio ${ad.wineName} non e piu disponibile`
+        );
         await pubsub.publish(NEGOTIATION_CLOSED, {
           negotiationClosed: ad,
+          userToNotify,
           usersToNotify,
           userToNotNotify: user._id.toString(),
         });
@@ -142,6 +182,7 @@ export const resolver: StringIndexed<Resolvers> = {
           _,
           { user }: { user: UserGraphQl }
         ) => {
+          // console.log(payload.negotiationCreated.forUserAd._id, user._id);
           return Boolean(
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             payload.negotiationCreated.forUserAd._id.toString() ===
@@ -153,10 +194,19 @@ export const resolver: StringIndexed<Resolvers> = {
     negotiationClosed: {
       subscribe: withFilter(
         () => pubsub.asyncIterator([NEGOTIATION_CLOSED]),
-        (payload, _, { user }: { user: UserGraphQl }) => {
-          console.log(payload);
+        (
+          payload: {
+            negotiationClosed: AdGraphQl;
+            userToNotify: string;
+            userToNotNotify: string;
+            usersToNotify: string[];
+          },
+          _,
+          { user }: { user: UserGraphQl; dataSources: MongoDataSource }
+        ) => {
+          console.log(payload.userToNotify, user._id, payload.userToNotNotify);
           if (user._id.toHexString() === payload.userToNotNotify) return false;
-          return payload.usersToNotify.includes(user._id.toHexString());
+          return payload.userToNotify === user._id.toString();
         }
       ),
     },

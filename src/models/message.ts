@@ -8,6 +8,7 @@ export interface IMessage {
   sentBy: IUserDoc['_id'];
   sentTo: IUserDoc['_id'];
   dateSent: Date;
+  isViewed: boolean;
 }
 
 export interface MessageGraphQl extends IMessage {
@@ -42,6 +43,10 @@ const messageSchemaFields: Record<keyof IMessage, any> = {
     type: Date,
     // `Date.now()` returns the current unix timestamp as a number
     default: Date.now,
+  },
+  isViewed: {
+    type: Boolean,
+    default: false,
   },
 };
 

@@ -143,16 +143,6 @@ const adSchemaFields: Record<keyof IAd, any> = {
     },
   },
   address: {
-    via: {
-      type: String,
-      required: true,
-      minlength: 5,
-    },
-    CAP: {
-      type: String,
-      required: true,
-      minlength: 5,
-    },
     comune: {
       type: String,
       required: true,

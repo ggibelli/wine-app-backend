@@ -6,7 +6,8 @@ import { Errors } from '../types';
 import { IMessageDoc, MessageGraphQl } from '../models/message';
 import { UserGraphQl } from '../models/user';
 import { MessageInput } from '../generated/graphql';
-
+import { loggerError } from '../utils/logger';
+import { ADMINISTRATOR_ID, NEGOTIATION_ADM } from '../utils/config';
 interface Context {
   user: UserGraphQl;
   createToken(user: UserGraphQl): string;
@@ -51,13 +52,30 @@ export default class Messages extends MongoDataSource<IMessageDoc, Context> {
     await this.collection.createIndex({ sentTo: 1 });
     await this.collection.createIndex({ sentBy: 1 });
     const userCtx = this.context.user;
-    return this.model
+    const messages = await this.model
       .find({
         $or: [{ sentBy: userCtx._id }, { sentTo: userCtx._id }],
         negotiation: negotiation,
       })
-      .lean()
       .exec();
+    const messagesToRead = messages.filter(
+      (message) =>
+        message.sentTo.toString() === this.context.user._id.toString() &&
+        !message.isViewed
+    );
+    // console.log(messageToRead);
+    if (messagesToRead) {
+      for (const message of messagesToRead) {
+        message.isViewed = true;
+        try {
+          await message.save();
+        } catch (e) {
+          loggerError(e);
+        }
+      }
+    }
+
+    return messages;
   }
 
   async createMessage(message: MessageInput): Promise<Response> {
@@ -90,6 +108,31 @@ export default class Messages extends MongoDataSource<IMessageDoc, Context> {
       response: createdMessage,
       errors,
     };
+  }
+
+  async messageAdmin(
+    recipients: string[] | undefined,
+    message: string
+  ): Promise<void> {
+    if (!recipients) return;
+    console.log('chiamato da', this.context.user.firstName);
+    await Promise.all(
+      recipients.map(async (recipient) => {
+        const createdMessage: IMessageDoc = new this.model({
+          sentTo: recipient,
+          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+          content: message,
+          sentBy: ADMINISTRATOR_ID,
+          negotiation: NEGOTIATION_ADM,
+        });
+        try {
+          await createdMessage.save();
+        } catch (e) {
+          loggerError(e);
+        }
+        // const message: IMessageDoc = new this.model({sentTo })
+      })
+    );
   }
 
   // async updateMessage(message: MessageInputUpdate): Promise<Response> {

@@ -13,7 +13,8 @@ export const typeDefs = gql`
     sentBy: User!
     sentTo: User!
     negotiation: Negotiation!
-    dateSent: Date! @date
+    dateSent: Date!
+    isViewed: Boolean!
   }
 
   type MessagePayload {

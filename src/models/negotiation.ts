@@ -12,6 +12,7 @@ export interface INegotiation {
   messages?: mongoose.Types.Array<IMessageDoc['_id']> | null;
   isConcluded: boolean;
   dateCreated: Date;
+  // dateConcluded?: Date | null;
   type: TypeAd;
 }
 
