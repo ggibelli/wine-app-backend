@@ -5,7 +5,6 @@
 import { MongoDataSource } from 'apollo-datasource-mongodb';
 import { AdGraphQl, IAdDoc } from '../models/ad';
 import { QueryOrderBy, TypeProduct, Errors, TypeAd } from '../types';
-import { ObjectId } from 'mongodb';
 
 import { assertNever } from '../utils/helpersTypeScript';
 import {
@@ -14,7 +13,7 @@ import {
   AdInputUpdate,
   AdsResult,
   QueryAdsArgs,
-  UserAdsArgs,
+  QueryAdsForUserArgs,
 } from '../generated/graphql';
 import { UserInputError } from 'apollo-server-express';
 import { UserGraphQl } from '../models/user';
@@ -172,14 +171,16 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
     return ad;
   }
 
-  async getAdsByUser(
-    userId: ObjectId,
-    {
-      limit = 10,
-      offset = 0,
-      orderBy = QueryOrderBy.createdAt_DESC,
-    }: UserAdsArgs
-  ): Promise<AdsResult> {
+  async getAdsUserType(user: string): Promise<AdGraphQl[]> {
+    return this.model.find({ postedBy: user }).lean().exec();
+  }
+
+  async getAdsByUser({
+    user,
+    limit = 10,
+    offset = 0,
+    orderBy = QueryOrderBy.createdAt_DESC,
+  }: QueryAdsForUserArgs): Promise<AdsResult> {
     const LIMIT_MAX = 100;
     if (limit < 1 || offset < 0 || limit > LIMIT_MAX) {
       throw new UserInputError(
@@ -189,12 +190,12 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
     const sortQuery = sortQueryHelper(orderBy);
     const pageCount = await this.model
       .countDocuments({
-        postedBy: userId,
+        postedBy: user,
       })
       .exec();
     return {
       ads: ((await this.model
-        .find({ postedBy: userId })
+        .find({ postedBy: user })
         .skip(offset)
         .limit(limit)
         .sort(sortQuery)

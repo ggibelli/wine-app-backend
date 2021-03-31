@@ -40,13 +40,12 @@ export const resolver: StringIndexed<Resolvers> = {
     },
     async messagesForNegotiation(
       _,
-      { negotiation },
+      args,
       { dataSources }: { dataSources: MongoDataSource }
     ) {
-      return dataSources.messages.getMessagesForNegotiation(negotiation);
+      return dataSources.messages.getMessagesForNegotiation(args);
     },
     async messages(_, __, { dataSources }: { dataSources: MongoDataSource }) {
-      console.log('mesmes');
       return dataSources.messages.getMessages();
     },
     async message(
@@ -82,7 +81,6 @@ export const resolver: StringIndexed<Resolvers> = {
       }
       const messageResponse = await dataSources.messages.createMessage(message);
       if (!messageResponse.errors.length) {
-        console.log('mandalo');
         await pubsub.publish(MESSAGE_SENT, {
           messageSent: messageResponse.response,
         });
@@ -115,7 +113,6 @@ export const resolver: StringIndexed<Resolvers> = {
           _,
           { user }: { user: UserGraphQl }
         ) => {
-          console.log('submess');
           return Boolean(
             payload.messageSent.sentTo.toString() === user._id.toString()
           );

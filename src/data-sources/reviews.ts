@@ -33,6 +33,19 @@ export default class Reviews extends MongoDataSource<IReviewDoc, Context> {
   async getReview(id: string): Promise<IReviewDoc | null | undefined> {
     return this.findOneById(id);
   }
+
+  async getReviewForUser(): Promise<ReviewGraphQl[]> {
+    const userCtx = this.context.user;
+    await this.collection.createIndex({ createdBy: 1 });
+    await this.collection.createIndex({ forUser: 1 });
+    return this.model
+      .find({
+        $or: [{ createdBy: userCtx._id }, { forUser: userCtx._id }],
+      })
+      .lean()
+      .exec();
+  }
+
   async getReviews({
     limit = 10,
     offset = 0,

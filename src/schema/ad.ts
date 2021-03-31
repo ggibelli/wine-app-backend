@@ -153,6 +153,12 @@ export const typeDefs = gql`
       orderBy: QueryOrderBy
       limit: Int
     ): AdsResult
+    adsForUser(
+      offset: Int
+      orderBy: QueryOrderBy
+      limit: Int
+      user: ID!
+    ): AdsResult
   }
 
   type Mutation {

@@ -5,7 +5,10 @@ import { MongoDataSource } from 'apollo-datasource-mongodb';
 import { Errors } from '../types';
 import { IMessageDoc, MessageGraphQl } from '../models/message';
 import { UserGraphQl } from '../models/user';
-import { MessageInput } from '../generated/graphql';
+import {
+  MessageInput,
+  QueryMessagesForNegotiationArgs,
+} from '../generated/graphql';
 import { loggerError } from '../utils/logger';
 import { ADMINISTRATOR_ID, NEGOTIATION_ADM } from '../utils/config';
 interface Context {
@@ -48,7 +51,7 @@ export default class Messages extends MongoDataSource<IMessageDoc, Context> {
       .exec();
   }
 
-  async getMessagesForNegotiation(negotiation: string) {
+  async getMessagesNegotiationType(negotiation: string) {
     await this.collection.createIndex({ sentTo: 1 });
     await this.collection.createIndex({ sentBy: 1 });
     const userCtx = this.context.user;
@@ -58,12 +61,39 @@ export default class Messages extends MongoDataSource<IMessageDoc, Context> {
         negotiation: negotiation,
       })
       .exec();
+    return messages;
+  }
+
+  async getMessagesForNegotiation({
+    negotiation,
+    limit = 20,
+    offset = 0,
+  }: QueryMessagesForNegotiationArgs) {
+    await this.collection.createIndex({ sentTo: 1 });
+    await this.collection.createIndex({ sentBy: 1 });
+    const userCtx = this.context.user;
+    const messages = await this.model
+      .find({
+        $or: [{ sentBy: userCtx._id }, { sentTo: userCtx._id }],
+        negotiation: negotiation,
+      })
+      .sort({ _id: -1 })
+      .skip(offset)
+      .limit(limit)
+      .exec();
+    const pageCount = await this.model
+      .find({
+        $or: [{ sentBy: userCtx._id }, { sentTo: userCtx._id }],
+        negotiation: negotiation,
+      })
+      .countDocuments()
+      .exec();
+
     const messagesToRead = messages.filter(
       (message) =>
         message.sentTo.toString() === this.context.user._id.toString() &&
         !message.isViewed
     );
-    // console.log(messageToRead);
     if (messagesToRead) {
       for (const message of messagesToRead) {
         message.isViewed = true;
@@ -75,7 +105,7 @@ export default class Messages extends MongoDataSource<IMessageDoc, Context> {
       }
     }
 
-    return messages;
+    return { messages, pageCount };
   }
 
   async createMessage(message: MessageInput): Promise<Response> {
@@ -115,7 +145,6 @@ export default class Messages extends MongoDataSource<IMessageDoc, Context> {
     message: string
   ): Promise<void> {
     if (!recipients) return;
-    console.log('chiamato da', this.context.user.firstName);
     await Promise.all(
       recipients.map(async (recipient) => {
         const createdMessage: IMessageDoc = new this.model({

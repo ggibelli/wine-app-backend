@@ -92,7 +92,7 @@ export const resolver: StringIndexed<Resolvers> = {
       try {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         await dataSources.messages.createMessage({
-          negotiation: negotiationResponse.response?._id,
+          negotiation: negotiationResponse.response?._id as string,
           sentTo: negotiation.forUserAd,
           content: 'negoziazione aperta',
         });
@@ -182,7 +182,6 @@ export const resolver: StringIndexed<Resolvers> = {
           _,
           { user }: { user: UserGraphQl }
         ) => {
-          // console.log(payload.negotiationCreated.forUserAd._id, user._id);
           return Boolean(
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             payload.negotiationCreated.forUserAd._id.toString() ===
@@ -204,7 +203,6 @@ export const resolver: StringIndexed<Resolvers> = {
           _,
           { user }: { user: UserGraphQl; dataSources: MongoDataSource }
         ) => {
-          console.log(payload.userToNotify, user._id, payload.userToNotNotify);
           if (user._id.toHexString() === payload.userToNotNotify) return false;
           return payload.userToNotify === user._id.toString();
         }
@@ -239,7 +237,7 @@ export const resolver: StringIndexed<Resolvers> = {
       _,
       { dataSources }: { dataSources: MongoDataSource }
     ) {
-      return dataSources.messages.getMessagesForNegotiation(negotiation._id);
+      return dataSources.messages.getMessagesNegotiationType(negotiation._id);
     },
   },
 };

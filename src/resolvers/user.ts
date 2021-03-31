@@ -1,14 +1,4 @@
-import {
-  AdsResult,
-  NegotiationResult,
-  Resolvers,
-  ReviewResult,
-  UserAdsArgs,
-  UserInput,
-  UserInputUpdate,
-  UserNegotiationsArgs,
-  UserReviewsArgs,
-} from '../generated/graphql';
+import { Resolvers, UserInput, UserInputUpdate } from '../generated/graphql';
 import { UserGraphQl } from '../models/user';
 import Users, { AuthResponse, UserResponse } from '../data-sources/users';
 import Ads from '../data-sources/ads';
@@ -16,8 +6,10 @@ import Messages from '../data-sources/messages';
 import Negotiations from '../data-sources/negotiations';
 import { ForbiddenError } from 'apollo-server-express';
 import Reviews from '../data-sources/reviews';
-import { IAdDoc } from '../models/ad';
+import { AdGraphQl, IAdDoc } from '../models/ad';
 import { MessageGraphQl } from '../models/message';
+import { NegotiationGraphQl } from '../models/negotiation';
+import { ReviewGraphQl } from '../models/review';
 
 interface StringIndexSignatureInterface {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -52,7 +44,6 @@ export const resolver: StringIndexed<Resolvers> = {
       return dataSources.users.getUser(id);
     },
     me(_, __, { user }: { user: UserGraphQl }): UserGraphQl {
-      console.log('yo');
       return user;
     },
   },
@@ -89,10 +80,10 @@ export const resolver: StringIndexed<Resolvers> = {
   User: {
     async ads(
       user: UserGraphQl,
-      args: UserAdsArgs,
+      _,
       { dataSources }: { dataSources: MongoDataSource }
-    ): Promise<AdsResult> {
-      return dataSources.ads.getAdsByUser(user._id, args);
+    ): Promise<AdGraphQl[]> {
+      return dataSources.ads.getAdsUserType(user._id.toString());
     },
     async messages(
       root: UserGraphQl,
@@ -106,11 +97,11 @@ export const resolver: StringIndexed<Resolvers> = {
     },
     async negotiations(
       root: UserGraphQl,
-      args: UserNegotiationsArgs,
+      _,
       { dataSources, user }: { dataSources: MongoDataSource; user: UserGraphQl }
-    ): Promise<NegotiationResult> {
+    ): Promise<NegotiationGraphQl[]> {
       if (root._id.toString() === user._id.toString()) {
-        return dataSources.negotiations.getNegotiations(args);
+        return dataSources.negotiations.getNegotiationsForUserType();
       }
       throw new ForbiddenError('You can only see your own negotiations');
     },
@@ -131,11 +122,11 @@ export const resolver: StringIndexed<Resolvers> = {
     },
     async reviews(
       root: UserGraphQl,
-      args: UserReviewsArgs,
+      _,
       { dataSources, user }: { dataSources: MongoDataSource; user: UserGraphQl }
-    ): Promise<ReviewResult> {
+    ): Promise<ReviewGraphQl[]> {
       if (root._id.toString() === user._id.toString()) {
-        return dataSources.reviews.getReviews(args);
+        return dataSources.reviews.getReviewForUser();
       }
       throw new ForbiddenError('You can only see your own negotiations');
     },

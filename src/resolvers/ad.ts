@@ -48,6 +48,13 @@ export const resolver: StringIndexed<Resolvers> = {
     async ads(_, args, { dataSources }: { dataSources: MongoDataSource }) {
       return dataSources.ads.getAds(args);
     },
+    async adsForUser(
+      _,
+      args,
+      { dataSources }: { dataSources: MongoDataSource }
+    ) {
+      return dataSources.ads.getAdsByUser(args);
+    },
     async ad(
       _,
       { id },

@@ -42,6 +42,19 @@ export default class Negotiations extends MongoDataSource<
   ): Promise<INegotiationDoc | null | undefined> {
     return this.findOneById(id);
   }
+
+  async getNegotiationsForUserType(): Promise<NegotiationGraphQl[]> {
+    await this.collection.createIndex({ createdBy: 1 });
+    await this.collection.createIndex({ forUserAd: 1 });
+    const userCtx = this.context.user;
+    return this.model
+      .find({
+        $or: [{ createdBy: userCtx._id }, { forUserAd: userCtx._id }],
+      })
+      .lean()
+      .exec();
+  }
+
   async getNegotiations({
     limit = 100,
     offset = 0,

@@ -22,10 +22,19 @@ export const typeDefs = gql`
     errors: [Errors]
   }
 
+  type MessageResult {
+    messages: [Message]
+    pageCount: Int
+  }
+
   extend type Query {
     message(id: ID!): Message @authenticated
     messagesToUser(sentTo: ID!): [Message!] @authenticated
-    messagesForNegotiation(negotiation: ID!): [Message!] @authenticated
+    messagesForNegotiation(
+      negotiation: ID!
+      offset: Int
+      limit: Int
+    ): MessageResult @authenticated
     messages: [Message!] @authenticated
   }
 

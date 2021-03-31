@@ -198,6 +198,12 @@ export type AdsResult = {
   pageCount?: Maybe<Scalars['Int']>;
 };
 
+export type MessageResult = {
+  __typename?: 'MessageResult';
+  messages?: Maybe<Array<Message>>;
+  pageCount?: Maybe<Scalars['Int']>;
+};
+
 export type NegotiationResult = {
   __typename?: 'NegotiationResult';
   negotiations?: Maybe<Array<Negotiation>>;
@@ -214,10 +220,12 @@ export type Query = {
   __typename?: 'Query';
   ad?: Maybe<Ad>;
   ads?: Maybe<AdsResult>;
+  adsForUser?: Maybe<AdsResult>;
+
   me?: Maybe<User>;
   message?: Maybe<Message>;
   messages?: Maybe<mongoose.Types.Array<Message>>;
-  messagesForNegotiation?: Maybe<mongoose.Types.Array<Message>>;
+  messagesForNegotiation?: Maybe<MessageResult>;
   messagesToUser?: Maybe<mongoose.Types.Array<Message>>;
   negotiation?: Maybe<Negotiation>;
   negotiations?: Maybe<NegotiationResult>;
@@ -247,6 +255,13 @@ export type QueryAdsArgs = {
   limit?: Scalars['Int'];
 };
 
+export type QueryAdsForUserArgs = {
+  offset?: Scalars['Int'];
+  orderBy?: QueryOrderBy;
+  limit?: Scalars['Int'];
+  user: Scalars['ID'];
+};
+
 export type QueryNegotiationsArgs = {
   offset?: Scalars['Int'];
   orderBy?: QueryOrderBy;
@@ -266,6 +281,8 @@ export type QueryMessageArgs = {
 
 export type QueryMessagesForNegotiationArgs = {
   negotiation: Scalars['ID'];
+  offset?: Scalars['Int'];
+  limit?: Scalars['Int'];
 };
 
 export type QueryMessagesToUserArgs = {
@@ -602,11 +619,11 @@ export type User = {
   isPremium?: Maybe<Scalars['Boolean']>;
   isAdmin: Scalars['Boolean'];
   hideContact: Scalars['Boolean'];
-  ads?: Maybe<AdsResult>;
+  ads?: mongoose.Types.Array<Ad>;
   savedAds?: mongoose.Types.Array<Ad>;
   messages?: mongoose.Types.Array<Message>;
-  negotiations?: Maybe<NegotiationResult>;
-  reviews?: Maybe<ReviewResult>;
+  negotiations?: mongoose.Types.Array<Negotiation>;
+  reviews?: mongoose.Types.Array<Review>;
 
   adsRemaining?: Maybe<Scalars['Int']>;
   dateCreated: Scalars['Date'];
@@ -843,6 +860,14 @@ export type ResolversTypes = ResolversObject<{
     >
   >;
 
+  MessageResult: ResolverTypeWrapper<
+    Partial<
+      Omit<MessageResult, 'messages'> & {
+        messages?: Maybe<Array<Maybe<ResolversTypes['Message']>>>;
+      }
+    >
+  >;
+
   NegotiationResult: ResolverTypeWrapper<
     Partial<
       Omit<NegotiationResult, 'negotiations'> & {
@@ -1022,6 +1047,12 @@ export type ResolversParentTypes = ResolversObject<{
   MessagePayload: Partial<
     Omit<MessagePayload, 'response'> & {
       response?: Maybe<ResolversParentTypes['Message']>;
+    }
+  >;
+
+  MessageResult: Partial<
+    Omit<MessageResult, 'messages'> & {
+      messages?: Maybe<Array<Maybe<ResolversParentTypes['Message']>>>;
     }
   >;
 
@@ -1296,6 +1327,19 @@ export type AdsResultResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type MessageResultResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['MessageResult'] = ResolversParentTypes['MessageResult']
+> = ResolversObject<{
+  messages?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Message']>>>,
+    ParentType,
+    ContextType
+  >;
+  pageCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type NegotiationResultResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['NegotiationResult'] = ResolversParentTypes['NegotiationResult']
@@ -1351,6 +1395,13 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryAdsArgs, 'typeAd' | 'typeProduct'>
   >;
+  adsForUser?: Resolver<
+    Maybe<ResolversTypes['AdsResult']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryAdsForUserArgs, 'user'>
+  >;
+
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   message?: Resolver<
     Maybe<ResolversTypes['Message']>,
@@ -1364,7 +1415,7 @@ export type QueryResolvers<
     ContextType
   >;
   messagesForNegotiation?: Resolver<
-    Maybe<Array<ResolversTypes['Message']>>,
+    Maybe<Maybe<ResolversTypes['MessageResult']>>,
     ParentType,
     ContextType,
     RequireFields<QueryMessagesForNegotiationArgs, 'negotiation'>
@@ -1979,12 +2030,7 @@ export type UserResolvers<
   >;
   isAdmin?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   hideContact?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  ads?: Resolver<
-    Maybe<ResolversTypes['AdsResult']>,
-    ParentType,
-    ContextType,
-    RequireFields<UserAdsArgs, never>
-  >;
+  ads?: Resolver<Maybe<Array<ResolversTypes['Ad']>>, ParentType, ContextType>;
   savedAds?: Resolver<
     Maybe<Array<ResolversTypes['Ad']>>,
     ParentType,
@@ -1996,16 +2042,14 @@ export type UserResolvers<
     ContextType
   >;
   negotiations?: Resolver<
-    Maybe<ResolversTypes['NegotiationResult']>,
+    Maybe<Array<ResolversTypes['Negotiation']>>,
     ParentType,
-    ContextType,
-    RequireFields<UserNegotiationsArgs, never>
+    ContextType
   >;
   reviews?: Resolver<
-    Maybe<ResolversTypes['ReviewResult']>,
+    Maybe<Array<ResolversTypes['Review']>>,
     ParentType,
-    ContextType,
-    RequireFields<UserReviewsArgs, never>
+    ContextType
   >;
 
   adsRemaining?: Resolver<
@@ -2135,6 +2179,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Address?: AddressResolvers<ContextType>;
   Ad?: AdResolvers<ContextType>;
   AdsResult?: AdsResultResolvers<ContextType>;
+  MessageResult?: MessageResultResolvers<ContextType>;
 
   NegotiationResult?: NegotiationResultResolvers<ContextType>;
 
