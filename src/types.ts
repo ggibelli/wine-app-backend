@@ -191,11 +191,16 @@ export interface Errors {
 }
 
 export enum Rating {
-  POOR = 'POOR',
-  AVERAGE = 'AVERAGE',
-  OK = 'OK',
-  GOOD = 'GOOD',
-  PERFECT = 'PERFECT',
+  'Useless' = 0.5,
+  'Useless+' = 1,
+  'Poor' = 1.5,
+  'Poor+' = 2,
+  'Ok' = 2.5,
+  'Ok+' = 3,
+  'Good' = 3.5,
+  'Good+' = 4,
+  'Excellent' = 4.5,
+  'Excellent+' = 5,
 }
 
 export enum Colore {

@@ -46,6 +46,16 @@ export default class Reviews extends MongoDataSource<IReviewDoc, Context> {
       .exec();
   }
 
+  async getReviewForNegotiation(id: string): Promise<ReviewGraphQl[]> {
+    await this.collection.createIndex({ negotiation: 1 });
+    return this.model
+      .find({
+        negotiation: id,
+      })
+      .lean()
+      .exec();
+  }
+
   async getReviews({
     limit = 10,
     offset = 0,

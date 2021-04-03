@@ -4,7 +4,7 @@ export const typeDefs = gql`
   input ReviewInput {
     negotiation: ID!
     forUser: ID!
-    rating: Rating!
+    rating: Float!
     content: String!
     type: TypeAd!
   }
@@ -13,7 +13,7 @@ export const typeDefs = gql`
     _id: ID!
     #negotiation: ID!
     #forUserAd: ID!
-    rating: Rating
+    rating: Float
     content: String
     #type: Type!
   }
@@ -28,7 +28,7 @@ export const typeDefs = gql`
     createdBy: User!
     negotiation: Negotiation!
     forUser: User!
-    rating: Rating!
+    rating: Float!
     dateCreated: Date! @date
     content: String!
     type: TypeAd!

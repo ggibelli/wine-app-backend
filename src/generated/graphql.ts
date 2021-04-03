@@ -11,7 +11,6 @@ import {
   DenomZona,
   QueryOrderBy,
   Colore,
-  Rating,
   Errors,
 } from '../types';
 import mongoose from 'mongoose';
@@ -449,8 +448,6 @@ export { Menzione };
 
 export { MetodoProduttivo };
 
-export { Rating };
-
 export { QueryOrderBy };
 export { Colore };
 
@@ -522,14 +519,14 @@ export type NegotiationPayload = {
 export type ReviewInput = {
   negotiation: Scalars['ID'];
   forUser: Scalars['ID'];
-  rating: Rating;
+  rating: Scalars['Float'];
   content: Scalars['String'];
   type: TypeAd;
 };
 
 export type ReviewInputUpdate = {
   _id: Scalars['ID'];
-  rating?: Rating;
+  rating?: Scalars['Float'];
   content?: Scalars['String'];
 };
 
@@ -539,7 +536,7 @@ export type Review = {
   createdBy: User;
   negotiation: Negotiation;
   forUser: User;
-  rating: Rating;
+  rating: Scalars['Float'];
   dateCreated: Scalars['Date'];
   content: Scalars['String'];
   type: TypeAd;
@@ -914,7 +911,6 @@ export type ResolversTypes = ResolversObject<{
   TypeProduct: ResolverTypeWrapper<Partial<TypeProduct>>;
   Menzione: ResolverTypeWrapper<Partial<Menzione>>;
   MetodoProduttivo: ResolverTypeWrapper<Partial<MetodoProduttivo>>;
-  Rating: ResolverTypeWrapper<Partial<Rating>>;
   Colore: ResolverTypeWrapper<Partial<Colore>>;
   EspressioneComunitaria: ResolverTypeWrapper<Partial<EspressioneComunitaria>>;
   DenomZona: ResolverTypeWrapper<Partial<DenomZona>>;
@@ -1950,7 +1946,7 @@ export type ReviewResolvers<
     ContextType
   >;
   forUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  rating?: Resolver<ResolversTypes['Rating'], ParentType, ContextType>;
+  rating?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   dateCreated?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   type?: Resolver<ResolversTypes['TypeAd'], ParentType, ContextType>;

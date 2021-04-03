@@ -88,6 +88,7 @@ export default class Negotiations extends MongoDataSource<
     const pageCount = await this.model
       .countDocuments({
         $or: [{ createdBy: userCtx._id }, { forUserAd: userCtx._id }],
+        $and: [{ isConcluded }],
       })
       .exec();
     return {

@@ -45,10 +45,11 @@ const reviewSchemaFields: Record<keyof IReview, any> = {
   content: {
     type: String,
     minlength: 5,
+    maxlength: 130,
   },
   rating: {
-    type: String,
-    enum: ['POOR', 'AVERAGE', 'OK', 'GOOD', 'PERFECT'],
+    type: Number,
+    enum: [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5],
     required: true,
   },
   type: {

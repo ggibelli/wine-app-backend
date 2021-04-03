@@ -12,7 +12,7 @@ export interface INegotiation {
   messages?: mongoose.Types.Array<IMessageDoc['_id']> | null;
   isConcluded: boolean;
   dateCreated: Date;
-  // dateConcluded?: Date | null;
+  dateConcluded?: Date | null;
   type: TypeAd;
 }
 
@@ -58,6 +58,9 @@ const negotiationSchemaFields: Record<keyof INegotiation, any> = {
     type: Date,
     // `Date.now()` returns the current unix timestamp as a number
     default: Date.now,
+  },
+  dateConcluded: {
+    type: Date,
   },
 };
 

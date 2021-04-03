@@ -13,7 +13,7 @@ export const typeDefs = gql`
     sentBy: User!
     sentTo: User!
     negotiation: Negotiation!
-    dateSent: Date!
+    dateSent: Date! @date
     isViewed: Boolean!
   }
 

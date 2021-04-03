@@ -159,14 +159,6 @@ export const typeDefs = gql`
     VEGANO
   }
 
-  enum Rating {
-    POOR
-    AVERAGE
-    OK
-    GOOD
-    PERFECT
-  }
-
   enum Colore {
     BIANCA
     ROSSA

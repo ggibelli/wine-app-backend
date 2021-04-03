@@ -17,6 +17,7 @@ import { NegotiationGraphQl } from '../models/negotiation';
 import { UserGraphQl } from '../models/user';
 import { AdGraphQl } from '../models/ad';
 import { loggerError } from '../utils/logger';
+import Reviews from '../data-sources/reviews';
 // import { AdGraphQl } from '../models/ad';
 
 const pubsub = new PubSub();
@@ -36,6 +37,7 @@ interface MongoDataSource {
   negotiations: Negotiations;
   ads: Ads;
   messages: Messages;
+  reviews: Reviews;
 }
 
 export const resolver: StringIndexed<Resolvers> = {
@@ -59,6 +61,7 @@ export const resolver: StringIndexed<Resolvers> = {
       args,
       { dataSources }: { dataSources: MongoDataSource }
     ) {
+      console.log(args);
       return dataSources.negotiations.getNegotiations(args);
     },
     async negotiation(
@@ -238,6 +241,14 @@ export const resolver: StringIndexed<Resolvers> = {
       { dataSources }: { dataSources: MongoDataSource }
     ) {
       return dataSources.messages.getMessagesNegotiationType(negotiation._id);
+    },
+
+    async review(
+      negotiation,
+      _,
+      { dataSources }: { dataSources: MongoDataSource }
+    ) {
+      return dataSources.reviews.getReviewForNegotiation(negotiation._id);
     },
   },
 };
