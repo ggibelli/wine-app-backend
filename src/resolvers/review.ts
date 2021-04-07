@@ -55,6 +55,10 @@ export const resolver: StringIndexed<Resolvers> = {
     ) {
       const reviewResponse = await dataSources.reviews.createReview(review);
       if (!reviewResponse.errors.length) {
+        await dataSources.messages.messageAdmin(
+          [review.forUser],
+          `Hanno scritto di te ${review.content}`
+        );
         await pubsub.publish(REVIEW_CREATED, {
           reviewCreated: reviewResponse.response,
         });

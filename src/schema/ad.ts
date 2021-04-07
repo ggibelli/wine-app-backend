@@ -157,6 +157,7 @@ export const typeDefs = gql`
       offset: Int
       orderBy: QueryOrderBy
       limit: Int
+      isActive: Boolean
       user: ID!
     ): AdsResult
   }

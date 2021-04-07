@@ -61,7 +61,6 @@ export const resolver: StringIndexed<Resolvers> = {
       args,
       { dataSources }: { dataSources: MongoDataSource }
     ) {
-      console.log(args);
       return dataSources.negotiations.getNegotiations(args);
     },
     async negotiation(

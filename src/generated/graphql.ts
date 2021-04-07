@@ -258,6 +258,7 @@ export type QueryAdsForUserArgs = {
   offset?: Scalars['Int'];
   orderBy?: QueryOrderBy;
   limit?: Scalars['Int'];
+  isActive?: Scalars['Boolean'];
   user: Scalars['ID'];
 };
 

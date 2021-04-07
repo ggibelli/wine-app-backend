@@ -180,6 +180,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
     limit = 10,
     offset = 0,
     orderBy = QueryOrderBy.createdAt_DESC,
+    isActive,
   }: QueryAdsForUserArgs): Promise<AdsResult> {
     const LIMIT_MAX = 100;
     if (limit < 1 || offset < 0 || limit > LIMIT_MAX) {
@@ -193,6 +194,24 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
         postedBy: user,
       })
       .exec();
+    if (isActive === true) {
+      const pageCount = await this.model
+        .countDocuments({
+          postedBy: user,
+          isActive: true,
+        })
+        .exec();
+      return {
+        ads: ((await this.model
+          .find({ postedBy: user, isActive: true })
+          .skip(offset)
+          .limit(limit)
+          .sort(sortQuery)
+          .lean()
+          .exec()) as unknown) as Ad[],
+        pageCount,
+      };
+    }
     return {
       ads: ((await this.model
         .find({ postedBy: user })
