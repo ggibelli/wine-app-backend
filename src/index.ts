@@ -120,6 +120,7 @@ export const app = express();
 server.applyMiddleware({ app });
 app.use(confirmationRouter);
 app.use(cors);
+app.use(express.static('buildClient'));
 const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
