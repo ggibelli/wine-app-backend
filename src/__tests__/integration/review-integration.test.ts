@@ -14,7 +14,7 @@ import { User } from '../../models/user';
 import { Ad } from '../../models/ad';
 import { Review, ReviewGraphQl } from '../../models/review';
 import { users, ads } from '../../tests/mocksTests';
-import { Rating, ReviewInput } from '../../generated/graphql';
+import { ReviewInput } from '../../generated/graphql';
 import { Negotiation, NegotiationGraphQl } from '../../models/negotiation';
 import cron from 'cron';
 
@@ -194,7 +194,7 @@ beforeAll(async () => {
     negotiation: negotiation,
     forUser: negotiation.forUserAd,
     type: ad.typeAd,
-    rating: Rating.PERFECT,
+    rating: 5,
     content: 'perfect',
   });
   const otherReview = new Review({
@@ -202,7 +202,7 @@ beforeAll(async () => {
     negotiation: otherNegotiation,
     forUser: otherNegotiation.forUserAd,
     type: ad.typeAd,
-    rating: Rating.POOR,
+    rating: 2,
     content: 'very poor',
   });
   await user.save();
@@ -241,7 +241,7 @@ describe('Integration test reviews', () => {
       negotiation: negotiation[0]._id.toString(),
       forUser: negotiation[0].forUserAd.toString(),
       type: negotiation[0].type,
-      rating: Rating.GOOD,
+      rating: 4,
       content: 'super good',
     };
     const res = await mutate(CREATE_REVIEW, {
@@ -268,7 +268,7 @@ describe('Integration test reviews', () => {
       negotiation: negotiation[1]._id.toString(),
       forUser: negotiation[1].forUserAd.toString(),
       type: negotiation[1].type,
-      rating: Rating.AVERAGE,
+      rating: 3,
       content: 'average',
     };
     const res = await mutate(CREATE_REVIEW, {
@@ -287,7 +287,7 @@ describe('Integration test reviews', () => {
       negotiation: negotiation[1]._id.toString(),
       forUser: negotiation[1].forUserAd.toString(),
       type: negotiation[1].type,
-      rating: Rating.AVERAGE,
+      rating: 3,
       content: 'average',
     };
     const res: any = await mutate(CREATE_REVIEW, {
@@ -305,7 +305,7 @@ describe('Integration test reviews', () => {
       negotiation: negotiation[0]._id.toString(),
       forUser: negotiation[0].forUserAd.toString(),
       type: negotiation[0].type,
-      rating: Rating.AVERAGE,
+      rating: 2,
       content: 'average',
     };
     const res = await mutate(CREATE_REVIEW, {

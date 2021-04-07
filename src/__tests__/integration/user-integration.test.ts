@@ -12,7 +12,7 @@ import {
 import { User } from '../../models/user';
 import { ads, users } from '../../tests/mocksTests';
 import { UserInput } from '../../generated/graphql';
-import { Province, Rating, Regioni } from '../../types';
+import { Province, Regioni } from '../../types';
 import supertest from 'supertest';
 import { app } from '../../index';
 import { Ad } from '../../models/ad';
@@ -300,7 +300,7 @@ beforeAll(async () => {
     negotiation: negotiation,
     forUser: negotiation.forUserAd,
     type: ad.typeAd,
-    rating: Rating.PERFECT,
+    rating: 5,
     content: 'perfect',
   });
   const otherReview = new Review({
@@ -308,7 +308,7 @@ beforeAll(async () => {
     negotiation: otherNegotiation,
     forUser: otherNegotiation.forUserAd,
     type: ad.typeAd,
-    rating: Rating.POOR,
+    rating: 2,
     content: 'very poor',
   });
   const vineyard = new Vineyard(vineyardDb[0]);

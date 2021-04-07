@@ -7,7 +7,9 @@
     "test": "jest tests",
     "dev": "ts-node-dev ./src/index.ts",
     "codegen-graphql": "graphql-codegen --config codegen.yml",
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "tsc": "tsc",
+    "start": "node build/index.js"
   },
   "author": "Giovanni Gibelli",
   "license": "ISC",
