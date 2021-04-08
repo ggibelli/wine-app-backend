@@ -31,6 +31,7 @@ const data_sources_1 = __importDefault(require("./data-sources"));
 const directives_2 = require("./directives");
 const auth_1 = require("./utils/auth");
 const accountConfirmation_1 = require("./controllers/accountConfirmation");
+const path_1 = __importDefault(require("path"));
 // import cors from 'cors';
 mongoose_1.default.set('useFindAndModify', false);
 mongoose_1.default.set('useCreateIndex', true);
@@ -112,6 +113,9 @@ exports.app = express_1.default();
 exports.app.use(accountConfirmation_1.confirmationRouter);
 // app.use(cors);
 exports.app.use(express_1.default.static('public'));
+exports.app.get('*', (_req, res) => {
+    res.sendFile(path_1.default.resolve(__dirname, 'public', 'index.html'));
+});
 server.applyMiddleware({ app: exports.app, path: '/graphql' });
 const httpServer = http_1.default.createServer(exports.app);
 server.installSubscriptionHandlers(httpServer);
