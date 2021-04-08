@@ -114,7 +114,7 @@ exports.app.use(accountConfirmation_1.confirmationRouter);
 // app.use(cors);
 exports.app.use(express_1.default.static('public'));
 exports.app.get('*', (_req, res) => {
-    res.sendFile(path_1.default.resolve(__dirname, 'public', 'index.html'));
+    res.sendFile(path_1.default.resolve('public', 'index.html'));
 });
 server.applyMiddleware({ app: exports.app, path: '/graphql' });
 const httpServer = http_1.default.createServer(exports.app);

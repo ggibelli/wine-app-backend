@@ -122,7 +122,7 @@ app.use(confirmationRouter);
 // app.use(cors);
 app.use(express.static('public'));
 app.get('*', (_req, res) => {
-  res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+  res.sendFile(path.resolve('public', 'index.html'));
 });
 server.applyMiddleware({ app, path: '/graphql' });
 
