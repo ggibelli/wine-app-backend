@@ -31,11 +31,9 @@ import {
   AuthorizedDirective,
   FormatDateDirective,
 } from './directives';
-
 import { createToken, getUserFromToken, createTokenMail } from './utils/auth';
 import { confirmationRouter } from './controllers/accountConfirmation';
 import path from 'path';
-// import cors from 'cors';
 
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
@@ -119,7 +117,6 @@ const server = new ApolloServer({
 
 export const app = express();
 app.use(confirmationRouter);
-// app.use(cors);
 app.use(express.static('public'));
 app.get('*', (_req, res) => {
   res.sendFile(path.resolve('public', 'index.html'));
