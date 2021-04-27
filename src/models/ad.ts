@@ -180,7 +180,7 @@ const adSchemaFields: Record<keyof IAd, any> = {
   },
   needsFollowUp: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   datePosted: {
     type: Date,
