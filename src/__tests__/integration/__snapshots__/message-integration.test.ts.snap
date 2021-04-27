@@ -173,42 +173,44 @@ Object {
 exports[`Integration test messages query messagesForNegotiation succeds if logged in 1`] = `
 Object {
   "data": Object {
-    "messagesForNegotiation": Array [
-      Object {
-        "content": "ciao",
-        "negotiation": Object {
-          "createdBy": Object {
+    "messagesForNegotiation": Object {
+      "messages": Array [
+        Object {
+          "content": "prova prova",
+          "negotiation": Object {
+            "createdBy": Object {
+              "firstName": "Giovanni",
+            },
+            "forUserAd": Object {
+              "firstName": "Mariuccio",
+            },
+          },
+          "sentBy": Object {
             "firstName": "Giovanni",
           },
-          "forUserAd": Object {
+          "sentTo": Object {
             "firstName": "Mariuccio",
           },
         },
-        "sentBy": Object {
-          "firstName": "Giovanni",
-        },
-        "sentTo": Object {
-          "firstName": "Mariuccio",
-        },
-      },
-      Object {
-        "content": "prova prova",
-        "negotiation": Object {
-          "createdBy": Object {
+        Object {
+          "content": "ciao",
+          "negotiation": Object {
+            "createdBy": Object {
+              "firstName": "Giovanni",
+            },
+            "forUserAd": Object {
+              "firstName": "Mariuccio",
+            },
+          },
+          "sentBy": Object {
             "firstName": "Giovanni",
           },
-          "forUserAd": Object {
+          "sentTo": Object {
             "firstName": "Mariuccio",
           },
         },
-        "sentBy": Object {
-          "firstName": "Giovanni",
-        },
-        "sentTo": Object {
-          "firstName": "Mariuccio",
-        },
-      },
-    ],
+      ],
+    },
   },
 }
 `;

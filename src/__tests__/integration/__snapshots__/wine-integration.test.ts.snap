@@ -111,31 +111,6 @@ Object {
 }
 `;
 
-exports[`Integration test wines query single wine fails if not logged 1`] = `
-Object {
-  "data": Object {
-    "wine": null,
-  },
-  "errors": Array [
-    Object {
-      "extensions": Object {
-        "code": "UNAUTHENTICATED",
-      },
-      "locations": Array [
-        Object {
-          "column": 3,
-          "line": 2,
-        },
-      ],
-      "message": "You need to login to continue",
-      "path": Array [
-        "wine",
-      ],
-    },
-  ],
-}
-`;
-
 exports[`Integration test wines query single wine succeds if logged 1`] = `
 Object {
   "data": Object {
@@ -148,31 +123,6 @@ Object {
       ],
     },
   },
-}
-`;
-
-exports[`Integration test wines query wines fails if not logged in 1`] = `
-Object {
-  "data": Object {
-    "wines": null,
-  },
-  "errors": Array [
-    Object {
-      "extensions": Object {
-        "code": "UNAUTHENTICATED",
-      },
-      "locations": Array [
-        Object {
-          "column": 3,
-          "line": 2,
-        },
-      ],
-      "message": "You need to login to continue",
-      "path": Array [
-        "wines",
-      ],
-    },
-  ],
 }
 `;
 

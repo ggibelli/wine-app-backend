@@ -160,7 +160,7 @@ Object {
       "errors": Array [],
       "response": Object {
         "content": "wow",
-        "datePosted": "17 Dec, 95",
+        "datePosted": "17 Dec 95, 3:24",
         "isActive": false,
         "postedBy": Object {
           "firstName": "Giovanni",
@@ -211,7 +211,7 @@ Object {
         Object {
           "abv": 12,
           "activeNegotiations": 0,
-          "datePosted": "17 Dec, 95",
+          "datePosted": "17 Dec 95, 3:24",
           "harvest": 2020,
           "postedBy": Object {
             "firstName": "Giovanni",
@@ -269,19 +269,6 @@ Object {
       ],
     },
   ],
-}
-`;
-
-exports[`Integration test ads saveAd mutation succeds if logged in 1`] = `
-Object {
-  "data": Object {
-    "saveAd": Object {
-      "errors": Array [],
-      "response": Object {
-        "content": "wow",
-      },
-    },
-  },
 }
 `;
 

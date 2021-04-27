@@ -19,6 +19,7 @@ const mockContext = {
       updateAd: jest.fn(),
       deleteAd: jest.fn(),
     },
+
     users: {
       getUser: jest.fn(),
     },
@@ -51,6 +52,7 @@ const mockContext = {
     },
     messages: {
       getMessagesForNegotiation: jest.fn(),
+      messageAdmin: jest.fn(),
     },
   },
   user: { id: 1, email: 'a@a.a' },
@@ -62,6 +64,7 @@ const { getReview } = mockContext.dataSources.reviews;
 const { createReview } = mockContext.dataSources.reviews;
 const { updateReview } = mockContext.dataSources.reviews;
 const { deleteReview } = mockContext.dataSources.reviews;
+const { messageAdmin } = mockContext.dataSources.messages;
 
 describe('Review resolvers', () => {
   afterEach(() => {
@@ -127,11 +130,18 @@ describe('Review resolvers', () => {
     const res = await resolvers.Mutation?.createReview(
       null,
       {
-        rating: 'Good',
-        forUser: '123',
-        negotiation: '322',
+        review: {
+          rating: 'Good',
+          forUser: '123',
+          negotiation: '322',
+          content: 'good',
+        },
       },
       mockContext
+    );
+    expect(messageAdmin).toHaveBeenCalledWith(
+      ['123'],
+      'Hanno scritto di te good'
     );
     expect(publish).toHaveBeenCalledTimes(1);
     expect(publish).toHaveBeenCalledWith('REVIEW_CREATED', {

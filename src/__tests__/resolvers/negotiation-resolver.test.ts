@@ -9,7 +9,6 @@ jest.mock('apollo-server-express', () => ({
 }));
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import resolvers from '../../resolvers';
-import { ObjectId } from 'mongodb';
 
 const mockContext = {
   dataSources: {
@@ -41,6 +40,9 @@ const mockContext = {
     },
     messages: {
       getMessagesForNegotiation: jest.fn(),
+      messageAdmin: jest.fn(),
+      createMessage: jest.fn(),
+      getMessagesNegotiationType: jest.fn(),
     },
   },
   user: { _id: '1', email: 'a@a.a' },
@@ -54,7 +56,9 @@ const { createNegotiation } = mockContext.dataSources.negotiations;
 const { deleteNegotiation } = mockContext.dataSources.negotiations;
 const { updateNegotiation } = mockContext.dataSources.negotiations;
 const { getUser } = mockContext.dataSources.users;
-const { getMessagesForNegotiation } = mockContext.dataSources.messages;
+const { getMessagesNegotiationType } = mockContext.dataSources.messages;
+const { messageAdmin } = mockContext.dataSources.messages;
+const { createMessage } = mockContext.dataSources.messages;
 
 describe('Negotiation resolvers', () => {
   afterEach(() => {
@@ -165,7 +169,7 @@ describe('Negotiation resolvers', () => {
   });
 
   it('createNegotiation succeeds and calls datasource and subscription', async () => {
-    createNegotiation.mockReturnValueOnce({
+    createNegotiation.mockReturnValue({
       response: {
         _id: '122',
         typeAd: 'SELL',
@@ -179,12 +183,23 @@ describe('Negotiation resolvers', () => {
     const res = await resolvers.Mutation?.createNegotiation(
       null,
       {
-        typeAd: 'SELL',
-        forUserAd: '123',
-        ad: '322',
+        negotiation: {
+          typeAd: 'SELL',
+          forUserAd: '123',
+          ad: '322',
+        },
       },
       mockContext
     );
+    expect(messageAdmin).toHaveBeenCalledWith(
+      ['123'],
+      'Trattativa creata per il tuo annuncio 322'
+    );
+    expect(createMessage).toHaveBeenCalledWith({
+      content: 'negoziazione aperta',
+      negotiation: '122',
+      sentTo: '123',
+    });
     expect(publish).toHaveBeenCalledTimes(1);
     expect(publish).toHaveBeenCalledWith('NEGOTIATION_CREATED', {
       negotiationCreated: {
@@ -242,12 +257,14 @@ describe('Negotiation resolvers', () => {
       },
       errors: [],
     });
+    const saveMock = jest.fn();
     getAd.mockReturnValueOnce({
-      _id: new ObjectId('5fdd925d9cc5800455e1855e'),
+      _id: '5fdd925d9cc5800455e1855e',
       typeAd: 'SELL',
       typeProduct: 'AdWine',
       wineName: 'wine',
       createdBy: 2,
+      save: saveMock,
     });
     getNegotiationsForAd.mockReturnValueOnce([
       {
@@ -261,22 +278,31 @@ describe('Negotiation resolvers', () => {
     const res = await resolvers.Mutation?.updateNegotiation(
       null,
       {
-        id: 1,
-        isConcluded: true,
+        negotiation: {
+          id: 1,
+          isConcluded: true,
+        },
       },
       mockContext
+    );
+    expect(messageAdmin).toHaveBeenCalledWith(
+      ['5', '4', '8', '7'],
+      "L'annuncio wine non e piu disponibile"
     );
     expect(publish).toHaveBeenCalledTimes(1);
     expect(publish).toHaveBeenCalledWith('NEGOTIATION_CLOSED', {
       negotiationClosed: {
-        _id: new ObjectId('5fdd925d9cc5800455e1855e'),
+        _id: '5fdd925d9cc5800455e1855e',
+        createdBy: 2,
+        isActive: false,
+        save: saveMock,
         typeAd: 'SELL',
         typeProduct: 'AdWine',
         wineName: 'wine',
-        createdBy: 2,
       },
-      usersToNotify: ['4', '5', '7', '8'],
       userToNotNotify: '1',
+      userToNotify: '2',
+      usersToNotify: ['5', '4', '8', '7'],
     });
     expect(res).toEqual({
       response: {
@@ -384,7 +410,7 @@ describe('Negotiation resolvers', () => {
   });
 
   it('Negotiation messages calls getMessagesForNegotiation', async () => {
-    getMessagesForNegotiation.mockReturnValueOnce([{ id: 1 }, { id: 2 }]);
+    getMessagesNegotiationType.mockReturnValueOnce([{ id: 1 }, { id: 2 }]);
     //@ts-ignore
     const res = await resolvers.Negotiation?.messages(
       { _id: '123' },
