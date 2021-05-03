@@ -38,19 +38,21 @@ const MESSAGES_USER = gql`
 const MESSAGES_NEGOTIATION = gql`
   query GetMessagesNegotiation($negotiation: ID!) {
     messagesForNegotiation(negotiation: $negotiation) {
-      sentBy {
-        firstName
-      }
-      sentTo {
-        firstName
-      }
-      content
-      negotiation {
-        createdBy {
+      messages {
+        sentBy {
           firstName
         }
-        forUserAd {
+        sentTo {
           firstName
+        }
+        content
+        negotiation {
+          createdBy {
+            firstName
+          }
+          forUserAd {
+            firstName
+          }
         }
       }
     }

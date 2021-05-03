@@ -24,6 +24,9 @@ const mockContext = {
       getUser: jest.fn(),
       saveAd: jest.fn(),
     },
+    messages: {
+      messageAdmin: jest.fn(),
+    },
     negotiations: {
       getNegotiationsForAd: jest.fn(),
       deleteMany: jest.fn(),
@@ -51,6 +54,7 @@ const { getUser } = mockContext.dataSources.users;
 const { getVineyardByName } = mockContext.dataSources.vineyards;
 const { getWineByName } = mockContext.dataSources.wines;
 const { saveAd } = mockContext.dataSources.users;
+const { messageAdmin } = mockContext.dataSources.messages;
 
 describe('Ad resolvers', () => {
   afterEach(() => {
@@ -123,13 +127,19 @@ describe('Ad resolvers', () => {
     const res = await resolvers.Mutation?.createAd(
       null,
       {
-        id: 1,
-        typeAd: 'SELL',
-        typeProduct: 'AdWine',
-        wineName: 'wine',
-        createdBy: 2,
+        input: {
+          id: 1,
+          typeAd: 'SELL',
+          typeProduct: 'AdWine',
+          wineName: 'wine',
+          createdBy: 2,
+        },
       },
       mockContext
+    );
+    expect(messageAdmin).toHaveBeenCalledWith(
+      [1],
+      'Un annuncio per il vino: wine e stato creato'
     );
     expect(publish).toHaveBeenCalledTimes(1);
     expect(publish).toHaveBeenCalledWith('AD_POSTED', {
@@ -198,15 +208,20 @@ describe('Ad resolvers', () => {
     const res = await resolvers.Mutation?.updateAd(
       null,
       {
-        input: { _id: 1 },
-        id: 1,
-        typeAd: 'SELL',
-        typeProduct: 'AdWine',
-        wineName: 'wine',
-        createdBy: 2,
-        isActive: false,
+        input: {
+          _id: 1,
+          typeAd: 'SELL',
+          typeProduct: 'AdWine',
+          wineName: 'wine',
+          createdBy: 2,
+          isActive: false,
+        },
       },
       mockContext
+    );
+    expect(messageAdmin).toHaveBeenCalledWith(
+      ['4', '7'],
+      'Un annuncio per il vino: wine e stato creato'
     );
     expect(publish).toHaveBeenCalledTimes(1);
     expect(publish).toHaveBeenCalledWith('AD_REMOVED', {
@@ -301,6 +316,10 @@ describe('Ad resolvers', () => {
       mockContext
     );
     expect(deleteMany).toHaveBeenCalledTimes(1);
+    expect(messageAdmin).toHaveBeenCalledWith(
+      ['4', '7'],
+      'L annuncio per il vino wine e stato rimosso'
+    );
     expect(publish).toHaveBeenCalledTimes(1);
     expect(publish).toHaveBeenCalledWith('AD_REMOVED', {
       adRemoved: {
