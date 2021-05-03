@@ -17,6 +17,7 @@ exports.resolver = {
             return dataSources.ads.getAds(args);
         },
         async adsForUser(_, args, { dataSources }) {
+            console.log(args);
             return dataSources.ads.getAdsByUser(args);
         },
         async ad(_, { id }, { dataSources, user }) {
@@ -130,6 +131,12 @@ exports.resolver = {
         },
         async negotiations(ad, _, { dataSources }) {
             return dataSources.negotiations.getNegotiationsForAd(ad._id);
+        },
+        savedTimes(ad) {
+            if (!ad.savedBy) {
+                return 0;
+            }
+            return ad.savedBy?.length;
         },
     },
     AdWine: {
