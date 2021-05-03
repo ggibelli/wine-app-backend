@@ -73,7 +73,8 @@ exports.typeDefs = apollo_server_express_1.gql `
     content: String!
     address: Address! @authenticated
     negotiations: [Negotiation!] @authenticated
-    activeNegotiations: Int @authenticated
+    activeNegotiations: Int
+    savedTimes: Int
     "viewedBy: [User]"
     numberViews: Int @authenticated
     typeAd: TypeAd!
@@ -101,6 +102,7 @@ exports.typeDefs = apollo_server_express_1.gql `
     address: Address! @authenticated
     negotiations: [Negotiation!] @authenticated
     activeNegotiations: Int
+    savedTimes: Int
     "viewedBy: [User]"
     numberViews: Int
     typeAd: TypeAd!
@@ -125,6 +127,7 @@ exports.typeDefs = apollo_server_express_1.gql `
     address: Address!
     negotiations: [Negotiation!] @authenticated
     activeNegotiations: Int
+    savedTimes: Int
     "viewedBy: [User]"
     numberViews: Int
     typeAd: TypeAd!

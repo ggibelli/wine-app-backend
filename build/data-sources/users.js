@@ -159,13 +159,16 @@ class Users extends apollo_datasource_mongodb_1.MongoDataSource {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         user?.savedAds?.findIndex((adSaved) => adSaved._id.toString() === ad._id.toString()) !== -1;
         if (isSaved) {
+            ad.savedBy?.pull({ _id: user?._id });
             user?.savedAds?.pull({ _id: ad._id });
         }
         else {
+            ad.savedBy?.addToSet(user);
             user?.savedAds?.addToSet(ad);
         }
         try {
             await user?.save();
+            await ad.save();
         }
         catch (e) {
             errors.push({

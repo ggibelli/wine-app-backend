@@ -7,7 +7,16 @@ const logger_1 = require("../utils/logger");
 const config_1 = require("../utils/config");
 class Messages extends apollo_datasource_mongodb_1.MongoDataSource {
     async getMessage(id) {
-        return this.findOneById(id);
+        const message = await this.findOneById(id);
+        if (message)
+            message.isViewed = true;
+        try {
+            await message?.save();
+        }
+        catch (e) {
+            logger_1.loggerError(e);
+        }
+        return message;
     }
     async getMessages() {
         const userCtx = this.context.user;

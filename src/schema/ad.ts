@@ -71,7 +71,8 @@ export const typeDefs = gql`
     content: String!
     address: Address! @authenticated
     negotiations: [Negotiation!] @authenticated
-    activeNegotiations: Int @authenticated
+    activeNegotiations: Int
+    savedTimes: Int
     "viewedBy: [User]"
     numberViews: Int @authenticated
     typeAd: TypeAd!
@@ -99,6 +100,7 @@ export const typeDefs = gql`
     address: Address! @authenticated
     negotiations: [Negotiation!] @authenticated
     activeNegotiations: Int
+    savedTimes: Int
     "viewedBy: [User]"
     numberViews: Int
     typeAd: TypeAd!
@@ -123,6 +125,7 @@ export const typeDefs = gql`
     address: Address!
     negotiations: [Negotiation!] @authenticated
     activeNegotiations: Int
+    savedTimes: Int
     "viewedBy: [User]"
     numberViews: Int
     typeAd: TypeAd!

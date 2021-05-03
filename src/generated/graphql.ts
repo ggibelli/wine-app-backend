@@ -123,6 +123,7 @@ export type Ad = {
   address: Address;
   negotiations?: mongoose.Types.Array<Negotiation>;
   activeNegotiations?: Maybe<Scalars['Int']>;
+  savedTimes?: Maybe<Scalars['Int']>;
   /** viewedBy: [User] */
   numberViews?: Maybe<Scalars['Int']>;
   typeAd: TypeAd;
@@ -151,6 +152,8 @@ export type AdWine = Ad & {
   address: Address;
   negotiations: NegotiationResult;
   activeNegotiations?: Maybe<Scalars['Int']>;
+  savedTimes?: Maybe<Scalars['Int']>;
+
   /** viewedBy: [User] */
   numberViews?: Maybe<Scalars['Int']>;
   typeAd: TypeAd;
@@ -176,6 +179,8 @@ export type AdGrape = Ad & {
   address: Address;
   negotiations: mongoose.Types.Array<Negotiation>;
   activeNegotiations?: Maybe<Scalars['Int']>;
+  savedTimes?: Maybe<Scalars['Int']>;
+
   /** viewedBy: [User] */
   numberViews?: Maybe<Scalars['Int']>;
   typeAd: TypeAd;
@@ -1183,6 +1188,7 @@ export type AdResolvers<
     ParentType,
     ContextType
   >;
+  savedTimes?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   negotiations?: Resolver<
     Maybe<Array<ResolversTypes['Negotiation']>>,
     ParentType,
@@ -1240,6 +1246,7 @@ export type AdWineResolvers<
     ParentType,
     ContextType
   >;
+  savedTimes?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   negotiations?: Resolver<
     Maybe<Array<ResolversTypes['Negotiation']>>,
     ParentType,
@@ -1288,6 +1295,7 @@ export type AdGrapeResolvers<
     ParentType,
     ContextType
   >;
+  savedTimes?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   negotiations?: Resolver<
     Maybe<Array<ResolversTypes['Negotiation']>>,
     ParentType,

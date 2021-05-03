@@ -34,6 +34,7 @@ export interface IAd {
   address: Address;
   negotiations?: mongoose.Types.Array<Negotiation>; // trattative dell'annuncio, solo attive, solo graphql??
   viewedBy?: mongoose.Types.Array<IUserDoc['_id']>;
+  savedBy?: mongoose.Types.Array<IUserDoc['_id']>;
   typeAd: TypeAd;
   typeProduct: TypeProduct;
   needsFollowUp: boolean;
@@ -165,6 +166,12 @@ const adSchemaFields: Record<keyof IAd, any> = {
     },
   ],
   viewedBy: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
+  savedBy: [
     {
       type: Schema.Types.ObjectId,
       ref: 'User',

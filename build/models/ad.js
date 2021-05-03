@@ -143,6 +143,12 @@ const adSchemaFields = {
             ref: 'User',
         },
     ],
+    savedBy: [
+        {
+            type: mongoose_1.Schema.Types.ObjectId,
+            ref: 'User',
+        },
+    ],
     content: {
         type: String,
         required: true,
@@ -153,7 +159,7 @@ const adSchemaFields = {
     },
     needsFollowUp: {
         type: Boolean,
-        default: false,
+        default: true,
     },
     datePosted: {
         type: Date,
