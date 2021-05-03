@@ -128,6 +128,8 @@ export const resolver: StringIndexed<Resolvers> = {
         try {
           await ad.save();
         } catch (e) {
+          console.log(e);
+
           return {
             response: null,
             errors: [{ name: 'General Error', text: 'Error updating the ad' }],
