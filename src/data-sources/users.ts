@@ -11,7 +11,7 @@ import { PORT } from '../utils/config';
 import { sendMail } from '../utils/mailServer';
 import { CronJob } from 'cron';
 import { loggerError } from '../utils/logger';
-import { AdGraphQl } from '../models/ad';
+import { IAdDoc } from '../models/ad';
 
 interface Context {
   user: UserGraphQl;
@@ -176,7 +176,7 @@ export default class Users extends MongoDataSource<IUserDoc, Context> {
     };
   }
 
-  async saveAd(ad: AdGraphQl) {
+  async saveAd(ad: IAdDoc) {
     const errors: Errors[] = [];
     const user = await this.model.findById(this.context.user._id);
 
@@ -186,13 +186,18 @@ export default class Users extends MongoDataSource<IUserDoc, Context> {
         (adSaved) => adSaved._id.toString() === ad._id.toString()
       ) !== -1;
     if (isSaved) {
+      ad.savedBy?.pull({ _id: user?._id });
+
       user?.savedAds?.pull({ _id: ad._id });
     } else {
+      ad.savedBy?.addToSet(user);
+
       user?.savedAds?.addToSet(ad);
     }
 
     try {
       await user?.save();
+      await ad.save();
     } catch (e) {
       errors.push({
         name: 'General error',

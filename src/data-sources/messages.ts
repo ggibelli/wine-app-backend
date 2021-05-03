@@ -23,7 +23,14 @@ interface Response {
 
 export default class Messages extends MongoDataSource<IMessageDoc, Context> {
   async getMessage(id: string): Promise<IMessageDoc | null | undefined> {
-    return this.findOneById(id);
+    const message = await this.findOneById(id);
+    if (message) message.isViewed = true;
+    try {
+      await message?.save();
+    } catch (e) {
+      loggerError(e);
+    }
+    return message;
   }
   async getMessages(): Promise<MessageGraphQl[]> {
     const userCtx = this.context.user;

@@ -4,7 +4,7 @@
   "description": "server for the wine project",
   "main": "index.js",
   "scripts": {
-    "test": "jest tests",
+    "test": "jest tests --runInBand",
     "dev": "ts-node-dev ./src/index.ts",
     "codegen-graphql": "graphql-codegen --config codegen.yml",
     "lint": "eslint src/",

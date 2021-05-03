@@ -53,6 +53,7 @@ export const resolver: StringIndexed<Resolvers> = {
       args,
       { dataSources }: { dataSources: MongoDataSource }
     ) {
+      console.log(args);
       return dataSources.ads.getAdsByUser(args);
     },
     async ad(
@@ -161,6 +162,7 @@ export const resolver: StringIndexed<Resolvers> = {
           errors: [{ text: 'Ad not found', name: 'General error' }],
         };
       }
+
       return await dataSources.users.saveAd(ad);
     },
   },
@@ -233,6 +235,12 @@ export const resolver: StringIndexed<Resolvers> = {
       { dataSources }: { dataSources: MongoDataSource }
     ) {
       return dataSources.negotiations.getNegotiationsForAd(ad._id);
+    },
+    savedTimes(ad) {
+      if (!ad.savedBy) {
+        return 0;
+      }
+      return ad.savedBy?.length;
     },
   },
 
