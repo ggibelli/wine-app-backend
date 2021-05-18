@@ -71,7 +71,7 @@ export type AddressInput = {
 export type AdInput = {
   typeAd: TypeAd;
   typeProduct: TypeProduct;
-  content: Scalars['String'];
+  content?: Maybe<Scalars['String']>;
   address: AddressInput;
   harvest: Scalars['Int'];
   abv: Scalars['Float'];
@@ -119,7 +119,7 @@ export type Ad = {
   abv: Scalars['Float'];
   priceFrom: Scalars['Float'];
   priceTo: Scalars['Float'];
-  content: Scalars['String'];
+  content?: Maybe<Scalars['String']>;
   address: Address;
   negotiations?: mongoose.Types.Array<Negotiation>;
   activeNegotiations?: Maybe<Scalars['Int']>;
@@ -148,7 +148,7 @@ export type AdWine = Ad & {
   priceTo: Scalars['Float'];
   litersFrom?: Maybe<Scalars['Int']>;
   litersTo?: Maybe<Scalars['Int']>;
-  content: Scalars['String'];
+  content?: Maybe<Scalars['String']>;
   address: Address;
   negotiations: NegotiationResult;
   activeNegotiations?: Maybe<Scalars['Int']>;
@@ -175,7 +175,7 @@ export type AdGrape = Ad & {
   priceTo: Scalars['Float'];
   kgFrom: Scalars['Int'];
   kgTo: Scalars['Int'];
-  content: Scalars['String'];
+  content?: Maybe<Scalars['String']>;
   address: Address;
   negotiations: mongoose.Types.Array<Negotiation>;
   activeNegotiations?: Maybe<Scalars['Int']>;
@@ -1181,7 +1181,7 @@ export type AdResolvers<
   abv?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   priceFrom?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   priceTo?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   address?: Resolver<ResolversTypes['Address'], ParentType, ContextType>;
   activeNegotiations?: Resolver<
     Maybe<ResolversTypes['Int']>,
@@ -1239,7 +1239,7 @@ export type AdWineResolvers<
   priceTo?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   litersFrom?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   litersTo?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   address?: Resolver<ResolversTypes['Address'], ParentType, ContextType>;
   activeNegotiations?: Resolver<
     Maybe<ResolversTypes['Int']>,
@@ -1288,7 +1288,7 @@ export type AdGrapeResolvers<
   priceTo?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   kgFrom?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   kgTo?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   address?: Resolver<ResolversTypes['Address'], ParentType, ContextType>;
   activeNegotiations?: Resolver<
     Maybe<ResolversTypes['Int']>,
@@ -2239,6 +2239,5 @@ export type DirectiveResolvers<ContextType = any> = ResolversObject<{
  * @deprecated
  * Use "DirectiveResolvers" root object instead. If you wish to get "IDirectiveResolvers", add "typesPrefix: I" to your config.
  */
-export type IDirectiveResolvers<
-  ContextType = any
-> = DirectiveResolvers<ContextType>;
+export type IDirectiveResolvers<ContextType = any> =
+  DirectiveResolvers<ContextType>;

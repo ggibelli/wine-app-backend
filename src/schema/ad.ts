@@ -20,7 +20,7 @@ export const typeDefs = gql`
   input AdInput {
     typeAd: TypeAd!
     typeProduct: TypeProduct!
-    content: String!
+    content: String
     address: AddressInput!
     harvest: Int!
     abv: Float!
@@ -68,7 +68,7 @@ export const typeDefs = gql`
     abv: Float!
     priceFrom: Float! @authenticated
     priceTo: Float! @authenticated
-    content: String!
+    content: String
     address: Address! @authenticated
     negotiations: [Negotiation!] @authenticated
     activeNegotiations: Int
@@ -96,7 +96,7 @@ export const typeDefs = gql`
     priceTo: Float! @authenticated
     litersFrom: Int
     litersTo: Int
-    content: String!
+    content: String
     address: Address! @authenticated
     negotiations: [Negotiation!] @authenticated
     activeNegotiations: Int
@@ -121,7 +121,7 @@ export const typeDefs = gql`
     priceTo: Float! @authenticated
     kgFrom: Int!
     kgTo: Int!
-    content: String!
+    content: String
     address: Address!
     negotiations: [Negotiation!] @authenticated
     activeNegotiations: Int
