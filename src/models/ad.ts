@@ -30,7 +30,7 @@ export interface IAd {
   litersTo?: number;
   kgFrom?: number;
   kgTo?: number;
-  content?: string;
+  content?: string | null;
   address: Address;
   negotiations?: mongoose.Types.Array<Negotiation>; // trattative dell'annuncio, solo attive, solo graphql??
   viewedBy?: mongoose.Types.Array<IUserDoc['_id']>;
