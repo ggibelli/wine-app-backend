@@ -78,9 +78,8 @@ export const resolver: StringIndexed<Resolvers> = {
       { negotiation }: { negotiation: NegotiationInput },
       { dataSources }: { dataSources: MongoDataSource }
     ) {
-      const negotiationResponse = await dataSources.negotiations.createNegotiation(
-        negotiation
-      );
+      const negotiationResponse =
+        await dataSources.negotiations.createNegotiation(negotiation);
       if (!negotiationResponse.errors.length) {
         await dataSources.messages.messageAdmin(
           [negotiation.forUserAd],
@@ -109,9 +108,8 @@ export const resolver: StringIndexed<Resolvers> = {
       { negotiation }: { negotiation: NegotiationInputUpdate },
       { dataSources, user }: { dataSources: MongoDataSource; user: UserGraphQl }
     ) {
-      const updatedNegotiationResponse = await dataSources.negotiations.updateNegotiation(
-        negotiation
-      );
+      const updatedNegotiationResponse =
+        await dataSources.negotiations.updateNegotiation(negotiation);
       if (updatedNegotiationResponse.response?.isConcluded) {
         const ad = await dataSources.ads.getAd(
           updatedNegotiationResponse.response.ad
@@ -133,9 +131,8 @@ export const resolver: StringIndexed<Resolvers> = {
             errors: [{ name: 'General Error', text: 'Error updating the ad' }],
           };
         }
-        const negotiations = await dataSources.negotiations.getNegotiationsForAd(
-          ad._id
-        );
+        const negotiations =
+          await dataSources.negotiations.getNegotiationsForAd(ad._id);
 
         const usersToNotifySet: Set<string> = new Set();
 
@@ -171,7 +168,15 @@ export const resolver: StringIndexed<Resolvers> = {
       { id }: { id: string },
       { dataSources }: { dataSources: MongoDataSource }
     ) {
-      return dataSources.negotiations.deleteNegotiation(id);
+      const deletedNegotiation =
+        await dataSources.negotiations.deleteNegotiation(id);
+      if (!deletedNegotiation.errors.length) {
+        const deletedMessages = await dataSources.messages.deleteMessages(id);
+        deletedMessages
+          ? deletedNegotiation.errors.push(deletedMessages)
+          : null;
+      }
+      return deletedNegotiation;
     },
   },
 
