@@ -9,7 +9,6 @@ jest.mock('apollo-server-express', () => ({
 }));
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import resolvers from '../../resolvers';
-import { ObjectId } from 'mongodb';
 
 const mockContext = {
   dataSources: {
@@ -45,6 +44,7 @@ const mockContext = {
       deleteMessages: jest.fn(),
       getMessagesNegotiationType: jest.fn(),
       createMessage: jest.fn(),
+
     },
   },
   user: { _id: '1', email: 'a@a.a' },
@@ -59,6 +59,9 @@ const { deleteNegotiation } = mockContext.dataSources.negotiations;
 const { updateNegotiation } = mockContext.dataSources.negotiations;
 const { getUser } = mockContext.dataSources.users;
 const { getMessagesNegotiationType } = mockContext.dataSources.messages;
+
+const { messageAdmin } = mockContext.dataSources.messages;
+const { createMessage } = mockContext.dataSources.messages;
 
 describe('Negotiation resolvers', () => {
   afterEach(() => {
@@ -169,7 +172,7 @@ describe('Negotiation resolvers', () => {
   });
 
   it('createNegotiation succeeds and calls datasource and subscription', async () => {
-    createNegotiation.mockReturnValueOnce({
+    createNegotiation.mockReturnValue({
       response: {
         _id: '122',
         typeAd: 'SELL',
@@ -184,9 +187,19 @@ describe('Negotiation resolvers', () => {
       null,
       {
         negotiation: { typeAd: 'SELL', forUserAd: '123', ad: '322' },
+
       },
       mockContext
     );
+    expect(messageAdmin).toHaveBeenCalledWith(
+      ['123'],
+      'Trattativa creata per il tuo annuncio 322'
+    );
+    expect(createMessage).toHaveBeenCalledWith({
+      content: 'negoziazione aperta',
+      negotiation: '122',
+      sentTo: '123',
+    });
     expect(publish).toHaveBeenCalledTimes(1);
     expect(publish).toHaveBeenCalledWith('NEGOTIATION_CREATED', {
       negotiationCreated: {
@@ -244,7 +257,7 @@ describe('Negotiation resolvers', () => {
     });
     const saveMock = jest.fn();
     getAd.mockReturnValueOnce({
-      _id: new ObjectId('5fdd925d9cc5800455e1855e'),
+      _id: '5fdd925d9cc5800455e1855e',
       typeAd: 'SELL',
       typeProduct: 'AdWine',
       wineName: 'wine',
@@ -264,13 +277,21 @@ describe('Negotiation resolvers', () => {
       null,
       {
         negotiation: { id: 1, isConcluded: true },
+
       },
       mockContext
+    );
+    expect(messageAdmin).toHaveBeenCalledWith(
+      ['5', '4', '8', '7'],
+      "L'annuncio wine non e piu disponibile"
     );
     expect(publish).toHaveBeenCalledTimes(1);
     expect(publish).toHaveBeenCalledWith('NEGOTIATION_CLOSED', {
       negotiationClosed: {
-        _id: new ObjectId('5fdd925d9cc5800455e1855e'),
+        _id: '5fdd925d9cc5800455e1855e',
+        createdBy: 2,
+        isActive: false,
+        save: saveMock,
         typeAd: 'SELL',
         typeProduct: 'AdWine',
         wineName: 'wine',
@@ -281,6 +302,7 @@ describe('Negotiation resolvers', () => {
       usersToNotify: ['5', '4', '8', '7'],
       userToNotNotify: '1',
       userToNotify: '2',
+
     });
     expect(res).toEqual({
       response: {

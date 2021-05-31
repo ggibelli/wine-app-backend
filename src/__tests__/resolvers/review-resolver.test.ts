@@ -19,6 +19,7 @@ const mockContext = {
       updateAd: jest.fn(),
       deleteAd: jest.fn(),
     },
+
     users: {
       getUser: jest.fn(),
     },
@@ -63,6 +64,7 @@ const { getReview } = mockContext.dataSources.reviews;
 const { createReview } = mockContext.dataSources.reviews;
 const { updateReview } = mockContext.dataSources.reviews;
 const { deleteReview } = mockContext.dataSources.reviews;
+const { messageAdmin } = mockContext.dataSources.messages;
 
 describe('Review resolvers', () => {
   afterEach(() => {
@@ -129,8 +131,13 @@ describe('Review resolvers', () => {
       null,
       {
         review: { rating: '3', forUser: '123', negotiation: '322' },
+
       },
       mockContext
+    );
+    expect(messageAdmin).toHaveBeenCalledWith(
+      ['123'],
+      'Hanno scritto di te good'
     );
     expect(publish).toHaveBeenCalledTimes(1);
     expect(publish).toHaveBeenCalledWith('REVIEW_CREATED', {

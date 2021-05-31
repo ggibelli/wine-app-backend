@@ -15,6 +15,7 @@ const mockContext = {
     ads: {
       getAd: jest.fn(),
       getAdsByUser: jest.fn(),
+      getAdsUserType: jest.fn(),
       getAds: jest.fn(),
       createAd: jest.fn(),
       updateAd: jest.fn(),
@@ -30,6 +31,7 @@ const mockContext = {
       login: jest.fn(),
     },
     negotiations: {
+      getNegotiationsForUserType: jest.fn(),
       getNegotiationsForUser: jest.fn(),
       getNegotiationsForAd: jest.fn(),
       getNegotiations: jest.fn(),
@@ -42,6 +44,7 @@ const mockContext = {
     },
     reviews: {
       getReviews: jest.fn(),
+
       getReviewForUser: jest.fn(),
     },
     vineyards: {
