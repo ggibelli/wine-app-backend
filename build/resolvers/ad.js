@@ -11,13 +11,10 @@ const AD_POSTED = 'AD_POSTED';
 const AD_REMOVED = 'AD_REMOVED';
 exports.resolver = {
     Query: {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
         async ads(_, args, { dataSources }) {
             return dataSources.ads.getAds(args);
         },
         async adsForUser(_, args, { dataSources }) {
-            console.log(args);
             return dataSources.ads.getAdsByUser(args);
         },
         async ad(_, { id }, { dataSources, user }) {

@@ -23,6 +23,7 @@ const mockContext = {
             createAd: jest.fn(),
             updateAd: jest.fn(),
             deleteAd: jest.fn(),
+            getAdsUserType: jest.fn(),
         },
         users: {
             getUsers: jest.fn(),
@@ -41,9 +42,11 @@ const mockContext = {
             deleteNegotiation: jest.fn(),
             deleteMany: jest.fn(),
             updateNegotiation: jest.fn(),
+            getNegotiationsForUserType: jest.fn(),
         },
         reviews: {
             getReviews: jest.fn(),
+            getReviewForUser: jest.fn(),
         },
         vineyards: {
             getVineyardByName: jest.fn(),
@@ -57,8 +60,8 @@ const mockContext = {
     },
     user: { _id: '123', email: 'a@a.a' },
 };
-const { getAdsByUser } = mockContext.dataSources.ads;
-const { getNegotiations } = mockContext.dataSources.negotiations;
+const { getAdsUserType } = mockContext.dataSources.ads;
+const { getNegotiationsForUserType } = mockContext.dataSources.negotiations;
 const { getUsers } = mockContext.dataSources.users;
 const { getUser } = mockContext.dataSources.users;
 const { createUser } = mockContext.dataSources.users;
@@ -66,7 +69,7 @@ const { updateUser } = mockContext.dataSources.users;
 const { deleteUser } = mockContext.dataSources.users;
 const { login } = mockContext.dataSources.users;
 const { getMessages } = mockContext.dataSources.messages;
-const { getReviews } = mockContext.dataSources.reviews;
+const { getReviewForUser } = mockContext.dataSources.reviews;
 describe('User resolvers', () => {
     afterEach(() => {
         jest.clearAllMocks();
@@ -214,7 +217,7 @@ describe('User resolvers', () => {
         });
     });
     it('User ads calls getAdsByUser', async () => {
-        getAdsByUser.mockReturnValueOnce([{ id: 1 }]);
+        getAdsUserType.mockReturnValueOnce([{ id: 1 }]);
         //@ts-ignore
         const res = await resolvers_1.default.User?.ads({ _id: '123' }, null, mockContext);
         expect(res).toEqual([{ id: 1 }]);
@@ -236,7 +239,7 @@ describe('User resolvers', () => {
         }
     });
     it('User negotiations calls getNegotiations if same user', async () => {
-        getNegotiations.mockReturnValueOnce([{ id: 1 }]);
+        getNegotiationsForUserType.mockReturnValueOnce([{ id: 1 }]);
         //@ts-ignore
         const res = await resolvers_1.default.User?.negotiations({ _id: '123' }, null, mockContext);
         expect(res).toEqual([{ id: 1 }]);
@@ -252,7 +255,7 @@ describe('User resolvers', () => {
         }
     });
     it('User reviews calls getReviews if same user', async () => {
-        getReviews.mockReturnValueOnce([{ id: 1 }]);
+        getReviewForUser.mockReturnValueOnce([{ id: 1 }]);
         //@ts-ignore
         const res = await resolvers_1.default.User?.reviews({ _id: '123' }, null, mockContext);
         expect(res).toEqual([{ id: 1 }]);

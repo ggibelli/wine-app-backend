@@ -38,7 +38,7 @@ import path from 'path';
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
-const mongooseConnection = () => {
+export const mongooseConnection = (): void => {
   mongoose
     .connect(MONGODB_URI, {
       useNewUrlParser: true,

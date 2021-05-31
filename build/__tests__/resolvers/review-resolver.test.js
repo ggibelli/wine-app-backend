@@ -55,6 +55,7 @@ const mockContext = {
         },
         messages: {
             getMessagesForNegotiation: jest.fn(),
+            messageAdmin: jest.fn(),
         },
     },
     user: { id: 1, email: 'a@a.a' },
@@ -125,9 +126,7 @@ describe('Review resolvers', () => {
         });
         //@ts-ignore
         const res = await resolvers_1.default.Mutation?.createReview(null, {
-            rating: 'Good',
-            forUser: '123',
-            negotiation: '322',
+            review: { rating: '3', forUser: '123', negotiation: '322' },
         }, mockContext);
         expect(publish).toHaveBeenCalledTimes(1);
         expect(publish).toHaveBeenCalledWith('REVIEW_CREATED', {

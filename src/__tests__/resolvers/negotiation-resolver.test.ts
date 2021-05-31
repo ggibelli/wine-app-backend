@@ -41,8 +41,10 @@ const mockContext = {
     messages: {
       getMessagesForNegotiation: jest.fn(),
       messageAdmin: jest.fn(),
-      createMessage: jest.fn(),
+      deleteMessages: jest.fn(),
       getMessagesNegotiationType: jest.fn(),
+      createMessage: jest.fn(),
+
     },
   },
   user: { _id: '1', email: 'a@a.a' },
@@ -57,6 +59,7 @@ const { deleteNegotiation } = mockContext.dataSources.negotiations;
 const { updateNegotiation } = mockContext.dataSources.negotiations;
 const { getUser } = mockContext.dataSources.users;
 const { getMessagesNegotiationType } = mockContext.dataSources.messages;
+
 const { messageAdmin } = mockContext.dataSources.messages;
 const { createMessage } = mockContext.dataSources.messages;
 
@@ -183,11 +186,8 @@ describe('Negotiation resolvers', () => {
     const res = await resolvers.Mutation?.createNegotiation(
       null,
       {
-        negotiation: {
-          typeAd: 'SELL',
-          forUserAd: '123',
-          ad: '322',
-        },
+        negotiation: { typeAd: 'SELL', forUserAd: '123', ad: '322' },
+
       },
       mockContext
     );
@@ -231,9 +231,7 @@ describe('Negotiation resolvers', () => {
     const res = await resolvers.Mutation?.createNegotiation(
       null,
       {
-        typeAd: 'SELL',
-        forUserAd: '123',
-        ad: '322',
+        negotiation: { typeAd: 'SELL', forUserAd: '123', ad: '322' },
       },
       mockContext
     );
@@ -278,10 +276,8 @@ describe('Negotiation resolvers', () => {
     const res = await resolvers.Mutation?.updateNegotiation(
       null,
       {
-        negotiation: {
-          id: 1,
-          isConcluded: true,
-        },
+        negotiation: { id: 1, isConcluded: true },
+
       },
       mockContext
     );
@@ -299,10 +295,14 @@ describe('Negotiation resolvers', () => {
         typeAd: 'SELL',
         typeProduct: 'AdWine',
         wineName: 'wine',
+        createdBy: 2,
+        isActive: false,
+        save: saveMock,
       },
+      usersToNotify: ['5', '4', '8', '7'],
       userToNotNotify: '1',
       userToNotify: '2',
-      usersToNotify: ['5', '4', '8', '7'],
+
     });
     expect(res).toEqual({
       response: {

@@ -25,7 +25,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Wine = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-validator"));
-const enumMongooseHelper_1 = require("../utils/enumMongooseHelper");
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const wineSchemaFields = {
     denominazioneVino: {
@@ -34,7 +33,7 @@ const wineSchemaFields = {
         minlength: 2,
         unique: true,
     },
-    aka: String,
+    tipoVino: String,
     espressioneComunitaria: {
         type: String,
         enum: ['DOP', 'IGP', 'ND'],
@@ -43,11 +42,9 @@ const wineSchemaFields = {
         type: String,
         enum: ['DOC', 'DOCG', 'IGT', 'Vino varietale', 'Vino generico'],
     },
-    regione: [
+    vitigni: [
         {
             type: String,
-            enum: Object.values(enumMongooseHelper_1.Regioni),
-            required: true,
         },
     ],
 };

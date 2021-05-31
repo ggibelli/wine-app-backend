@@ -72,13 +72,13 @@ export default class Negotiations extends MongoDataSource<
     if (userCtx.isAdmin) {
       const pageCount = await this.model.countDocuments().exec();
       return {
-        negotiations: ((await this.model
+        negotiations: (await this.model
           .find({})
           .sort(sortQuery)
           .skip(offset)
           .limit(limit)
           .lean()
-          .exec()) as unknown) as Negotiation[],
+          .exec()) as unknown as Negotiation[],
         pageCount,
       };
     }
@@ -92,7 +92,7 @@ export default class Negotiations extends MongoDataSource<
       })
       .exec();
     return {
-      negotiations: ((await this.model
+      negotiations: (await this.model
         .find({
           $or: [{ createdBy: userCtx._id }, { forUserAd: userCtx._id }],
           $and: [{ isConcluded }],
@@ -101,7 +101,7 @@ export default class Negotiations extends MongoDataSource<
         .sort(sortQuery)
         .skip(offset)
         .limit(limit)
-        .exec()) as unknown) as Negotiation[],
+        .exec()) as unknown as Negotiation[],
       pageCount,
     };
   }
@@ -224,8 +224,7 @@ export default class Negotiations extends MongoDataSource<
     if (!updatedNegotiation) {
       errors.push({
         name: 'General error',
-        text:
-          'Errors during the negotiation update, only creator can update negotiation',
+        text: 'Errors during the negotiation update, only creator can update negotiation',
       });
       return {
         response: null,
@@ -242,14 +241,16 @@ export default class Negotiations extends MongoDataSource<
     const userCtx = this.context.user;
     const errors: Errors[] = [];
     const deletedNegotiation = await this.model
-      .findOneAndDelete({ _id: negotiationId, createdBy: userCtx })
+      .findOneAndDelete({
+        $or: [{ createdBy: userCtx }, { forUserAd: userCtx }],
+        $and: [{ _id: negotiationId }],
+      })
       .lean()
       .exec();
     if (!deletedNegotiation) {
       errors.push({
         name: 'General error',
-        text:
-          'Errors during the negotiation delete, only creator can delete negotiation',
+        text: 'Errors during the negotiation delete, only creator can delete negotiation',
       });
       return {
         response: null,

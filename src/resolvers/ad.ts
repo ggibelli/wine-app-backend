@@ -43,8 +43,6 @@ type StringIndexed<T> = T & StringIndexSignatureInterface;
 
 export const resolver: StringIndexed<Resolvers> = {
   Query: {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
     async ads(_, args, { dataSources }: { dataSources: MongoDataSource }) {
       return dataSources.ads.getAds(args);
     },
@@ -53,7 +51,6 @@ export const resolver: StringIndexed<Resolvers> = {
       args,
       { dataSources }: { dataSources: MongoDataSource }
     ) {
-      console.log(args);
       return dataSources.ads.getAdsByUser(args);
     },
     async ad(
@@ -100,9 +97,8 @@ export const resolver: StringIndexed<Resolvers> = {
     ) {
       const adResponse = await dataSources.ads.updateAd(input);
       if (!adResponse.response?.isActive) {
-        const negotiations = await dataSources.negotiations.getNegotiationsForAd(
-          input._id
-        );
+        const negotiations =
+          await dataSources.negotiations.getNegotiationsForAd(input._id);
         const users = negotiations
           .filter((negotiation) => !negotiation.isConcluded)
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -144,8 +140,7 @@ export const resolver: StringIndexed<Resolvers> = {
       } catch (e) {
         adResponse.errors.push({
           name: 'DeleteManyError',
-          text:
-            'Error during the removal of the negotiations linked to this ad',
+          text: 'Error during the removal of the negotiations linked to this ad',
         });
       }
       return adResponse;

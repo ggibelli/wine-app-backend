@@ -30,19 +30,21 @@ const MESSAGES_USER = apollo_server_express_1.gql `
 const MESSAGES_NEGOTIATION = apollo_server_express_1.gql `
   query GetMessagesNegotiation($negotiation: ID!) {
     messagesForNegotiation(negotiation: $negotiation) {
-      sentBy {
-        firstName
-      }
-      sentTo {
-        firstName
-      }
-      content
-      negotiation {
-        createdBy {
+      messages {
+        sentBy {
           firstName
         }
-        forUserAd {
+        sentTo {
           firstName
+        }
+        content
+        negotiation {
+          createdBy {
+            firstName
+          }
+          forUserAd {
+            firstName
+          }
         }
       }
     }

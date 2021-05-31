@@ -98,11 +98,6 @@ Object {
         },
         "priceFrom": 1,
         "priceTo": 1.5,
-        "wine": Object {
-          "regione": Array [
-            "ABRUZZO",
-          ],
-        },
         "wineName": "Abruzzo",
       },
     },
@@ -125,11 +120,6 @@ Object {
         },
         "priceFrom": 1,
         "priceTo": 1.5,
-        "wine": Object {
-          "regione": Array [
-            "ABRUZZO",
-          ],
-        },
         "wineName": "Abruzzo",
       },
     },

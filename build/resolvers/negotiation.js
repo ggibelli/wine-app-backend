@@ -90,7 +90,14 @@ exports.resolver = {
             return updatedNegotiationResponse;
         },
         async deleteNegotiation(_, { id }, { dataSources }) {
-            return dataSources.negotiations.deleteNegotiation(id);
+            const deletedNegotiation = await dataSources.negotiations.deleteNegotiation(id);
+            if (!deletedNegotiation.errors.length) {
+                const deletedMessages = await dataSources.messages.deleteMessages(id);
+                deletedMessages
+                    ? deletedNegotiation.errors.push(deletedMessages)
+                    : null;
+            }
+            return deletedNegotiation;
         },
     },
     Subscription: {

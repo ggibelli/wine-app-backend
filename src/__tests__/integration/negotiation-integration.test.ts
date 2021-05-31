@@ -419,13 +419,12 @@ describe('Integration test negotiations', () => {
 
   it('update negotiation mutation succeds if logged in and same user', async () => {
     const user = await User.findOne({ firstName: 'Giovanni' });
-    const negotiationToUpdate: NegotiationGraphQl | null = await Negotiation.findOne(
-      {
+    const negotiationToUpdate: NegotiationGraphQl | null =
+      await Negotiation.findOne({
         createdBy: user,
-      }
-    )
-      .lean()
-      .exec();
+      })
+        .lean()
+        .exec();
     const negotiation = {
       _id: negotiationToUpdate?._id.toString(),
       isConcluded: true,
@@ -438,13 +437,12 @@ describe('Integration test negotiations', () => {
 
   it('update negotiation mutation fails if logged in and not same user', async () => {
     const user = await User.findOne({ firstName: 'Luigetto' });
-    const negotiationToUpdate: NegotiationGraphQl | null = await Negotiation.findOne(
-      {
+    const negotiationToUpdate: NegotiationGraphQl | null =
+      await Negotiation.findOne({
         createdBy: user,
-      }
-    )
-      .lean()
-      .exec();
+      })
+        .lean()
+        .exec();
     const negotiation = {
       _id: negotiationToUpdate?._id.toString(),
       isConcluded: true,
@@ -457,13 +455,12 @@ describe('Integration test negotiations', () => {
 
   it('delete negotiation mutation succeds if logged in and same user', async () => {
     const user = await User.findOne({ firstName: 'Giovanni' });
-    const negotiationToDelete: NegotiationGraphQl | null = await Negotiation.findOne(
-      {
+    const negotiationToDelete: NegotiationGraphQl | null =
+      await Negotiation.findOne({
         createdBy: user,
-      }
-    )
-      .lean()
-      .exec();
+      })
+        .lean()
+        .exec();
     const res = await mutate(DELETE_NEGOTIATION, {
       variables: { id: negotiationToDelete?._id.toString() },
     });
@@ -471,14 +468,13 @@ describe('Integration test negotiations', () => {
   });
 
   it('delete negotiation mutation fails if logged in and not same user', async () => {
-    const user = await User.findOne({ firstName: 'Mariuccio' });
-    const negotiationToDelete: NegotiationGraphQl | null = await Negotiation.findOne(
-      {
+    const user = await User.findOne({ firstName: 'Luigetto' });
+    const negotiationToDelete: NegotiationGraphQl | null =
+      await Negotiation.findOne({
         createdBy: user,
-      }
-    )
-      .lean()
-      .exec();
+      })
+        .lean()
+        .exec();
     const res = await mutate(DELETE_NEGOTIATION, {
       variables: { id: negotiationToDelete?._id.toString() },
     });

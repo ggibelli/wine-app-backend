@@ -19,9 +19,7 @@ import { Ad } from '../../models/ad';
 import { Message } from '../../models/message';
 import { Negotiation } from '../../models/negotiation';
 import { Review } from '../../models/review';
-import { Vineyard } from '../../models/vineyard';
 import { Wine } from '../../models/wine';
-import createVineyardDb from '../../utils/vineyardExtractor';
 // import createWineDb from '../../utils/wineExtractor';
 import cron from 'cron';
 
@@ -258,7 +256,6 @@ beforeAll(async () => {
   const usersMock = users();
   const adsMock = ads();
   // const wineDb = await createWineDb();
-  const vineyardDb = createVineyardDb();
   const user = new User(usersMock[0]);
   const otherUser = new User(usersMock[1]);
   const thirdUser = new User(usersMock[2]);
@@ -293,12 +290,10 @@ beforeAll(async () => {
     rating: 2,
     content: 'very poor',
   });
-  const vineyard = new Vineyard(vineyardDb[0]);
   const wine = new Wine({
     denominazioneVino: 'Abruzzo',
     espressioneComunitaria: 'DOP',
     denominazioneZona: 'DOC',
-    regione: [Regioni.ABRUZZO],
   });
   const message = new Message({
     negotiation: negotiation,
@@ -324,7 +319,6 @@ beforeAll(async () => {
   await otherNegotiation.save();
   await review.save();
   await otherReview.save();
-  await vineyard.save();
   await wine.save();
 
   await user.save();

@@ -130,12 +130,8 @@ describe('Review resolvers', () => {
     const res = await resolvers.Mutation?.createReview(
       null,
       {
-        review: {
-          rating: 'Good',
-          forUser: '123',
-          negotiation: '322',
-          content: 'good',
-        },
+        review: { rating: '3', forUser: '123', negotiation: '322' },
+
       },
       mockContext
     );

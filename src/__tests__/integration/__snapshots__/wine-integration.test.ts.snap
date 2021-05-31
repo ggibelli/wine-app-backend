@@ -59,9 +59,6 @@ Object {
         "denominazioneVino": "ciccio",
         "denominazioneZona": "DOC",
         "espressioneComunitaria": "DOP",
-        "regione": Array [
-          "CALABRIA",
-        ],
       },
     },
   },
@@ -102,9 +99,6 @@ Object {
         "denominazioneVino": "Caprotto",
         "denominazioneZona": "DOC",
         "espressioneComunitaria": "DOP",
-        "regione": Array [
-          "ABRUZZO",
-        ],
       },
     },
   },
@@ -118,9 +112,6 @@ Object {
       "denominazioneVino": "Abruzzo",
       "denominazioneZona": "DOC",
       "espressioneComunitaria": "DOP",
-      "regione": Array [
-        "ABRUZZO",
-      ],
     },
   },
 }
@@ -134,9 +125,6 @@ Object {
         "denominazioneVino": "Abruzzo",
         "denominazioneZona": "DOC",
         "espressioneComunitaria": "DOP",
-        "regione": Array [
-          "ABRUZZO",
-        ],
       },
     ],
   },
@@ -177,9 +165,6 @@ Object {
         "denominazioneVino": "Caprotto",
         "denominazioneZona": "DOC",
         "espressioneComunitaria": "DOP",
-        "regione": Array [
-          "ABRUZZO",
-        ],
       },
     },
   },

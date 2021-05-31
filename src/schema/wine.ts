@@ -3,28 +3,28 @@ import { gql } from 'apollo-server-express';
 export const typeDefs = gql`
   input WineInput {
     denominazioneVino: String!
-    aka: String
+    tipoVino: String
     espressioneComunitaria: EspressioneComunitaria!
     denominazioneZona: DenomZona!
-    regione: [Regioni!]!
+    vitigni: [String]
   }
 
   input WineInputUpdate {
     _id: ID!
     denominazioneVino: String
-    aka: String
+    tipoVino: String
     espressioneComunitaria: EspressioneComunitaria
     denominazioneZona: DenomZona
-    regione: [Regioni]
+    vitigni: [String]
   }
 
   type Wine {
     _id: ID!
     denominazioneVino: String!
-    aka: String
+    tipoVino: String
     espressioneComunitaria: EspressioneComunitaria!
     denominazioneZona: DenomZona!
-    regione: [Regioni!]!
+    vitigni: [String]
   }
 
   type WinePayload {

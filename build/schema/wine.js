@@ -5,28 +5,28 @@ const apollo_server_express_1 = require("apollo-server-express");
 exports.typeDefs = apollo_server_express_1.gql `
   input WineInput {
     denominazioneVino: String!
-    aka: String
+    tipoVino: String
     espressioneComunitaria: EspressioneComunitaria!
     denominazioneZona: DenomZona!
-    regione: [Regioni!]!
+    vitigni: [String]
   }
 
   input WineInputUpdate {
     _id: ID!
     denominazioneVino: String
-    aka: String
+    tipoVino: String
     espressioneComunitaria: EspressioneComunitaria
     denominazioneZona: DenomZona
-    regione: [Regioni]
+    vitigni: [String]
   }
 
   type Wine {
     _id: ID!
     denominazioneVino: String!
-    aka: String
+    tipoVino: String
     espressioneComunitaria: EspressioneComunitaria!
     denominazioneZona: DenomZona!
-    regione: [Regioni!]!
+    vitigni: [String]
   }
 
   type WinePayload {

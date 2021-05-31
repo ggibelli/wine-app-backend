@@ -192,6 +192,19 @@ export default class Messages extends MongoDataSource<IMessageDoc, Context> {
   //   };
   // }
 
+  async deleteMessages(negotiation: string): Promise<Errors | null> {
+    let error: Errors | null = null;
+    try {
+      await this.model.deleteMany({ negotiation });
+    } catch (e) {
+      error = {
+        name: 'messages deletion error',
+        text: e as string,
+      };
+    }
+    return error;
+  }
+
   async deleteMessage(messageId: string): Promise<Response> {
     const errors: Errors[] = [];
     const deletedMessage = await this.model

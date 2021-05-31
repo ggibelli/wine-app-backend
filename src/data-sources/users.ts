@@ -12,6 +12,7 @@ import { sendMail } from '../utils/mailServer';
 import { CronJob } from 'cron';
 import { loggerError } from '../utils/logger';
 import { IAdDoc } from '../models/ad';
+import { getCoordinatesFromAddress } from '../utils/coordinatesExtractor';
 
 interface Context {
   user: UserGraphQl;
@@ -62,7 +63,9 @@ export default class Users extends MongoDataSource<IUserDoc, Context> {
         text: 'The PIVA provided is not valid',
       });
     }
-    const newUser = new this.model({ ...user });
+    const coordinates = await getCoordinatesFromAddress(user.address);
+
+    const newUser = new this.model({ ...user, coordinates });
     if (errors.length > 0) {
       return {
         response: null,
