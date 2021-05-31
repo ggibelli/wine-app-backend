@@ -16,13 +16,7 @@ import {
   AdInputUpdate,
   Wine as WineType,
 } from '../../generated/graphql';
-import {
-  TypeAd,
-  TypeProduct,
-  Province,
-  Regioni,
-  MetodoProduttivo,
-} from '../../types';
+import { TypeAd, TypeProduct, MetodoProduttivo } from '../../types';
 // import createWineDb from '../../utils/wineExtractor';
 import { Wine } from '../../models/wine';
 //import { ObjectId } from 'mongodb';
@@ -43,13 +37,6 @@ const FakeCron = jest.fn(() => ({
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 cron.CronJob = FakeCron;
-const indirizzo = {
-  via: 'asd asddasd',
-  CAP: '12345',
-  comune: 'aaaa',
-  provincia: Province.AT,
-  regione: Regioni.PIEMONTE,
-};
 
 const { query, mutate, setOptions } = testClient;
 
@@ -252,7 +239,6 @@ describe('Integration test ads', () => {
       priceFrom: 1.0,
       priceTo: 1.5,
       content: 'buona uva',
-      address: indirizzo,
       typeAd: TypeAd.SELL,
       typeProduct: TypeProduct.ADGRAPE,
     };
@@ -291,7 +277,6 @@ describe('Integration test ads', () => {
       litersFrom: 500,
       litersTo: 600,
       content: 'wow',
-      address: indirizzo,
       typeAd: TypeAd.BUY,
       typeProduct: TypeProduct.ADWINE,
       needsFollowUp: true,
@@ -380,7 +365,6 @@ describe('Integration test ads', () => {
       litersFrom: 500,
       litersTo: 600,
       content: 'wow',
-      address: indirizzo,
       typeAd: TypeAd.BUY,
       typeProduct: TypeProduct.ADWINE,
       needsFollowUp: true,
@@ -462,7 +446,6 @@ describe('Integration test ads', () => {
       litersFrom: 500,
       litersTo: 600,
       content: 'wow',
-      address: indirizzo,
       typeAd: TypeAd.SELL,
       typeProduct: TypeProduct.ADWINE,
       needsFollowUp: false,
@@ -486,7 +469,6 @@ describe('Integration test ads', () => {
       kgFrom: 500,
       kgTo: 600,
       content: 'buona uva',
-      address: indirizzo,
       typeAd: TypeAd.SELL,
       typeProduct: TypeProduct.ADGRAPE,
     };
@@ -508,7 +490,6 @@ describe('Integration test ads', () => {
       //kgFrom: 500,
       //kgTo: 600,
       content: 'buona uva',
-      address: indirizzo,
       typeAd: TypeAd.SELL,
       typeProduct: TypeProduct.ADGRAPE,
     };

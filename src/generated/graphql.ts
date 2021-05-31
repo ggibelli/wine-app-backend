@@ -56,23 +56,23 @@ export type Address = {
   via?: Scalars['String'];
   CAP?: Scalars['String'];
   comune: Scalars['String'];
-  provincia: Province;
-  regione: Regioni;
+  // provincia: Province;
+  // regione: Regioni;
 };
 
 export type AddressInput = {
   via?: Scalars['String'];
   CAP?: Scalars['String'];
   comune: Scalars['String'];
-  provincia: Province;
-  regione: Regioni;
+  // provincia: Province;
+  // regione: Regioni;
 };
 
 export type AdInput = {
   typeAd: TypeAd;
   typeProduct: TypeProduct;
   content?: Maybe<Scalars['String']>;
-  address: AddressInput;
+  // address: AddressInput;
   harvest: Scalars['Int'];
   abv: Scalars['Float'];
   wine?: Maybe<Scalars['ID']>;
@@ -107,7 +107,7 @@ export type AdInputUpdate = {
   litersFrom?: Scalars['Int'];
   litersTo?: Scalars['Int'];
   content?: Scalars['String'];
-  address?: AddressInput;
+  // address?: AddressInput;
   isActive?: Scalars['Boolean'];
   needsFollowUp?: Scalars['Boolean'];
 };
@@ -120,7 +120,7 @@ export type Ad = {
   priceFrom: Scalars['Float'];
   priceTo: Scalars['Float'];
   content?: Maybe<Scalars['String']>;
-  address: Address;
+  // address: Address;
   negotiations?: mongoose.Types.Array<Negotiation>;
   activeNegotiations?: Maybe<Scalars['Int']>;
   savedTimes?: Maybe<Scalars['Int']>;
@@ -149,7 +149,7 @@ export type AdWine = Ad & {
   litersFrom?: Maybe<Scalars['Int']>;
   litersTo?: Maybe<Scalars['Int']>;
   content?: Maybe<Scalars['String']>;
-  address: Address;
+  // address: Address;
   negotiations: NegotiationResult;
   activeNegotiations?: Maybe<Scalars['Int']>;
   savedTimes?: Maybe<Scalars['Int']>;
@@ -176,7 +176,7 @@ export type AdGrape = Ad & {
   kgFrom: Scalars['Int'];
   kgTo: Scalars['Int'];
   content?: Maybe<Scalars['String']>;
-  address: Address;
+  // address: Address;
   negotiations: mongoose.Types.Array<Negotiation>;
   activeNegotiations?: Maybe<Scalars['Int']>;
   savedTimes?: Maybe<Scalars['Int']>;
@@ -1165,8 +1165,8 @@ export type AddressResolvers<
   via?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   CAP?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   comune?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  provincia?: Resolver<ResolversTypes['Province'], ParentType, ContextType>;
-  regione?: Resolver<ResolversTypes['Regioni'], ParentType, ContextType>;
+  // provincia?: Resolver<ResolversTypes['Province'], ParentType, ContextType>;
+  // regione?: Resolver<ResolversTypes['Regioni'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -1182,7 +1182,7 @@ export type AdResolvers<
   priceFrom?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   priceTo?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  address?: Resolver<ResolversTypes['Address'], ParentType, ContextType>;
+  // address?: Resolver<ResolversTypes['Address'], ParentType, ContextType>;
   activeNegotiations?: Resolver<
     Maybe<ResolversTypes['Int']>,
     ParentType,
@@ -1240,7 +1240,7 @@ export type AdWineResolvers<
   litersFrom?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   litersTo?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  address?: Resolver<ResolversTypes['Address'], ParentType, ContextType>;
+  // address?: Resolver<ResolversTypes['Address'], ParentType, ContextType>;
   activeNegotiations?: Resolver<
     Maybe<ResolversTypes['Int']>,
     ParentType,
@@ -1289,7 +1289,7 @@ export type AdGrapeResolvers<
   kgFrom?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   kgTo?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  address?: Resolver<ResolversTypes['Address'], ParentType, ContextType>;
+  // address?: Resolver<ResolversTypes['Address'], ParentType, ContextType>;
   activeNegotiations?: Resolver<
     Maybe<ResolversTypes['Int']>,
     ParentType,

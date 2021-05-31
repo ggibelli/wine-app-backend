@@ -136,8 +136,8 @@ export interface Address {
   via?: string;
   CAP?: string;
   comune: string;
-  provincia: Province;
-  regione: Regioni;
+  // provincia: Province;
+  // regione: Regioni;
 }
 
 export enum TypeAd {

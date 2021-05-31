@@ -12,7 +12,6 @@ import {
 import { User } from '../../models/user';
 import { ads, users } from '../../tests/mocksTests';
 import { UserInput } from '../../generated/graphql';
-import { Province, Regioni } from '../../types';
 import supertest from 'supertest';
 import { app } from '../../index';
 import { Ad } from '../../models/ad';
@@ -246,8 +245,6 @@ const indirizzo = {
   via: 'asd asddasd',
   CAP: '12345',
   comune: 'aaaaa',
-  provincia: Province.AT,
-  regione: Regioni.PIEMONTE,
 };
 
 beforeAll(async () => {

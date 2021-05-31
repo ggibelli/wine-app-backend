@@ -202,24 +202,24 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
         })
         .exec();
       return {
-        ads: ((await this.model
+        ads: (await this.model
           .find({ postedBy: user, isActive: true })
           .skip(offset)
           .limit(limit)
           .sort(sortQuery)
           .lean()
-          .exec()) as unknown) as Ad[],
+          .exec()) as unknown as Ad[],
         pageCount,
       };
     }
     return {
-      ads: ((await this.model
+      ads: (await this.model
         .find({ postedBy: user })
         .skip(offset)
         .limit(limit)
         .sort(sortQuery)
         .lean()
-        .exec()) as unknown) as Ad[],
+        .exec()) as unknown as Ad[],
       pageCount,
     };
   }
@@ -252,7 +252,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
       return {
         pageCount,
 
-        ads: ((await this.model
+        ads: (await this.model
           .find({
             typeAd: typeAd,
             vineyardName: vineyardName,
@@ -262,7 +262,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
           .limit(limit)
           .sort(sortQuery)
           .lean()
-          .exec()) as unknown) as Ad[],
+          .exec()) as unknown as Ad[],
       };
     } else if (wineName) {
       const pageCount = await this.model
@@ -275,7 +275,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
       return {
         pageCount,
 
-        ads: ((await this.model
+        ads: (await this.model
           .find({
             typeAd: typeAd,
             wineName: wineName,
@@ -285,7 +285,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
           .limit(limit)
           .sort(sortQuery)
           .lean()
-          .exec()) as unknown) as Ad[],
+          .exec()) as unknown as Ad[],
       };
     }
     const pageCount = await this.model
@@ -298,7 +298,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
     return {
       pageCount,
 
-      ads: ((await this.model
+      ads: (await this.model
         .find({
           typeAd: typeAd,
           typeProduct: typeProduct,
@@ -308,7 +308,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
         .limit(limit)
         .sort(sortQuery)
         .lean()
-        .exec()) as unknown) as Ad[],
+        .exec()) as unknown as Ad[],
     };
   }
 
@@ -331,7 +331,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
       typeAd,
       typeProduct,
       content,
-      address,
+      // address,
       harvest,
       abv,
       priceFrom,
@@ -343,7 +343,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
       typeAd: typeAd,
       typeProduct: typeProduct,
       content: content,
-      address: address,
+      // address: address,
       harvest: harvest,
       abv: abv,
       priceFrom: priceFrom,

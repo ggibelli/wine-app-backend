@@ -28,13 +28,6 @@ const FakeCron = jest.fn(() => ({
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 cron_1.default.CronJob = FakeCron;
-const indirizzo = {
-    via: 'asd asddasd',
-    CAP: '12345',
-    comune: 'aaaa',
-    provincia: types_1.Province.AT,
-    regione: types_1.Regioni.PIEMONTE,
-};
 const { query, mutate, setOptions } = integrationSetup_1.testClient;
 const ADS = apollo_server_express_1.gql `
   {
@@ -222,7 +215,6 @@ describe('Integration test ads', () => {
             priceFrom: 1.0,
             priceTo: 1.5,
             content: 'buona uva',
-            address: indirizzo,
             typeAd: types_1.TypeAd.SELL,
             typeProduct: types_1.TypeProduct.ADGRAPE,
         };
@@ -259,7 +251,6 @@ describe('Integration test ads', () => {
             litersFrom: 500,
             litersTo: 600,
             content: 'wow',
-            address: indirizzo,
             typeAd: types_1.TypeAd.BUY,
             typeProduct: types_1.TypeProduct.ADWINE,
             needsFollowUp: true,
@@ -336,7 +327,6 @@ describe('Integration test ads', () => {
             litersFrom: 500,
             litersTo: 600,
             content: 'wow',
-            address: indirizzo,
             typeAd: types_1.TypeAd.BUY,
             typeProduct: types_1.TypeProduct.ADWINE,
             needsFollowUp: true,
@@ -413,7 +403,6 @@ describe('Integration test ads', () => {
             litersFrom: 500,
             litersTo: 600,
             content: 'wow',
-            address: indirizzo,
             typeAd: types_1.TypeAd.SELL,
             typeProduct: types_1.TypeProduct.ADWINE,
             needsFollowUp: false,
@@ -436,7 +425,6 @@ describe('Integration test ads', () => {
             kgFrom: 500,
             kgTo: 600,
             content: 'buona uva',
-            address: indirizzo,
             typeAd: types_1.TypeAd.SELL,
             typeProduct: types_1.TypeProduct.ADGRAPE,
         };
@@ -456,7 +444,6 @@ describe('Integration test ads', () => {
             //kgFrom: 500,
             //kgTo: 600,
             content: 'buona uva',
-            address: indirizzo,
             typeAd: types_1.TypeAd.SELL,
             typeProduct: types_1.TypeProduct.ADGRAPE,
         };

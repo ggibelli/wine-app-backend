@@ -5,23 +5,23 @@ export const typeDefs = gql`
     via: String
     CAP: String
     comune: String!
-    provincia: Province!
-    regione: Regioni!
+    # provincia: Province!
+    # regione: Regioni!
   }
 
   input AddressInput {
     via: String
     CAP: String
     comune: String!
-    provincia: Province!
-    regione: Regioni!
+    # provincia: Province!
+    # regione: Regioni!
   }
 
   input AdInput {
     typeAd: TypeAd!
     typeProduct: TypeProduct!
     content: String
-    address: AddressInput!
+    # address: AddressInput!
     harvest: Int!
     abv: Float!
     wine: ID
@@ -69,7 +69,7 @@ export const typeDefs = gql`
     priceFrom: Float! @authenticated
     priceTo: Float! @authenticated
     content: String
-    address: Address! @authenticated
+    # address: Address! @authenticated
     negotiations: [Negotiation!] @authenticated
     activeNegotiations: Int
     savedTimes: Int
@@ -97,7 +97,7 @@ export const typeDefs = gql`
     litersFrom: Int
     litersTo: Int
     content: String
-    address: Address! @authenticated
+    # address: Address! @authenticated
     negotiations: [Negotiation!] @authenticated
     activeNegotiations: Int
     savedTimes: Int
@@ -122,7 +122,7 @@ export const typeDefs = gql`
     kgFrom: Int!
     kgTo: Int!
     content: String
-    address: Address!
+    # address: Address!
     negotiations: [Negotiation!] @authenticated
     activeNegotiations: Int
     savedTimes: Int

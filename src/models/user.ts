@@ -2,7 +2,7 @@
 import mongoose, { Schema, Document, HookNextFunction } from 'mongoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { Address } from '../types';
-import { Province, Regioni } from '../utils/enumMongooseHelper';
+// import { Province, Regioni } from '../utils/enumMongooseHelper';
 import { IAdDoc } from './ad';
 import { IWineDoc } from './wine';
 import { IReviewDoc } from './review';
@@ -100,16 +100,16 @@ const userSchemaFields: Record<keyof IUser, any> = {
       minlength: 5,
     },
     comune: { type: String, required: true, minlength: 5 },
-    provincia: {
-      type: String,
-      enum: Object.values(Province),
-      required: true,
-    },
-    regione: {
-      type: String,
-      enum: Object.values(Regioni),
-      required: true,
-    },
+    // provincia: {
+    //   type: String,
+    //   enum: Object.values(Province),
+    //   required: true,
+    // },
+    // regione: {
+    //   type: String,
+    //   enum: Object.values(Regioni),
+    //   required: true,
+    // },
   },
   coordinates: {
     latitude: Number,

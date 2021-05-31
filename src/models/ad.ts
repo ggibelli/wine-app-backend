@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import mongoose, { Schema, Document } from 'mongoose';
-import { Address } from '../types';
+// import { Address } from '../types';
 import {
-  Province,
-  Regioni,
+  // Province,
+  // Regioni,
   METODOPRODUTTIVO,
 } from '../utils/enumMongooseHelper';
 import { IUserDoc } from './user';
@@ -31,7 +31,7 @@ export interface IAd {
   kgFrom?: number;
   kgTo?: number;
   content?: string | null;
-  address: Address;
+  // address: Address;
   negotiations?: mongoose.Types.Array<Negotiation>; // trattative dell'annuncio, solo attive, solo graphql??
   viewedBy?: mongoose.Types.Array<IUserDoc['_id']>;
   savedBy?: mongoose.Types.Array<IUserDoc['_id']>;
@@ -143,22 +143,22 @@ const adSchemaFields: Record<keyof IAd, any> = {
       return this.typeProduct === TypeProduct.ADGRAPE;
     },
   },
-  address: {
-    comune: {
-      type: String,
-      required: true,
-    },
-    provincia: {
-      type: String,
-      enum: Object.values(Province),
-      required: true,
-    },
-    regione: {
-      type: String,
-      enum: Object.values(Regioni),
-      required: true,
-    },
-  },
+  // address: {
+  //   comune: {
+  //     type: String,
+  //     required: true,
+  //   },
+  //   provincia: {
+  //     type: String,
+  //     enum: Object.values(Province),
+  //     required: true,
+  //   },
+  //   regione: {
+  //     type: String,
+  //     enum: Object.values(Regioni),
+  //     required: true,
+  //   },
+  // },
   negotiations: [
     {
       type: Schema.Types.ObjectId,

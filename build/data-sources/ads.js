@@ -245,12 +245,14 @@ class Ads extends apollo_datasource_mongodb_1.MongoDataSource {
             };
         }
         const { _id } = this.context.user;
-        const { typeAd, typeProduct, content, address, harvest, abv, priceFrom, priceTo, needsFollowUp, ...restParams } = ad;
+        const { typeAd, typeProduct, content, 
+        // address,
+        harvest, abv, priceFrom, priceTo, needsFollowUp, ...restParams } = ad;
         let newAd = {
             typeAd: typeAd,
             typeProduct: typeProduct,
             content: content,
-            address: address,
+            // address: address,
             harvest: harvest,
             abv: abv,
             priceFrom: priceFrom,

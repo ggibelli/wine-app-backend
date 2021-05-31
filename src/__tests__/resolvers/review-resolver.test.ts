@@ -119,10 +119,11 @@ describe('Review resolvers', () => {
     createReview.mockReturnValueOnce({
       response: {
         _id: '122',
-        rating: 'Good',
+        rating: '3',
         forUser: '123',
         createdBy: '321',
         negotiation: '322',
+        content: 'nice',
       },
       errors: [],
     });
@@ -130,33 +131,39 @@ describe('Review resolvers', () => {
     const res = await resolvers.Mutation?.createReview(
       null,
       {
-        review: { rating: '3', forUser: '123', negotiation: '322' },
-
+        review: {
+          rating: '3',
+          forUser: '123',
+          negotiation: '322',
+          content: 'nice',
+        },
       },
       mockContext
     );
     expect(messageAdmin).toHaveBeenCalledWith(
       ['123'],
-      'Hanno scritto di te good'
+      'Hanno scritto di te nice'
     );
     expect(publish).toHaveBeenCalledTimes(1);
     expect(publish).toHaveBeenCalledWith('REVIEW_CREATED', {
       reviewCreated: {
         _id: '122',
-        rating: 'Good',
+        rating: '3',
         forUser: '123',
         createdBy: '321',
         negotiation: '322',
+        content: 'nice',
       },
     });
-    expect(res).toEqual({
+    expect(res).toStrictEqual({
       errors: [],
       response: {
         _id: '122',
-        rating: 'Good',
+        rating: '3',
         forUser: '123',
         createdBy: '321',
         negotiation: '322',
+        content: 'nice',
       },
     });
   });

@@ -1,6 +1,6 @@
 import { IAd } from '../models/ad';
 import { IUser } from '../models/user';
-import { TypeAd, TypeProduct, Province, Regioni } from '../types';
+import { TypeAd, TypeProduct } from '../types';
 import { ObjectId } from 'mongodb';
 import { INegotiation } from '../models/negotiation';
 
@@ -15,8 +15,6 @@ const indirizzo = {
   via: 'asd asddasd',
   CAP: '12345',
   comune: 'aaaaaa',
-  provincia: Province.AG,
-  regione: Regioni.ABRUZZO,
 };
 
 export const ads = (): AdTest[] => {
@@ -35,7 +33,6 @@ export const ads = (): AdTest[] => {
       litersFrom: 500,
       litersTo: 600,
       content: 'wow',
-      address: indirizzo,
       typeAd: TypeAd.BUY,
       typeProduct: TypeProduct.ADWINE,
       datePosted: new Date('December 17, 1995 03:24:00'),
@@ -57,7 +54,6 @@ export const ads = (): AdTest[] => {
       litersFrom: 500,
       litersTo: 600,
       content: 'waaow',
-      address: indirizzo,
       typeAd: TypeAd.SELL,
       typeProduct: TypeProduct.ADWINE,
       datePosted: new Date('December 17, 1995 03:24:20'),
@@ -77,7 +73,6 @@ export const ads = (): AdTest[] => {
       kgFrom: 500,
       kgTo: 600,
       content: 'ostia',
-      address: indirizzo,
       typeAd: TypeAd.BUY,
       typeProduct: TypeProduct.ADGRAPE,
       datePosted: new Date('December 17, 1995 02:24:00'),
@@ -95,7 +90,6 @@ export const ads = (): AdTest[] => {
       kgFrom: 500,
       kgTo: 600,
       content: 'lol',
-      address: indirizzo,
       typeAd: TypeAd.SELL,
       typeProduct: TypeProduct.ADGRAPE,
       datePosted: new Date('December 27, 1995 03:24:00'),

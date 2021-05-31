@@ -22,6 +22,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Ad = void 0;
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 const mongoose_1 = __importStar(require("mongoose"));
+// import { Address } from '../types';
 const enumMongooseHelper_1 = require("../utils/enumMongooseHelper");
 const types_1 = require("../types");
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -115,22 +116,22 @@ const adSchemaFields = {
             return this.typeProduct === types_1.TypeProduct.ADGRAPE;
         },
     },
-    address: {
-        comune: {
-            type: String,
-            required: true,
-        },
-        provincia: {
-            type: String,
-            enum: Object.values(enumMongooseHelper_1.Province),
-            required: true,
-        },
-        regione: {
-            type: String,
-            enum: Object.values(enumMongooseHelper_1.Regioni),
-            required: true,
-        },
-    },
+    // address: {
+    //   comune: {
+    //     type: String,
+    //     required: true,
+    //   },
+    //   provincia: {
+    //     type: String,
+    //     enum: Object.values(Province),
+    //     required: true,
+    //   },
+    //   regione: {
+    //     type: String,
+    //     enum: Object.values(Regioni),
+    //     required: true,
+    //   },
+    // },
     negotiations: [
         {
             type: mongoose_1.Schema.Types.ObjectId,

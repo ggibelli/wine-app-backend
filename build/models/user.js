@@ -27,7 +27,6 @@ exports.User = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-validator"));
 const enumMongooseHelper_1 = require("../utils/enumMongooseHelper");
-const enumMongooseHelper_2 = require("../utils/enumMongooseHelper");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const HASH_ROUNDS = 10;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -65,16 +64,6 @@ const userSchemaFields = {
             minlength: 5,
         },
         comune: { type: String, required: true, minlength: 5 },
-        provincia: {
-            type: String,
-            enum: Object.values(enumMongooseHelper_1.Province),
-            required: true,
-        },
-        regione: {
-            type: String,
-            enum: Object.values(enumMongooseHelper_1.Regioni),
-            required: true,
-        },
     },
     coordinates: {
         latitude: Number,
@@ -142,7 +131,7 @@ const userSchemaFields = {
             bottlesProduced: Number,
             metodoProduttivo: {
                 type: String,
-                enum: Object.values(enumMongooseHelper_2.METODOPRODUTTIVO),
+                enum: Object.values(enumMongooseHelper_1.METODOPRODUTTIVO),
             },
         },
     ],
@@ -155,7 +144,7 @@ const userSchemaFields = {
             tonsProduced: Number,
             metodoProduttivo: {
                 type: String,
-                enum: Object.values(enumMongooseHelper_2.METODOPRODUTTIVO),
+                enum: Object.values(enumMongooseHelper_1.METODOPRODUTTIVO),
             },
         },
     ],

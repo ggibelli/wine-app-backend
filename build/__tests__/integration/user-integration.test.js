@@ -11,7 +11,6 @@ const apollo_server_express_1 = require("apollo-server-express");
 const integrationSetup_1 = require("../../tests/integrationSetup");
 const user_1 = require("../../models/user");
 const mocksTests_1 = require("../../tests/mocksTests");
-const types_1 = require("../../types");
 const supertest_1 = __importDefault(require("supertest"));
 const index_1 = require("../../index");
 const ad_1 = require("../../models/ad");
@@ -229,8 +228,6 @@ const indirizzo = {
     via: 'asd asddasd',
     CAP: '12345',
     comune: 'aaaaa',
-    provincia: types_1.Province.AT,
-    regione: types_1.Regioni.PIEMONTE,
 };
 beforeAll(async () => {
     await integrationSetup_1.connectToDb();

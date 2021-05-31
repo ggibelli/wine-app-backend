@@ -7,8 +7,6 @@ const indirizzo = {
     via: 'asd asddasd',
     CAP: '12345',
     comune: 'aaaaaa',
-    provincia: types_1.Province.AG,
-    regione: types_1.Regioni.ABRUZZO,
 };
 const ads = () => {
     return [
@@ -25,7 +23,6 @@ const ads = () => {
             litersFrom: 500,
             litersTo: 600,
             content: 'wow',
-            address: indirizzo,
             typeAd: types_1.TypeAd.BUY,
             typeProduct: types_1.TypeProduct.ADWINE,
             datePosted: new Date('December 17, 1995 03:24:00'),
@@ -46,7 +43,6 @@ const ads = () => {
             litersFrom: 500,
             litersTo: 600,
             content: 'waaow',
-            address: indirizzo,
             typeAd: types_1.TypeAd.SELL,
             typeProduct: types_1.TypeProduct.ADWINE,
             datePosted: new Date('December 17, 1995 03:24:20'),
@@ -65,7 +61,6 @@ const ads = () => {
             kgFrom: 500,
             kgTo: 600,
             content: 'ostia',
-            address: indirizzo,
             typeAd: types_1.TypeAd.BUY,
             typeProduct: types_1.TypeProduct.ADGRAPE,
             datePosted: new Date('December 17, 1995 02:24:00'),
@@ -83,7 +78,6 @@ const ads = () => {
             kgFrom: 500,
             kgTo: 600,
             content: 'lol',
-            address: indirizzo,
             typeAd: types_1.TypeAd.SELL,
             typeProduct: types_1.TypeProduct.ADGRAPE,
             datePosted: new Date('December 27, 1995 03:24:00'),
