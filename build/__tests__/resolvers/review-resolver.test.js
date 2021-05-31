@@ -67,6 +67,7 @@ const { getReview } = mockContext.dataSources.reviews;
 const { createReview } = mockContext.dataSources.reviews;
 const { updateReview } = mockContext.dataSources.reviews;
 const { deleteReview } = mockContext.dataSources.reviews;
+const { messageAdmin } = mockContext.dataSources.messages;
 describe('Review resolvers', () => {
     afterEach(() => {
         jest.clearAllMocks();
@@ -128,6 +129,7 @@ describe('Review resolvers', () => {
         const res = await resolvers_1.default.Mutation?.createReview(null, {
             review: { rating: '3', forUser: '123', negotiation: '322' },
         }, mockContext);
+        expect(messageAdmin).toHaveBeenCalledWith(['123'], 'Hanno scritto di te good');
         expect(publish).toHaveBeenCalledTimes(1);
         expect(publish).toHaveBeenCalledWith('REVIEW_CREATED', {
             reviewCreated: {

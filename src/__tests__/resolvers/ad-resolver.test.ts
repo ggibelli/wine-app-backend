@@ -54,8 +54,7 @@ const { getUser } = mockContext.dataSources.users;
 const { getVineyardByName } = mockContext.dataSources.vineyards;
 const { getWineByName } = mockContext.dataSources.wines;
 const { saveAd } = mockContext.dataSources.users;
-// const { messageAdmin } = mockContext.dataSources.messages;
-
+const { messageAdmin } = mockContext.dataSources.messages;
 
 describe('Ad resolvers', () => {
   afterEach(() => {

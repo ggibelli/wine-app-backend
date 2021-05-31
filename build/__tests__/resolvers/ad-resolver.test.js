@@ -58,7 +58,7 @@ const { getUser } = mockContext.dataSources.users;
 const { getVineyardByName } = mockContext.dataSources.vineyards;
 const { getWineByName } = mockContext.dataSources.wines;
 const { saveAd } = mockContext.dataSources.users;
-// const { messageAdmin } = mockContext.dataSources.messages;
+const { messageAdmin } = mockContext.dataSources.messages;
 describe('Ad resolvers', () => {
     afterEach(() => {
         jest.clearAllMocks();
@@ -130,6 +130,7 @@ describe('Ad resolvers', () => {
                 createdBy: 2,
             },
         }, mockContext);
+        expect(messageAdmin).toHaveBeenCalledWith([1], 'Un annuncio per il vino: wine e stato creato');
         expect(publish).toHaveBeenCalledTimes(1);
         expect(publish).toHaveBeenCalledWith('AD_POSTED', {
             adPostedFollowUp: {
@@ -189,14 +190,16 @@ describe('Ad resolvers', () => {
         ]);
         //@ts-ignore
         const res = await resolvers_1.default.Mutation?.updateAd(null, {
-            input: { _id: 1 },
-            id: 1,
-            typeAd: 'SELL',
-            typeProduct: 'AdWine',
-            wineName: 'wine',
-            createdBy: 2,
-            isActive: false,
+            input: {
+                _id: 1,
+                typeAd: 'SELL',
+                typeProduct: 'AdWine',
+                wineName: 'wine',
+                createdBy: 2,
+                isActive: false,
+            },
         }, mockContext);
+        expect(messageAdmin).toHaveBeenCalledWith(['4', '7'], 'Un annuncio per il vino: wine e stato creato');
         expect(publish).toHaveBeenCalledTimes(1);
         expect(publish).toHaveBeenCalledWith('AD_REMOVED', {
             adRemoved: {
@@ -279,6 +282,7 @@ describe('Ad resolvers', () => {
             id: 1,
         }, mockContext);
         expect(deleteMany).toHaveBeenCalledTimes(1);
+        expect(messageAdmin).toHaveBeenCalledWith(['4', '7'], 'L annuncio per il vino wine e stato rimosso');
         expect(publish).toHaveBeenCalledTimes(1);
         expect(publish).toHaveBeenCalledWith('AD_REMOVED', {
             adRemoved: {

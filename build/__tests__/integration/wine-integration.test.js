@@ -117,6 +117,17 @@ beforeAll(async () => {
     await wine.save();
 });
 describe('Integration test wines', () => {
+    // it('query wines fails if not logged in', async () => {
+    //   const res = await query(WINES);
+    //   expect(res).toMatchSnapshot();
+    // });
+    // it('query single wine fails if not logged', async () => {
+    //   const wines: WineGraphQl[] = await Wine.find({}).lean().exec();
+    //   const res = await query(WINE, {
+    //     variables: { id: wines[0]._id.toString() },
+    //   });
+    //   expect(res).toMatchSnapshot();
+    // });
     it('create wine mutation fails if not logged in', async () => {
         const wine = {
             denominazioneVino: 'ciccio',

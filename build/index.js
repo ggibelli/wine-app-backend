@@ -31,7 +31,7 @@ const data_sources_1 = __importDefault(require("./data-sources"));
 const directives_2 = require("./directives");
 const auth_1 = require("./utils/auth");
 const accountConfirmation_1 = require("./controllers/accountConfirmation");
-// import path from 'path';
+const path_1 = __importDefault(require("path"));
 mongoose_1.default.set('useFindAndModify', false);
 mongoose_1.default.set('useCreateIndex', true);
 const mongooseConnection = () => {
@@ -111,10 +111,10 @@ const server = new apollo_server_express_1.ApolloServer({
 });
 exports.app = express_1.default();
 exports.app.use(accountConfirmation_1.confirmationRouter);
-// app.use(express.static('public'));
-// app.get('*', (_req, res) => {
-//   res.sendFile(path.resolve('public', 'index.html'));
-// });
+exports.app.use(express_1.default.static('public'));
+exports.app.get('*', (_req, res) => {
+    res.sendFile(path_1.default.resolve('public', 'index.html'));
+});
 server.applyMiddleware({ app: exports.app, path: '/graphql' });
 const httpServer = http_1.default.createServer(exports.app);
 server.installSubscriptionHandlers(httpServer);
