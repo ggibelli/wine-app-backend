@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.app = exports.schema = void 0;
+exports.app = exports.schema = exports.mongooseConnection = void 0;
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -31,7 +31,7 @@ const data_sources_1 = __importDefault(require("./data-sources"));
 const directives_2 = require("./directives");
 const auth_1 = require("./utils/auth");
 const accountConfirmation_1 = require("./controllers/accountConfirmation");
-const path_1 = __importDefault(require("path"));
+// import path from 'path';
 mongoose_1.default.set('useFindAndModify', false);
 mongoose_1.default.set('useCreateIndex', true);
 const mongooseConnection = () => {
@@ -48,6 +48,7 @@ const mongooseConnection = () => {
         logger_1.loggerError('error connection to MongoDB: ', error.message);
     });
 };
+exports.mongooseConnection = mongooseConnection;
 exports.schema = apollo_server_express_1.makeExecutableSchema({
     typeDefs: [
         ad_1.typeDefs,
@@ -110,15 +111,15 @@ const server = new apollo_server_express_1.ApolloServer({
 });
 exports.app = express_1.default();
 exports.app.use(accountConfirmation_1.confirmationRouter);
-exports.app.use(express_1.default.static('public'));
-exports.app.get('*', (_req, res) => {
-    res.sendFile(path_1.default.resolve('public', 'index.html'));
-});
+// app.use(express.static('public'));
+// app.get('*', (_req, res) => {
+//   res.sendFile(path.resolve('public', 'index.html'));
+// });
 server.applyMiddleware({ app: exports.app, path: '/graphql' });
 const httpServer = http_1.default.createServer(exports.app);
 server.installSubscriptionHandlers(httpServer);
 const start = () => {
-    mongooseConnection();
+    exports.mongooseConnection();
     httpServer.listen(config_1.PORT, () => logger_1.loggerInfo(`🚀 Server ready at http://localhost:${config_1.PORT}${server.graphqlPath}`));
 };
 if (process.env.NODE_ENV !== 'test') {

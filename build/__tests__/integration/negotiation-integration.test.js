@@ -434,7 +434,7 @@ describe('Integration test negotiations', () => {
         expect(res).toMatchSnapshot();
     });
     it('delete negotiation mutation fails if logged in and not same user', async () => {
-        const user = await user_1.User.findOne({ firstName: 'Mariuccio' });
+        const user = await user_1.User.findOne({ firstName: 'Luigetto' });
         const negotiationToDelete = await negotiation_1.Negotiation.findOne({
             createdBy: user,
         })

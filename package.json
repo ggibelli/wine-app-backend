@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "jest tests --runInBand",
-    "dev": "ts-node-dev ./src/index.ts",
+    "dev": "NODE_ENV=development && ts-node-dev ./src/index.ts",
     "codegen-graphql": "graphql-codegen --config codegen.yml",
     "lint": "eslint src/",
     "tsc": "tsc",
-    "start": "node build/index.js"
+    "start": "node build/index.js",
+    "load-wine": "ts-node-dev ./src/utils/wineExtractor.ts"
   },
   "author": "Giovanni Gibelli",
   "license": "ISC",
@@ -52,6 +53,7 @@
     "apollo-datasource-mongodb": "^0.2.8",
     "apollo-server-express": "^2.19.0",
     "apollo-server-testing": "^2.19.0",
+    "axios": "^0.21.1",
     "bcrypt": "^5.0.0",
     "cors": "^2.8.5",
     "cron": "^1.8.2",

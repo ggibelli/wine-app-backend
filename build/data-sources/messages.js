@@ -161,6 +161,19 @@ class Messages extends apollo_datasource_mongodb_1.MongoDataSource {
     //     errors,
     //   };
     // }
+    async deleteMessages(negotiation) {
+        let error = null;
+        try {
+            await this.model.deleteMany({ negotiation });
+        }
+        catch (e) {
+            error = {
+                name: 'messages deletion error',
+                text: e,
+            };
+        }
+        return error;
+    }
     async deleteMessage(messageId) {
         const errors = [];
         const deletedMessage = await this.model

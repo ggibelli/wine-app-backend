@@ -18,9 +18,7 @@ const ad_1 = require("../../models/ad");
 const message_1 = require("../../models/message");
 const negotiation_1 = require("../../models/negotiation");
 const review_1 = require("../../models/review");
-const vineyard_1 = require("../../models/vineyard");
 const wine_1 = require("../../models/wine");
-const vineyardExtractor_1 = __importDefault(require("../../utils/vineyardExtractor"));
 // import createWineDb from '../../utils/wineExtractor';
 const cron_1 = __importDefault(require("cron"));
 const fakeStart = jest.fn(() => fakeStop());
@@ -107,23 +105,19 @@ const ME_FULL = apollo_server_express_1.gql `
         content
       }
       ads {
-        ads {
-          postedBy {
-            firstName
-          }
-          ... on AdWine {
-            wineName
-          }
+        postedBy {
+          firstName
+        }
+        ... on AdWine {
+          wineName
         }
       }
       negotiations {
-        negotiations {
-          createdBy {
-            firstName
-          }
-          forUserAd {
-            firstName
-          }
+        createdBy {
+          firstName
+        }
+        forUserAd {
+          firstName
         }
       }
       messages {
@@ -136,15 +130,13 @@ const ME_FULL = apollo_server_express_1.gql `
         }
       }
       reviews {
-        reviews {
-          createdBy {
-            firstName
-          }
-          forUser {
-            firstName
-          }
-          rating
+        createdBy {
+          firstName
         }
+        forUser {
+          firstName
+        }
+        rating
       }
     }
   }
@@ -156,23 +148,19 @@ const USERS = apollo_server_express_1.gql `
       phoneNumber
       email
       ads {
-        ads {
-          postedBy {
-            firstName
-          }
-          ... on AdWine {
-            wineName
-          }
+        postedBy {
+          firstName
+        }
+        ... on AdWine {
+          wineName
         }
       }
       negotiations {
-        negotiations {
-          createdBy {
-            firstName
-          }
-          forUserAd {
-            firstName
-          }
+        createdBy {
+          firstName
+        }
+        forUserAd {
+          firstName
         }
       }
       messages {
@@ -185,15 +173,13 @@ const USERS = apollo_server_express_1.gql `
         }
       }
       reviews {
-        reviews {
-          createdBy {
-            firstName
-          }
-          forUser {
-            firstName
-          }
-          rating
+        createdBy {
+          firstName
         }
+        forUser {
+          firstName
+        }
+        rating
       }
     }
   }
@@ -203,23 +189,19 @@ const USER = apollo_server_express_1.gql `
     user(id: $id) {
       firstName
       ads {
-        ads {
-          postedBy {
-            firstName
-          }
-          ... on AdWine {
-            wineName
-          }
+        postedBy {
+          firstName
+        }
+        ... on AdWine {
+          wineName
         }
       }
       negotiations {
-        negotiations {
-          createdBy {
-            firstName
-          }
-          forUserAd {
-            firstName
-          }
+        createdBy {
+          firstName
+        }
+        forUserAd {
+          firstName
         }
       }
       messages {
@@ -232,15 +214,13 @@ const USER = apollo_server_express_1.gql `
         }
       }
       reviews {
-        reviews {
-          createdBy {
-            firstName
-          }
-          forUser {
-            firstName
-          }
-          rating
+        createdBy {
+          firstName
         }
+        forUser {
+          firstName
+        }
+        rating
       }
     }
   }
@@ -258,7 +238,6 @@ beforeAll(async () => {
     const usersMock = mocksTests_1.users();
     const adsMock = mocksTests_1.ads();
     // const wineDb = await createWineDb();
-    const vineyardDb = vineyardExtractor_1.default();
     const user = new user_1.User(usersMock[0]);
     const otherUser = new user_1.User(usersMock[1]);
     const thirdUser = new user_1.User(usersMock[2]);
@@ -292,12 +271,10 @@ beforeAll(async () => {
         rating: 2,
         content: 'very poor',
     });
-    const vineyard = new vineyard_1.Vineyard(vineyardDb[0]);
     const wine = new wine_1.Wine({
         denominazioneVino: 'Abruzzo',
         espressioneComunitaria: 'DOP',
         denominazioneZona: 'DOC',
-        regione: [types_1.Regioni.ABRUZZO],
     });
     const message = new message_1.Message({
         negotiation: negotiation,
@@ -323,7 +300,6 @@ beforeAll(async () => {
     await otherNegotiation.save();
     await review.save();
     await otherReview.save();
-    await vineyard.save();
     await wine.save();
     await user.save();
 });

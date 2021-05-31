@@ -17,7 +17,6 @@ const WINES = apollo_server_express_1.gql `
     wines {
       denominazioneVino
       espressioneComunitaria
-      regione
       denominazioneZona
     }
   }
@@ -27,7 +26,6 @@ const WINE = apollo_server_express_1.gql `
     wine(id: $id) {
       denominazioneVino
       espressioneComunitaria
-      regione
       denominazioneZona
     }
   }
@@ -38,7 +36,6 @@ const CREATE_WINE = apollo_server_express_1.gql `
       response {
         denominazioneVino
         espressioneComunitaria
-        regione
         denominazioneZona
       }
       errors {
@@ -54,7 +51,6 @@ const UPDATE_WINE = apollo_server_express_1.gql `
       response {
         denominazioneVino
         espressioneComunitaria
-        regione
         denominazioneZona
       }
       errors {
@@ -70,7 +66,6 @@ const DELETE_WINE = apollo_server_express_1.gql `
       response {
         denominazioneVino
         espressioneComunitaria
-        regione
         denominazioneZona
       }
       errors {
@@ -116,30 +111,17 @@ beforeAll(async () => {
         denominazioneVino: 'Abruzzo',
         espressioneComunitaria: 'DOP',
         denominazioneZona: 'DOC',
-        regione: [types_1.Regioni.ABRUZZO],
     });
     await user.save();
     await otherUser.save();
     await wine.save();
 });
 describe('Integration test wines', () => {
-    it('query wines fails if not logged in', async () => {
-        const res = await query(WINES);
-        expect(res).toMatchSnapshot();
-    });
-    it('query single wine fails if not logged', async () => {
-        const wines = await wine_1.Wine.find({}).lean().exec();
-        const res = await query(WINE, {
-            variables: { id: wines[0]._id.toString() },
-        });
-        expect(res).toMatchSnapshot();
-    });
     it('create wine mutation fails if not logged in', async () => {
         const wine = {
             denominazioneVino: 'ciccio',
             espressioneComunitaria: types_1.EspressioneComunitaria.DOP,
             //@ts-ignore
-            regione: [types_1.Regioni.CALABRIA],
             denominazioneZona: types_1.DenomZona.DOC,
         };
         const res = await mutate(CREATE_WINE, {
@@ -173,7 +155,6 @@ describe('Integration test wines', () => {
             denominazioneVino: 'ciccio',
             espressioneComunitaria: types_1.EspressioneComunitaria.DOP,
             //@ts-ignore
-            regione: [types_1.Regioni.CALABRIA],
             denominazioneZona: types_1.DenomZona.DOC,
         };
         const res = await mutate(CREATE_WINE, {
@@ -232,7 +213,6 @@ describe('Integration test wines', () => {
             denominazioneVino: 'ciccio',
             espressioneComunitaria: types_1.EspressioneComunitaria.DOP,
             //@ts-ignore
-            regione: [types_1.Regioni.CALABRIA],
             denominazioneZona: types_1.DenomZona.DOC,
         };
         const res = await mutate(CREATE_WINE, {

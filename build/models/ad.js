@@ -151,7 +151,6 @@ const adSchemaFields = {
     ],
     content: {
         type: String,
-        required: true,
     },
     isActive: {
         type: Boolean,

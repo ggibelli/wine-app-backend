@@ -110,9 +110,6 @@ const CREATE_AD = gql`
         priceTo
         ... on AdWine {
           wineName
-          wine {
-            regione
-          }
         }
         ... on AdGrape {
           vineyardName
@@ -221,7 +218,6 @@ beforeAll(async () => {
     denominazioneVino: 'Abruzzo',
     espressioneComunitaria: 'DOP',
     denominazioneZona: 'DOC',
-    regione: [Regioni.ABRUZZO],
   });
   await user.save();
   await otherUser.save();
@@ -357,13 +353,12 @@ describe('Integration test ads', () => {
     const res = await mutate(SAVE_AD, {
       variables: { id: ads[0]._id.toString() },
     });
-    const userAfterMutation: DocumentDefinition<IUserDoc> | null = await User.findOne(
-      {
+    const userAfterMutation: DocumentDefinition<IUserDoc> | null =
+      await User.findOne({
         email: 'gio@prova.it',
-      }
-    )
-      .lean()
-      .exec();
+      })
+        .lean()
+        .exec();
     expect(
       userAfterMutation?.savedAds &&
         userAfterMutation.savedAds

@@ -13,6 +13,7 @@ const config_1 = require("../utils/config");
 const mailServer_1 = require("../utils/mailServer");
 const cron_1 = require("cron");
 const logger_1 = require("../utils/logger");
+const coordinatesExtractor_1 = require("../utils/coordinatesExtractor");
 class Users extends apollo_datasource_mongodb_1.MongoDataSource {
     async getUser(userId) {
         return this.findOneById(userId);
@@ -40,7 +41,8 @@ class Users extends apollo_datasource_mongodb_1.MongoDataSource {
                 text: 'The PIVA provided is not valid',
             });
         }
-        const newUser = new this.model({ ...user });
+        const coordinates = await coordinatesExtractor_1.getCoordinatesFromAddress(user.address);
+        const newUser = new this.model({ ...user, coordinates });
         if (errors.length > 0) {
             return {
                 response: null,

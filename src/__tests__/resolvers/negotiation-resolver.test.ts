@@ -41,6 +41,10 @@ const mockContext = {
     },
     messages: {
       getMessagesForNegotiation: jest.fn(),
+      messageAdmin: jest.fn(),
+      deleteMessages: jest.fn(),
+      getMessagesNegotiationType: jest.fn(),
+      createMessage: jest.fn(),
     },
   },
   user: { _id: '1', email: 'a@a.a' },
@@ -54,7 +58,7 @@ const { createNegotiation } = mockContext.dataSources.negotiations;
 const { deleteNegotiation } = mockContext.dataSources.negotiations;
 const { updateNegotiation } = mockContext.dataSources.negotiations;
 const { getUser } = mockContext.dataSources.users;
-const { getMessagesForNegotiation } = mockContext.dataSources.messages;
+const { getMessagesNegotiationType } = mockContext.dataSources.messages;
 
 describe('Negotiation resolvers', () => {
   afterEach(() => {
@@ -179,9 +183,7 @@ describe('Negotiation resolvers', () => {
     const res = await resolvers.Mutation?.createNegotiation(
       null,
       {
-        typeAd: 'SELL',
-        forUserAd: '123',
-        ad: '322',
+        negotiation: { typeAd: 'SELL', forUserAd: '123', ad: '322' },
       },
       mockContext
     );
@@ -216,9 +218,7 @@ describe('Negotiation resolvers', () => {
     const res = await resolvers.Mutation?.createNegotiation(
       null,
       {
-        typeAd: 'SELL',
-        forUserAd: '123',
-        ad: '322',
+        negotiation: { typeAd: 'SELL', forUserAd: '123', ad: '322' },
       },
       mockContext
     );
@@ -242,12 +242,14 @@ describe('Negotiation resolvers', () => {
       },
       errors: [],
     });
+    const saveMock = jest.fn();
     getAd.mockReturnValueOnce({
       _id: new ObjectId('5fdd925d9cc5800455e1855e'),
       typeAd: 'SELL',
       typeProduct: 'AdWine',
       wineName: 'wine',
       createdBy: 2,
+      save: saveMock,
     });
     getNegotiationsForAd.mockReturnValueOnce([
       {
@@ -261,8 +263,7 @@ describe('Negotiation resolvers', () => {
     const res = await resolvers.Mutation?.updateNegotiation(
       null,
       {
-        id: 1,
-        isConcluded: true,
+        negotiation: { id: 1, isConcluded: true },
       },
       mockContext
     );
@@ -274,9 +275,12 @@ describe('Negotiation resolvers', () => {
         typeProduct: 'AdWine',
         wineName: 'wine',
         createdBy: 2,
+        isActive: false,
+        save: saveMock,
       },
-      usersToNotify: ['4', '5', '7', '8'],
+      usersToNotify: ['5', '4', '8', '7'],
       userToNotNotify: '1',
+      userToNotify: '2',
     });
     expect(res).toEqual({
       response: {
@@ -384,7 +388,7 @@ describe('Negotiation resolvers', () => {
   });
 
   it('Negotiation messages calls getMessagesForNegotiation', async () => {
-    getMessagesForNegotiation.mockReturnValueOnce([{ id: 1 }, { id: 2 }]);
+    getMessagesNegotiationType.mockReturnValueOnce([{ id: 1 }, { id: 2 }]);
     //@ts-ignore
     const res = await resolvers.Negotiation?.messages(
       { _id: '123' },

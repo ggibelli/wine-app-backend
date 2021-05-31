@@ -24,6 +24,9 @@ const mockContext = {
       getUser: jest.fn(),
       saveAd: jest.fn(),
     },
+    messages: {
+      messageAdmin: jest.fn(),
+    },
     negotiations: {
       getNegotiationsForAd: jest.fn(),
       deleteMany: jest.fn(),
@@ -51,6 +54,7 @@ const { getUser } = mockContext.dataSources.users;
 const { getVineyardByName } = mockContext.dataSources.vineyards;
 const { getWineByName } = mockContext.dataSources.wines;
 const { saveAd } = mockContext.dataSources.users;
+// const { messageAdmin } = mockContext.dataSources.messages;
 
 describe('Ad resolvers', () => {
   afterEach(() => {
@@ -123,11 +127,13 @@ describe('Ad resolvers', () => {
     const res = await resolvers.Mutation?.createAd(
       null,
       {
-        id: 1,
-        typeAd: 'SELL',
-        typeProduct: 'AdWine',
-        wineName: 'wine',
-        createdBy: 2,
+        input: {
+          id: 1,
+          typeAd: 'SELL',
+          typeProduct: 'AdWine',
+          wineName: 'wine',
+          createdBy: 2,
+        },
       },
       mockContext
     );

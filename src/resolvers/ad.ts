@@ -51,7 +51,6 @@ export const resolver: StringIndexed<Resolvers> = {
       args,
       { dataSources }: { dataSources: MongoDataSource }
     ) {
-      console.log(args);
       return dataSources.ads.getAdsByUser(args);
     },
     async ad(

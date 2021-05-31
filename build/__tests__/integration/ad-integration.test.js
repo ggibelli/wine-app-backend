@@ -90,9 +90,6 @@ const CREATE_AD = apollo_server_express_1.gql `
         priceTo
         ... on AdWine {
           wineName
-          wine {
-            regione
-          }
         }
         ... on AdGrape {
           vineyardName
@@ -194,7 +191,6 @@ beforeAll(async () => {
         denominazioneVino: 'Abruzzo',
         espressioneComunitaria: 'DOP',
         denominazioneZona: 'DOC',
-        regione: [types_1.Regioni.ABRUZZO],
     });
     await user.save();
     await otherUser.save();

@@ -9,7 +9,6 @@ import { IReviewDoc } from './review';
 import { IVineyardDoc } from './vineyard';
 import { MetodoProduttivo } from '../types';
 import { METODOPRODUTTIVO } from '../utils/enumMongooseHelper';
-
 import bcrypt from 'bcrypt';
 import { IMessageDoc } from './message';
 import { Negotiation } from '../generated/graphql';
@@ -28,6 +27,11 @@ interface OwnedVineyards {
   metodoProduttivo: MetodoProduttivo;
 }
 
+export interface Coordinates {
+  latitude: number;
+  longitude: number;
+}
+
 export interface IUser {
   email: string;
   firstName: string;
@@ -36,6 +40,7 @@ export interface IUser {
   pIva: string;
   phoneNumber: string;
   address: Address;
+  coordinates?: Coordinates;
   isVerified: boolean;
   isPremium?: boolean;
   isAdmin: boolean;
@@ -105,6 +110,10 @@ const userSchemaFields: Record<keyof IUser, any> = {
       enum: Object.values(Regioni),
       required: true,
     },
+  },
+  coordinates: {
+    latitude: Number,
+    longitude: Number,
   },
   isVerified: {
     type: Boolean,

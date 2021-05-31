@@ -62,6 +62,11 @@ exports.typeDefs = apollo_server_express_1.gql `
     ownedVineyards: OwnedVineyardsInput
   }
 
+  type Coordinates {
+    latitude: Float
+    longitude: Float
+  }
+
   type User {
     _id: ID!
     email: String!
@@ -71,6 +76,7 @@ exports.typeDefs = apollo_server_express_1.gql `
     phoneNumber: String!
     address: Address!
     isVerified: Boolean!
+    coordinates: Coordinates
     isPremium: Boolean
     isAdmin: Boolean!
     hideContact: Boolean!

@@ -76,6 +76,10 @@ const userSchemaFields = {
             required: true,
         },
     },
+    coordinates: {
+        latitude: Number,
+        longitude: Number,
+    },
     isVerified: {
         type: Boolean,
         required: true,

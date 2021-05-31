@@ -1,14 +1,13 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
-import { Regioni, EspressioneComunitaria, DenomZona } from '../types';
-import { Regioni as MongooseRegioni } from '../utils/enumMongooseHelper';
+import { EspressioneComunitaria, DenomZona } from '../types';
 
 export interface IWine {
   denominazioneVino: string;
-  aka?: string;
+  tipoVino?: string;
   espressioneComunitaria: EspressioneComunitaria;
   denominazioneZona: DenomZona;
-  regione: mongoose.Types.Array<Regioni>;
+  vitigni: mongoose.Types.Array<string>;
 }
 
 export interface WineGraphQl extends IWine {
@@ -25,7 +24,7 @@ const wineSchemaFields: Record<keyof IWine, any> = {
     minlength: 2,
     unique: true,
   },
-  aka: String,
+  tipoVino: String,
   espressioneComunitaria: {
     type: String,
     enum: ['DOP', 'IGP', 'ND'],
@@ -34,11 +33,9 @@ const wineSchemaFields: Record<keyof IWine, any> = {
     type: String,
     enum: ['DOC', 'DOCG', 'IGT', 'Vino varietale', 'Vino generico'],
   },
-  regione: [
+  vitigni: [
     {
       type: String,
-      enum: Object.values(MongooseRegioni),
-      required: true,
     },
   ],
 };

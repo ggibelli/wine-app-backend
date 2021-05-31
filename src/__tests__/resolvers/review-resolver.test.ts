@@ -51,6 +51,7 @@ const mockContext = {
     },
     messages: {
       getMessagesForNegotiation: jest.fn(),
+      messageAdmin: jest.fn(),
     },
   },
   user: { id: 1, email: 'a@a.a' },
@@ -127,9 +128,7 @@ describe('Review resolvers', () => {
     const res = await resolvers.Mutation?.createReview(
       null,
       {
-        rating: 'Good',
-        forUser: '123',
-        negotiation: '322',
+        review: { rating: '3', forUser: '123', negotiation: '322' },
       },
       mockContext
     );

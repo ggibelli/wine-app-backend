@@ -12,7 +12,7 @@ import {
 import { User } from '../../models/user';
 import { users } from '../../tests/mocksTests';
 import { WineInput, WineInputUpdate } from '../../generated/graphql';
-import { Regioni, EspressioneComunitaria, DenomZona } from '../../types';
+import { EspressioneComunitaria, DenomZona } from '../../types';
 // import createWineDb from '../../utils/wineExtractor';
 import { Wine, WineGraphQl } from '../../models/wine';
 
@@ -23,7 +23,6 @@ const WINES = gql`
     wines {
       denominazioneVino
       espressioneComunitaria
-      regione
       denominazioneZona
     }
   }
@@ -34,7 +33,6 @@ const WINE = gql`
     wine(id: $id) {
       denominazioneVino
       espressioneComunitaria
-      regione
       denominazioneZona
     }
   }
@@ -46,7 +44,6 @@ const CREATE_WINE = gql`
       response {
         denominazioneVino
         espressioneComunitaria
-        regione
         denominazioneZona
       }
       errors {
@@ -63,7 +60,6 @@ const UPDATE_WINE = gql`
       response {
         denominazioneVino
         espressioneComunitaria
-        regione
         denominazioneZona
       }
       errors {
@@ -80,7 +76,6 @@ const DELETE_WINE = gql`
       response {
         denominazioneVino
         espressioneComunitaria
-        regione
         denominazioneZona
       }
       errors {
@@ -129,7 +124,6 @@ beforeAll(async () => {
     denominazioneVino: 'Abruzzo',
     espressioneComunitaria: 'DOP',
     denominazioneZona: 'DOC',
-    regione: [Regioni.ABRUZZO],
   });
   await user.save();
   await otherUser.save();
@@ -137,25 +131,11 @@ beforeAll(async () => {
 });
 
 describe('Integration test wines', () => {
-  it('query wines fails if not logged in', async () => {
-    const res = await query(WINES);
-    expect(res).toMatchSnapshot();
-  });
-
-  it('query single wine fails if not logged', async () => {
-    const wines: WineGraphQl[] = await Wine.find({}).lean().exec();
-    const res = await query(WINE, {
-      variables: { id: wines[0]._id.toString() },
-    });
-    expect(res).toMatchSnapshot();
-  });
-
   it('create wine mutation fails if not logged in', async () => {
     const wine: WineInput = {
       denominazioneVino: 'ciccio',
       espressioneComunitaria: EspressioneComunitaria.DOP,
       //@ts-ignore
-      regione: [Regioni.CALABRIA],
       denominazioneZona: DenomZona.DOC,
     };
     const res = await mutate(CREATE_WINE, {
@@ -192,7 +172,6 @@ describe('Integration test wines', () => {
       denominazioneVino: 'ciccio',
       espressioneComunitaria: EspressioneComunitaria.DOP,
       //@ts-ignore
-      regione: [Regioni.CALABRIA],
       denominazioneZona: DenomZona.DOC,
     };
     const res = await mutate(CREATE_WINE, {
@@ -256,7 +235,6 @@ describe('Integration test wines', () => {
       denominazioneVino: 'ciccio',
       espressioneComunitaria: EspressioneComunitaria.DOP,
       //@ts-ignore
-      regione: [Regioni.CALABRIA],
       denominazioneZona: DenomZona.DOC,
     };
     const res = await mutate(CREATE_WINE, {

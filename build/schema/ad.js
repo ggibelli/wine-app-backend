@@ -22,7 +22,7 @@ exports.typeDefs = apollo_server_express_1.gql `
   input AdInput {
     typeAd: TypeAd!
     typeProduct: TypeProduct!
-    content: String!
+    content: String
     address: AddressInput!
     harvest: Int!
     abv: Float!
@@ -70,7 +70,7 @@ exports.typeDefs = apollo_server_express_1.gql `
     abv: Float!
     priceFrom: Float! @authenticated
     priceTo: Float! @authenticated
-    content: String!
+    content: String
     address: Address! @authenticated
     negotiations: [Negotiation!] @authenticated
     activeNegotiations: Int
@@ -98,7 +98,7 @@ exports.typeDefs = apollo_server_express_1.gql `
     priceTo: Float! @authenticated
     litersFrom: Int
     litersTo: Int
-    content: String!
+    content: String
     address: Address! @authenticated
     negotiations: [Negotiation!] @authenticated
     activeNegotiations: Int
@@ -123,7 +123,7 @@ exports.typeDefs = apollo_server_express_1.gql `
     priceTo: Float! @authenticated
     kgFrom: Int!
     kgTo: Int!
-    content: String!
+    content: String
     address: Address!
     negotiations: [Negotiation!] @authenticated
     activeNegotiations: Int

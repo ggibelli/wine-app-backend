@@ -696,29 +696,29 @@ export type VineyardPayload = {
 
 export type WineInput = {
   denominazioneVino: Scalars['String'];
-  aka?: Maybe<Scalars['String']>;
+  tipoVino?: Maybe<Scalars['String']>;
   espressioneComunitaria: EspressioneComunitaria;
   denominazioneZona: DenomZona;
-  regione: mongoose.Types.Array<Regioni>;
+  vitigni?: mongoose.Types.Array<Scalars['String']>;
 };
 
 export type WineInputUpdate = {
   _id: Scalars['ID'];
   denominazioneVino?: Scalars['String'];
-  aka?: Scalars['String'];
+  tipoVino?: Scalars['String'];
   espressioneComunitaria?: EspressioneComunitaria;
   denominazioneZona?: DenomZona;
-  regione?: mongoose.Types.Array<Regioni>;
+  vitigni?: mongoose.Types.Array<Scalars['String']>;
 };
 
 export type Wine = {
   __typename?: 'Wine';
   _id: Scalars['ID'];
   denominazioneVino: Scalars['String'];
-  aka?: Maybe<Scalars['String']>;
+  tipoVino?: Maybe<Scalars['String']>;
   espressioneComunitaria: EspressioneComunitaria;
   denominazioneZona: DenomZona;
-  regione: mongoose.Types.Array<Regioni>;
+  vitigni?: mongoose.Types.Array<Scalars['String']>;
 };
 
 export type WinePayload = {
@@ -2152,7 +2152,7 @@ export type WineResolvers<
     ParentType,
     ContextType
   >;
-  aka?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  tipoVino?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   espressioneComunitaria?: Resolver<
     ResolversTypes['EspressioneComunitaria'],
     ParentType,
@@ -2163,7 +2163,11 @@ export type WineResolvers<
     ParentType,
     ContextType
   >;
-  regione?: Resolver<Array<ResolversTypes['Regioni']>, ParentType, ContextType>;
+  vitigni?: Resolver<
+    Maybe<Array<ResolversTypes['String']>>,
+    ParentType,
+    ContextType
+  >;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 

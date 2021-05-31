@@ -19,3 +19,5 @@ if (process.env.NODE_ENV === 'production') {
   MAIL_USER = process.env.MAIL_USER_PROD as string;
   BASE_URL = process.env.BASE_URL_PROD as string;
 }
+
+export const GEOAPI = process.env.GEO_API as string;

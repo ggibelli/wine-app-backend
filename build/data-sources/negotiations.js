@@ -187,7 +187,10 @@ class Negotiations extends apollo_datasource_mongodb_1.MongoDataSource {
         const userCtx = this.context.user;
         const errors = [];
         const deletedNegotiation = await this.model
-            .findOneAndDelete({ _id: negotiationId, createdBy: userCtx })
+            .findOneAndDelete({
+            $or: [{ createdBy: userCtx }, { forUserAd: userCtx }],
+            $and: [{ _id: negotiationId }],
+        })
             .lean()
             .exec();
         if (!deletedNegotiation) {
