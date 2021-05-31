@@ -20,7 +20,6 @@ const mockContext = {
       createAd: jest.fn(),
       updateAd: jest.fn(),
       deleteAd: jest.fn(),
-      getAdsUserType: jest.fn(),
     },
     users: {
       getUsers: jest.fn(),
@@ -40,7 +39,6 @@ const mockContext = {
       deleteNegotiation: jest.fn(),
       deleteMany: jest.fn(),
       updateNegotiation: jest.fn(),
-      getNegotiationsForUserType: jest.fn(),
     },
     reviews: {
       getReviews: jest.fn(),

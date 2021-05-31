@@ -44,7 +44,6 @@ const mockContext = {
       deleteMessages: jest.fn(),
       getMessagesNegotiationType: jest.fn(),
       createMessage: jest.fn(),
-
     },
   },
   user: { _id: '1', email: 'a@a.a' },
@@ -187,7 +186,6 @@ describe('Negotiation resolvers', () => {
       null,
       {
         negotiation: { typeAd: 'SELL', forUserAd: '123', ad: '322' },
-
       },
       mockContext
     );
@@ -277,7 +275,6 @@ describe('Negotiation resolvers', () => {
       null,
       {
         negotiation: { id: 1, isConcluded: true },
-
       },
       mockContext
     );
@@ -295,14 +292,10 @@ describe('Negotiation resolvers', () => {
         typeAd: 'SELL',
         typeProduct: 'AdWine',
         wineName: 'wine',
-        createdBy: 2,
-        isActive: false,
-        save: saveMock,
       },
       usersToNotify: ['5', '4', '8', '7'],
       userToNotNotify: '1',
       userToNotify: '2',
-
     });
     expect(res).toEqual({
       response: {
