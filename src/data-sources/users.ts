@@ -184,8 +184,8 @@ export default class Users extends MongoDataSource<IUserDoc, Context> {
     const user = await this.model.findById(this.context.user._id);
 
     const isSaved =
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       user?.savedAds?.findIndex(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         (adSaved) => adSaved._id.toString() === ad._id.toString()
       ) !== -1;
     if (isSaved) {

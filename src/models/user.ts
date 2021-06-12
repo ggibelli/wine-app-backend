@@ -94,11 +94,11 @@ const userSchemaFields: Record<keyof IUser, any> = {
       required: true,
       minlength: 5,
     },
-    CAP: {
-      type: String,
-      required: true,
-      minlength: 5,
-    },
+    // CAP: {
+    //   type: String,
+    //   required: true,
+    //   minlength: 5,
+    // },
     comune: { type: String, required: true, minlength: 5 },
     // provincia: {
     //   type: String,

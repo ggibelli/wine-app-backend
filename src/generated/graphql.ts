@@ -54,7 +54,7 @@ export type Scalars = {
 export type Address = {
   __typename?: 'Address';
   via?: Scalars['String'];
-  CAP?: Scalars['String'];
+  // CAP?: Scalars['String'];
   comune: Scalars['String'];
   // provincia: Province;
   // regione: Regioni;
@@ -62,7 +62,7 @@ export type Address = {
 
 export type AddressInput = {
   via?: Scalars['String'];
-  CAP?: Scalars['String'];
+  // CAP?: Scalars['String'];
   comune: Scalars['String'];
   // provincia: Province;
   // regione: Regioni;
@@ -1163,7 +1163,7 @@ export type AddressResolvers<
   ParentType extends ResolversParentTypes['Address'] = ResolversParentTypes['Address']
 > = ResolversObject<{
   via?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  CAP?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  // CAP?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   comune?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   // provincia?: Resolver<ResolversTypes['Province'], ParentType, ContextType>;
   // regione?: Resolver<ResolversTypes['Regioni'], ParentType, ContextType>;

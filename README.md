@@ -4,8 +4,8 @@ This is the server of the wine trading app I developed for the Italian market, t
 
 ## Technology used
 
-This app is written in nodeJs using TypeScript, and I decided to use mongoDB as a database.
-This is my first project using GraphQL over REST and I use ApolloServer.
+This app is written in NodeJs using TypeScript, and I decided to use mongoDB as a database.
+This is my first project using GraphQL over REST and I used ApolloServer.
 
 ## Features
 

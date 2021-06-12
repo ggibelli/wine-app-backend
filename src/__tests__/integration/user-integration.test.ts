@@ -242,9 +242,8 @@ const USER = gql`
 `;
 
 const indirizzo = {
-  via: 'asd asddasd',
-  CAP: '12345',
-  comune: 'aaaaa',
+  via: 'via roma 12',
+  comune: 'canelli',
 };
 
 beforeAll(async () => {
