@@ -1,14 +1,16 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-const publish = jest.fn();
-const filter = jest.fn();
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+const mockPublish = jest.fn();
+
+import { Types } from 'mongoose';
+import resolvers from '../../resolvers';
+
 jest.mock('apollo-server-express', () => ({
   PubSub: jest.fn(() => ({
-    publish,
+    publish: mockPublish,
   })),
-  withFilter: filter,
+  withFilter: jest.fn(),
 }));
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import resolvers from '../../resolvers';
 
 const mockContext = {
   dataSources: {
@@ -81,7 +83,7 @@ describe('Negotiation resolvers', () => {
     const res = await resolvers.Query?.negotiationsWithUser(
       null,
       { forUserAd: '123' },
-      mockContext
+      mockContext,
     );
     expect(res).toEqual([
       {
@@ -109,7 +111,7 @@ describe('Negotiation resolvers', () => {
     const res = await resolvers.Query?.negotiationsForAd(
       null,
       { ad: '322' },
-      mockContext
+      mockContext,
     );
     expect(res).toEqual([
       {
@@ -159,7 +161,7 @@ describe('Negotiation resolvers', () => {
     const res = await resolvers.Query?.negotiation(
       null,
       { id: '123' },
-      mockContext
+      mockContext,
     );
     expect(res).toEqual({
       _id: '122',
@@ -173,7 +175,7 @@ describe('Negotiation resolvers', () => {
   it('createNegotiation succeeds and calls datasource and subscription', async () => {
     createNegotiation.mockReturnValue({
       response: {
-        _id: '122',
+        _id: new Types.ObjectId('5fdd925d9cc5800455e1855e'),
         typeAd: 'SELL',
         forUserAd: '123',
         createdBy: '321',
@@ -181,27 +183,27 @@ describe('Negotiation resolvers', () => {
       },
       errors: [],
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.createNegotiation(
       null,
       {
         negotiation: { typeAd: 'SELL', forUserAd: '123', ad: '322' },
       },
-      mockContext
+      mockContext,
     );
     expect(messageAdmin).toHaveBeenCalledWith(
       ['123'],
-      'Trattativa creata per il tuo annuncio 322'
+      'Trattativa creata per il tuo annuncio 322',
     );
     expect(createMessage).toHaveBeenCalledWith({
       content: 'negoziazione aperta',
-      negotiation: '122',
+      negotiation: '5fdd925d9cc5800455e1855e',
       sentTo: '123',
     });
-    expect(publish).toHaveBeenCalledTimes(1);
-    expect(publish).toHaveBeenCalledWith('NEGOTIATION_CREATED', {
+    expect(mockPublish).toHaveBeenCalledTimes(1);
+    expect(mockPublish).toHaveBeenCalledWith('NEGOTIATION_CREATED', {
       negotiationCreated: {
-        _id: '122',
+        _id: new Types.ObjectId('5fdd925d9cc5800455e1855e'),
         typeAd: 'SELL',
         forUserAd: '123',
         createdBy: '321',
@@ -211,7 +213,7 @@ describe('Negotiation resolvers', () => {
     expect(res).toEqual({
       errors: [],
       response: {
-        _id: '122',
+        _id: new Types.ObjectId('5fdd925d9cc5800455e1855e'),
         typeAd: 'SELL',
         forUserAd: '123',
         createdBy: '321',
@@ -225,15 +227,15 @@ describe('Negotiation resolvers', () => {
       response: null,
       errors: [{ name: 'error', text: 'error' }],
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.createNegotiation(
       null,
       {
         negotiation: { typeAd: 'SELL', forUserAd: '123', ad: '322' },
       },
-      mockContext
+      mockContext,
     );
-    expect(publish).toHaveBeenCalledTimes(0);
+    expect(mockPublish).toHaveBeenCalledTimes(0);
 
     expect(res).toEqual({
       response: null,
@@ -247,7 +249,7 @@ describe('Negotiation resolvers', () => {
       response: {
         id: 1,
         typeAd: 'SELL',
-        ad: 3,
+        ad: new Types.ObjectId('5fdd925d9cc5800455e1855e'),
         createdBy: 2,
         isConcluded: true,
       },
@@ -270,20 +272,20 @@ describe('Negotiation resolvers', () => {
       },
       { id: 5, createdBy: 7, forUserAd: 8 },
     ]);
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.updateNegotiation(
       null,
       {
         negotiation: { id: 1, isConcluded: true },
       },
-      mockContext
+      mockContext,
     );
     expect(messageAdmin).toHaveBeenCalledWith(
       ['5', '4', '8', '7'],
-      "L'annuncio wine non e piu disponibile"
+      "L'annuncio wine non e piu disponibile",
     );
-    expect(publish).toHaveBeenCalledTimes(1);
-    expect(publish).toHaveBeenCalledWith('NEGOTIATION_CLOSED', {
+    expect(mockPublish).toHaveBeenCalledTimes(1);
+    expect(mockPublish).toHaveBeenCalledWith('NEGOTIATION_CLOSED', {
       negotiationClosed: {
         _id: '5fdd925d9cc5800455e1855e',
         createdBy: 2,
@@ -301,7 +303,7 @@ describe('Negotiation resolvers', () => {
       response: {
         id: 1,
         typeAd: 'SELL',
-        ad: 3,
+        ad: new Types.ObjectId('5fdd925d9cc5800455e1855e'),
         createdBy: 2,
         isConcluded: true,
       },
@@ -314,16 +316,16 @@ describe('Negotiation resolvers', () => {
       response: null,
       errors: [{ name: 'error', text: 'text' }],
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.updateNegotiation(
       null,
       {
         id: 1,
         isConcluded: true,
       },
-      mockContext
+      mockContext,
     );
-    expect(publish).toHaveBeenCalledTimes(0);
+    expect(mockPublish).toHaveBeenCalledTimes(0);
     expect(getAd).toHaveBeenCalledTimes(0);
     expect(getNegotiationsForAd).toHaveBeenCalledTimes(0);
 
@@ -345,13 +347,13 @@ describe('Negotiation resolvers', () => {
       },
       errors: [],
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.deleteNegotiation(
       null,
       {
         id: 1,
       },
-      mockContext
+      mockContext,
     );
     expect(res).toEqual({
       response: {
@@ -367,11 +369,11 @@ describe('Negotiation resolvers', () => {
 
   it('Negotiation createdBy calls getUser', async () => {
     getUser.mockReturnValueOnce({ id: 1 });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Negotiation?.createdBy(
-      { postedBy: '123' },
+      { createdBy: new Types.ObjectId('5fdd925d9cc5800455e1855e') },
       null,
-      mockContext
+      mockContext,
     );
     expect(res).toEqual({ id: 1 });
   });
@@ -382,33 +384,33 @@ describe('Negotiation resolvers', () => {
       typeAd: 'SELL',
       postedBy: '123',
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Negotiation?.ad(
-      { ad: '123' },
+      { ad: new Types.ObjectId('5fdd925d9cc5800455e1855e') },
       null,
-      mockContext
+      mockContext,
     );
     expect(res).toEqual({ wineName: 'vino', typeAd: 'SELL', postedBy: '123' });
   });
 
   it('Negotiation forUserAd calls getUser', async () => {
     getUser.mockReturnValueOnce({ id: 1 });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Negotiation?.forUserAd(
-      { forUserAd: { _id: '123' } },
+      { forUserAd:  new Types.ObjectId('5fdd925d9cc5800455e1855e') } ,
       null,
-      mockContext
+      mockContext,
     );
     expect(res).toEqual({ id: 1 });
   });
 
   it('Negotiation messages calls getMessagesForNegotiation', async () => {
     getMessagesNegotiationType.mockReturnValueOnce([{ id: 1 }, { id: 2 }]);
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Negotiation?.messages(
-      { _id: '123' },
+      { _id: new Types.ObjectId('5fdd925d9cc5800455e1855e') },
       null,
-      mockContext
+      mockContext,
     );
     expect(res).toEqual([{ id: 1 }, { id: 2 }]);
   });

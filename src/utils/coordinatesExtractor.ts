@@ -22,8 +22,8 @@ interface GeoResponse {
   error?: ErrorGeo;
 }
 
-export const getCoordinatesFromAddress = async (
-  address: Address
+const getCoordinatesFromAddress = async (
+  address: Address,
 ): Promise<Coordinates | null> => {
   const params = {
     access_key: GEOAPI,
@@ -34,7 +34,7 @@ export const getCoordinatesFromAddress = async (
       'http://api.positionstack.com/v1/forward',
       {
         params,
-      }
+      },
     );
     if (data.data?.length) {
       return {
@@ -47,3 +47,5 @@ export const getCoordinatesFromAddress = async (
   }
   return null;
 };
+
+export default getCoordinatesFromAddress;

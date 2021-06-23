@@ -1,11 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.typeDefs = void 0;
 const apollo_server_express_1 = require("apollo-server-express");
-exports.typeDefs = apollo_server_express_1.gql `
+const typeDefs = apollo_server_express_1.gql `
   type Address {
     via: String
-    CAP: String
+    # CAP: String
     comune: String!
     # provincia: Province!
     # regione: Regioni!
@@ -13,7 +12,7 @@ exports.typeDefs = apollo_server_express_1.gql `
 
   input AddressInput {
     via: String
-    CAP: String
+    # CAP: String
     comune: String!
     # provincia: Province!
     # regione: Regioni!
@@ -65,18 +64,18 @@ exports.typeDefs = apollo_server_express_1.gql `
 
   interface Ad {
     _id: ID!
-    postedBy: User! @authenticated
+    postedBy: User!
     harvest: Int!
     abv: Float!
-    priceFrom: Float! @authenticated
-    priceTo: Float! @authenticated
+    priceFrom: Float!
+    priceTo: Float!
     content: String
     # address: Address! @authenticated
-    negotiations: [Negotiation!] @authenticated
+    negotiations: [Negotiation!]
     activeNegotiations: Int
     savedTimes: Int
     "viewedBy: [User]"
-    numberViews: Int @authenticated
+    numberViews: Int
     typeAd: TypeAd!
     typeProduct: TypeProduct!
     isActive: Boolean!
@@ -86,7 +85,7 @@ exports.typeDefs = apollo_server_express_1.gql `
 
   type AdWine implements Ad {
     _id: ID!
-    postedBy: User! @authenticated
+    postedBy: User!
     wineName: String!
     wine: Wine
     sottoZona: String
@@ -94,13 +93,13 @@ exports.typeDefs = apollo_server_express_1.gql `
     metodoProduttivo: MetodoProduttivo
     harvest: Int!
     abv: Float!
-    priceFrom: Float! @authenticated
-    priceTo: Float! @authenticated
+    priceFrom: Float!
+    priceTo: Float!
     litersFrom: Int
     litersTo: Int
     content: String
     # address: Address! @authenticated
-    negotiations: [Negotiation!] @authenticated
+    negotiations: [Negotiation!]
     activeNegotiations: Int
     savedTimes: Int
     "viewedBy: [User]"
@@ -114,18 +113,18 @@ exports.typeDefs = apollo_server_express_1.gql `
 
   type AdGrape implements Ad {
     _id: ID!
-    postedBy: User! @authenticated
+    postedBy: User!
     vineyardName: String!
     vineyard: Vineyard
     harvest: Int!
     abv: Float!
-    priceFrom: Float! @authenticated
-    priceTo: Float! @authenticated
+    priceFrom: Float!
+    priceTo: Float!
     kgFrom: Int!
     kgTo: Int!
     content: String
     # address: Address!
-    negotiations: [Negotiation!] @authenticated
+    negotiations: [Negotiation!]
     activeNegotiations: Int
     savedTimes: Int
     "viewedBy: [User]"
@@ -154,14 +153,14 @@ exports.typeDefs = apollo_server_express_1.gql `
       typeProduct: TypeProduct!
       wineName: String
       vineyardName: String
-      offset: Int
-      orderBy: QueryOrderBy
-      limit: Int
+      offset: Int = 0
+      orderBy: QueryOrderBy = createdAt_DESC
+      limit: Int = 10
     ): AdsResult
     adsForUser(
-      offset: Int
-      orderBy: QueryOrderBy
-      limit: Int
+      offset: Int = 0
+      orderBy: QueryOrderBy = createdAt_DESC
+      limit: Int = 10
       isActive: Boolean
       user: ID!
     ): AdsResult
@@ -178,3 +177,4 @@ exports.typeDefs = apollo_server_express_1.gql `
     adRemoved: Ad! @authenticated
   }
 `;
+exports.default = typeDefs;

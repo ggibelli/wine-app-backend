@@ -1,23 +1,14 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
-import { EspressioneComunitaria, DenomZona } from '../types';
-
-export interface IWine {
-  denominazioneVino: string;
-  tipoVino?: string;
-  espressioneComunitaria: EspressioneComunitaria;
-  denominazioneZona: DenomZona;
-  vitigni: mongoose.Types.Array<string>;
-}
-
-export interface WineGraphQl extends IWine {
-  _id: mongoose.Types.ObjectId;
-}
-
-export interface IWineDoc extends IWine, Document {}
+import {
+  WineDocument,
+  WineModel,
+  WineSchema,
+} from '../interfaces/mongoose.gen';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const wineSchemaFields: Record<keyof IWine, any> = {
+const wineSchema: WineSchema = new Schema({
+  _id: { type: Schema.Types.ObjectId },
   denominazioneVino: {
     type: String,
     required: true,
@@ -38,12 +29,12 @@ const wineSchemaFields: Record<keyof IWine, any> = {
       type: String,
     },
   ],
-};
-
-const wineSchema = new Schema(wineSchemaFields);
+});
 
 wineSchema.index({ denominazioneVino: 1 });
-
+// @ts-ignore
 wineSchema.plugin(mongooseUniqueValidator);
-
-export const Wine = mongoose.model<IWineDoc>('Wine', wineSchema);
+export const Wine: WineModel = mongoose.model<WineDocument, WineModel>(
+  'Wine',
+  wineSchema,
+);

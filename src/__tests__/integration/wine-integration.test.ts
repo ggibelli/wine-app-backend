@@ -2,19 +2,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { gql } from 'apollo-server-express';
+import { LeanDocument, Types } from 'mongoose';
 import {
   testClient,
   connectToDb,
   dropTestDb,
   closeDbConnection,
 } from '../../tests/integrationSetup';
-//import { ObjectId } from 'mongodb';
+// import { ObjectId } from 'mongodb';
 import { User } from '../../models/user';
 import { users } from '../../tests/mocksTests';
 import { WineInput, WineInputUpdate } from '../../generated/graphql';
 import { EspressioneComunitaria, DenomZona } from '../../types';
 // import createWineDb from '../../utils/wineExtractor';
-import { Wine, WineGraphQl } from '../../models/wine';
+import { Wine } from '../../models/wine';
+import { WineDocument } from '../../interfaces/mongoose.gen';
 
 const { query, mutate, setOptions } = testClient;
 
@@ -118,12 +120,13 @@ beforeAll(async () => {
   await connectToDb();
   await dropTestDb();
   const usersMock = users();
-  const user = new User(usersMock[0]);
-  const otherUser = new User(usersMock[1]);
+  const user = new User({ ...usersMock[0], _id: new Types.ObjectId() });
+  const otherUser = new User({ ...usersMock[1], _id: new Types.ObjectId() });
   const wine = new Wine({
     denominazioneVino: 'Abruzzo',
     espressioneComunitaria: 'DOP',
     denominazioneZona: 'DOC',
+    _id: new Types.ObjectId(),
   });
   await user.save();
   await otherUser.save();
@@ -137,7 +140,7 @@ describe('Integration test wines', () => {
   // });
 
   // it('query single wine fails if not logged', async () => {
-  //   const wines: WineGraphQl[] = await Wine.find({}).lean().exec();
+  //   const wines: LeanDocument<IWineDoc>[] = await Wine.find({}).lean().exec();
   //   const res = await query(WINE, {
   //     variables: { id: wines[0]._id.toString() },
   //   });
@@ -148,7 +151,7 @@ describe('Integration test wines', () => {
     const wine: WineInput = {
       denominazioneVino: 'ciccio',
       espressioneComunitaria: EspressioneComunitaria.DOP,
-      //@ts-ignore
+      // @ts-ignore
       denominazioneZona: DenomZona.DOC,
     };
     const res = await mutate(CREATE_WINE, {
@@ -160,7 +163,7 @@ describe('Integration test wines', () => {
   it('query wines succeds if logged in', async () => {
     const data: any = await mutate(LOGIN_VALID);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const token: string = data.data.login.response.token;
+    const { token } = data.data.login.response;
     setOptions({
       request: {
         headers: {
@@ -173,7 +176,9 @@ describe('Integration test wines', () => {
   });
 
   it('query single wine succeds if logged', async () => {
-    const wine: WineGraphQl[] = await Wine.find({}).lean().exec();
+    const wine: LeanDocument<WineDocument>[] = await Wine.find({})
+      .lean()
+      .exec();
     const res = await query(WINE, {
       variables: { id: wine[0]._id.toString() },
     });
@@ -184,7 +189,7 @@ describe('Integration test wines', () => {
     const wine: WineInput = {
       denominazioneVino: 'ciccio',
       espressioneComunitaria: EspressioneComunitaria.DOP,
-      //@ts-ignore
+      // @ts-ignore
       denominazioneZona: DenomZona.DOC,
     };
     const res = await mutate(CREATE_WINE, {
@@ -194,7 +199,9 @@ describe('Integration test wines', () => {
   });
 
   it('update wine mutation succeds if logged in and admin', async () => {
-    const wineToUpdate: WineGraphQl[] = await Wine.find({}).lean().exec();
+    const wineToUpdate: LeanDocument<WineDocument>[] = await Wine.find({})
+      .lean()
+      .exec();
     const wine: WineInputUpdate = {
       _id: wineToUpdate[0]._id.toString(),
       denominazioneVino: 'Caprotto',
@@ -206,7 +213,9 @@ describe('Integration test wines', () => {
   });
 
   it('delete wine mutation succeds if logged in and admin', async () => {
-    const wineToDelete: WineGraphQl[] = await Wine.find({}).lean().exec();
+    const wineToDelete: LeanDocument<WineDocument>[] = await Wine.find({})
+      .lean()
+      .exec();
     const res = await mutate(DELETE_WINE, {
       variables: { id: wineToDelete[0]._id.toString() },
     });
@@ -216,7 +225,7 @@ describe('Integration test wines', () => {
   it('update wine mutation fails if logged in and not admin', async () => {
     const data: any = await mutate(LOGIN_VALID_OTHER);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const token = data.data.login.response.token;
+    const { token } = data.data.login.response;
     setOptions({
       request: {
         headers: {
@@ -224,7 +233,9 @@ describe('Integration test wines', () => {
         },
       },
     });
-    const wineToUpdate: WineGraphQl[] = await Wine.find({}).lean().exec();
+    const wineToUpdate: LeanDocument<WineDocument>[] = await Wine.find({})
+      .lean()
+      .exec();
     const wine: WineInputUpdate = {
       _id: wineToUpdate[0]._id.toString(),
       denominazioneVino: 'Caprotto',
@@ -236,7 +247,9 @@ describe('Integration test wines', () => {
   });
 
   it('delete wine mutation fails if logged in and not admin', async () => {
-    const wineToDelete: WineGraphQl[] = await Wine.find({}).lean().exec();
+    const wineToDelete: LeanDocument<WineDocument>[] = await Wine.find({})
+      .lean()
+      .exec();
     const res = await mutate(DELETE_WINE, {
       variables: { id: wineToDelete[0]._id.toString() },
     });
@@ -247,7 +260,7 @@ describe('Integration test wines', () => {
     const wine: WineInput = {
       denominazioneVino: 'ciccio',
       espressioneComunitaria: EspressioneComunitaria.DOP,
-      //@ts-ignore
+      // @ts-ignore
       denominazioneZona: DenomZona.DOC,
     };
     const res = await mutate(CREATE_WINE, {

@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server-express';
 
-export const typeDefs = gql`
+const typeDefs = gql`
   type Address {
     via: String
     # CAP: String
@@ -63,18 +63,18 @@ export const typeDefs = gql`
 
   interface Ad {
     _id: ID!
-    postedBy: User! @authenticated
+    postedBy: User!
     harvest: Int!
     abv: Float!
-    priceFrom: Float! @authenticated
-    priceTo: Float! @authenticated
+    priceFrom: Float!
+    priceTo: Float!
     content: String
     # address: Address! @authenticated
-    negotiations: [Negotiation!] @authenticated
+    negotiations: [Negotiation!]
     activeNegotiations: Int
     savedTimes: Int
     "viewedBy: [User]"
-    numberViews: Int @authenticated
+    numberViews: Int
     typeAd: TypeAd!
     typeProduct: TypeProduct!
     isActive: Boolean!
@@ -84,7 +84,7 @@ export const typeDefs = gql`
 
   type AdWine implements Ad {
     _id: ID!
-    postedBy: User! @authenticated
+    postedBy: User!
     wineName: String!
     wine: Wine
     sottoZona: String
@@ -92,13 +92,13 @@ export const typeDefs = gql`
     metodoProduttivo: MetodoProduttivo
     harvest: Int!
     abv: Float!
-    priceFrom: Float! @authenticated
-    priceTo: Float! @authenticated
+    priceFrom: Float!
+    priceTo: Float!
     litersFrom: Int
     litersTo: Int
     content: String
     # address: Address! @authenticated
-    negotiations: [Negotiation!] @authenticated
+    negotiations: [Negotiation!]
     activeNegotiations: Int
     savedTimes: Int
     "viewedBy: [User]"
@@ -112,18 +112,18 @@ export const typeDefs = gql`
 
   type AdGrape implements Ad {
     _id: ID!
-    postedBy: User! @authenticated
+    postedBy: User!
     vineyardName: String!
     vineyard: Vineyard
     harvest: Int!
     abv: Float!
-    priceFrom: Float! @authenticated
-    priceTo: Float! @authenticated
+    priceFrom: Float!
+    priceTo: Float!
     kgFrom: Int!
     kgTo: Int!
     content: String
     # address: Address!
-    negotiations: [Negotiation!] @authenticated
+    negotiations: [Negotiation!]
     activeNegotiations: Int
     savedTimes: Int
     "viewedBy: [User]"
@@ -152,14 +152,14 @@ export const typeDefs = gql`
       typeProduct: TypeProduct!
       wineName: String
       vineyardName: String
-      offset: Int
-      orderBy: QueryOrderBy
-      limit: Int
+      offset: Int = 0
+      orderBy: QueryOrderBy = createdAt_DESC
+      limit: Int = 10
     ): AdsResult
     adsForUser(
-      offset: Int
-      orderBy: QueryOrderBy
-      limit: Int
+      offset: Int = 0
+      orderBy: QueryOrderBy = createdAt_DESC
+      limit: Int = 10
       isActive: Boolean
       user: ID!
     ): AdsResult
@@ -176,3 +176,5 @@ export const typeDefs = gql`
     adRemoved: Ad! @authenticated
   }
 `;
+
+export default typeDefs;

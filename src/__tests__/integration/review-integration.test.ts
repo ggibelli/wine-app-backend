@@ -3,23 +3,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { gql } from 'apollo-server-express';
+import cron from 'cron';
+import { LeanDocument, Types } from 'mongoose';
 import {
   testClient,
   connectToDb,
   dropTestDb,
   closeDbConnection,
 } from '../../tests/integrationSetup';
-//import { ObjectId } from 'mongodb';
+// import { ObjectId } from 'mongodb';
 import { User } from '../../models/user';
 import { Ad } from '../../models/ad';
-import { Review, ReviewGraphQl } from '../../models/review';
+import { Review } from '../../models/review';
 import { users, ads } from '../../tests/mocksTests';
-import { ReviewInput } from '../../generated/graphql';
-import { Negotiation, NegotiationGraphQl } from '../../models/negotiation';
-import cron from 'cron';
+import { ReviewInput, TypeAd } from '../../generated/graphql';
+import { Negotiation } from '../../models/negotiation';
+import {
+  ReviewDocument, 
+  NegotiationDocument,
+} from '../../interfaces/mongoose.gen';
 
-const fakeStart = jest.fn(() => fakeStop());
 const fakeStop = jest.fn(() => null);
+const fakeStart = jest.fn(() => fakeStop());
 const FakeCron = jest.fn(() => ({
   stop: fakeStop,
   start: fakeStart,
@@ -29,7 +34,7 @@ const FakeCron = jest.fn(() => ({
 // @ts-ignore
 cron.CronJob = FakeCron;
 
-//import { ObjectId } from 'mongodb';
+// import { ObjectId } from 'mongodb';
 
 const { query, mutate, setOptions } = testClient;
 
@@ -171,31 +176,42 @@ beforeAll(async () => {
   await dropTestDb();
   const usersMock = users();
   const adsMock = ads();
-  const user = new User(usersMock[0]);
-  const otherUser = new User(usersMock[1]);
-  const thirdUser = new User(usersMock[2]);
-  const ad = new Ad({ ...adsMock[0], postedBy: user });
-  const otherAd = new Ad({ ...adsMock[1], postedBy: otherUser });
-  //const thirdAd = new Ad({ ...adsMock[2], postedBy: thirdUser });
+  const user = new User({ ...usersMock[0], _id: new Types.ObjectId() });
+  const otherUser = new User({ ...usersMock[1], _id: new Types.ObjectId() });
+  const thirdUser = new User({ ...usersMock[2], _id: new Types.ObjectId() });
+  const ad = new Ad({
+    ...adsMock[0],
+    postedBy: user,
+    _id: new Types.ObjectId(),
+  });
+  const otherAd = new Ad({
+    ...adsMock[1],
+    postedBy: otherUser,
+    _id: new Types.ObjectId(),
+  });
+  // const thirdAd = new Ad({ ...adsMock[2], postedBy: thirdUser });
   const negotiation = new Negotiation({
     createdBy: otherUser,
-    ad: ad,
+    ad,
     forUserAd: ad.postedBy,
     type: ad.typeAd,
+    _id: new Types.ObjectId(),
   });
   const otherNegotiation = new Negotiation({
     createdBy: thirdUser,
     ad: otherAd,
     forUserAd: otherAd.postedBy,
     type: otherAd.typeAd,
+    _id: new Types.ObjectId(),
   });
   const review = new Review({
     createdBy: otherUser,
-    negotiation: negotiation,
+    negotiation,
     forUser: negotiation.forUserAd,
     type: ad.typeAd,
     rating: 5,
     content: 'perfect',
+    _id: new Types.ObjectId(),
   });
   const otherReview = new Review({
     createdBy: thirdUser,
@@ -204,6 +220,7 @@ beforeAll(async () => {
     type: ad.typeAd,
     rating: 2,
     content: 'very poor',
+    _id: new Types.ObjectId(),
   });
   await user.save();
   await otherUser.save();
@@ -226,7 +243,9 @@ describe('Integration test reviews', () => {
   });
 
   it('query single review fails if not logged', async () => {
-    const review: ReviewGraphQl[] = await Review.find({}).lean().exec();
+    const review: LeanDocument<ReviewDocument>[] = await Review.find({})
+      .lean()
+      .exec();
     const res = await query(REVIEW, {
       variables: { id: review[0]._id.toString() },
     });
@@ -234,18 +253,16 @@ describe('Integration test reviews', () => {
   });
 
   it('create review mutation fails if not logged in', async () => {
-    const negotiation: NegotiationGraphQl[] = await Negotiation.find({})
-      .lean()
-      .exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
     const review: ReviewInput = {
       negotiation: negotiation[0]._id.toString(),
       forUser: negotiation[0].forUserAd.toString(),
-      type: negotiation[0].type,
+      type: negotiation[0].type as TypeAd,
       rating: 4,
       content: 'super good',
     };
     const res = await mutate(CREATE_REVIEW, {
-      variables: { review: review },
+      variables: { review },
     });
     expect(res).toMatchSnapshot();
   });
@@ -253,7 +270,7 @@ describe('Integration test reviews', () => {
   it('create review mutation successfull', async () => {
     const data: any = await mutate(LOGIN_VALID);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const token: string = data.data.login.response.token;
+    const { token } = data.data.login.response;
     setOptions({
       request: {
         headers: {
@@ -261,13 +278,11 @@ describe('Integration test reviews', () => {
         },
       },
     });
-    const negotiation: NegotiationGraphQl[] = await Negotiation.find({})
-      .lean()
-      .exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
     const review: ReviewInput = {
       negotiation: negotiation[1]._id.toString(),
       forUser: negotiation[1].forUserAd.toString(),
-      type: negotiation[1].type,
+      type: negotiation[1].type as TypeAd,
       rating: 3,
       content: 'average',
     };
@@ -280,13 +295,11 @@ describe('Integration test reviews', () => {
   });
 
   it('create review mutation fails if same negotiation and user', async () => {
-    const negotiation: NegotiationGraphQl[] = await Negotiation.find({})
-      .lean()
-      .exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
     const review: ReviewInput = {
       negotiation: negotiation[1]._id.toString(),
       forUser: negotiation[1].forUserAd.toString(),
-      type: negotiation[1].type,
+      type: negotiation[1].type as TypeAd,
       rating: 3,
       content: 'average',
     };
@@ -298,13 +311,11 @@ describe('Integration test reviews', () => {
   });
 
   it('create review mutation fails if is for own user', async () => {
-    const negotiation: NegotiationGraphQl[] = await Negotiation.find({})
-      .lean()
-      .exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
     const review: ReviewInput = {
       negotiation: negotiation[0]._id.toString(),
       forUser: negotiation[0].forUserAd.toString(),
-      type: negotiation[0].type,
+      type: negotiation[0].type as TypeAd,
       rating: 2,
       content: 'average',
     };
@@ -320,7 +331,9 @@ describe('Integration test reviews', () => {
   });
 
   it('query single review succeds if logged', async () => {
-    const review: ReviewGraphQl[] = await Review.find({}).lean().exec();
+    const review: LeanDocument<ReviewDocument>[] = await Review.find({})
+      .lean()
+      .exec();
     const res = await query(REVIEW, {
       variables: { id: review[0]._id.toString() },
     });
@@ -329,7 +342,8 @@ describe('Integration test reviews', () => {
 
   it('update review mutation succeds if logged in and same user', async () => {
     const user = await User.findOne({ firstName: 'Giovanni' });
-    const reviewToUpdate: ReviewGraphQl | null = await Review.findOne({
+    if (!user) throw new Error();
+    const reviewToUpdate: LeanDocument<ReviewDocument> | null = await Review.findOne({
       createdBy: user,
     })
       .lean()
@@ -339,14 +353,16 @@ describe('Integration test reviews', () => {
       content: 'cambiato',
     };
     const res = await mutate(UPDATE_REVIEW, {
-      variables: { review: review },
+      variables: { review },
     });
     expect(res).toMatchSnapshot();
   });
 
   it('update review mutation fails if logged in and not same user', async () => {
     const user = await User.findOne({ firstName: 'Mariuccio' });
-    const reviewToUpdate: ReviewGraphQl | null = await Review.findOne({
+    if (!user) throw new Error();
+
+    const reviewToUpdate: LeanDocument<ReviewDocument> | null = await Review.findOne({
       createdBy: user,
     })
       .lean()
@@ -363,7 +379,9 @@ describe('Integration test reviews', () => {
 
   it('delete review mutation succeds if logged in and same user', async () => {
     const user = await User.findOne({ firstName: 'Giovanni' });
-    const reviewToDelete: ReviewGraphQl | null = await Review.findOne({
+    if (!user) throw new Error();
+
+    const reviewToDelete: LeanDocument<ReviewDocument> | null = await Review.findOne({
       createdBy: user,
     })
       .lean()
@@ -376,7 +394,9 @@ describe('Integration test reviews', () => {
 
   it('delete review mutation fails if logged in and not same user', async () => {
     const user = await User.findOne({ firstName: 'Mariuccio' });
-    const reviewToDelete: ReviewGraphQl | null = await Review.findOne({
+    if (!user) throw new Error();
+
+    const reviewToDelete: LeanDocument<ReviewDocument> | null = await Review.findOne({
       createdBy: user,
     })
       .lean()
@@ -390,7 +410,7 @@ describe('Integration test reviews', () => {
   it('query reviews succeds if logged in and not admin, only user review shown', async () => {
     const data: any = await mutate(LOGIN_VALID_OTHER);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const token: string = data.data.login.response.token;
+    const { token } = data.data.login.response;
     setOptions({
       request: {
         headers: {

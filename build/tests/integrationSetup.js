@@ -7,6 +7,7 @@ exports.testClient = exports.closeDbConnection = exports.dropTestDb = exports.co
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// eslint-disable-next-line import/no-extraneous-dependencies
 const apollo_server_integration_testing_1 = require("apollo-server-integration-testing");
 const apollo_server_express_1 = require("apollo-server-express");
 const mongoose_1 = __importDefault(require("mongoose"));

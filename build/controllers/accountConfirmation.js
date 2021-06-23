@@ -3,13 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.confirmationRouter = void 0;
 const express_1 = require("express");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const user_1 = require("../models/user");
 const config_1 = require("../utils/config");
-exports.confirmationRouter = express_1.Router();
-exports.confirmationRouter.get('/verify', async (req, res) => {
+const confirmationRouter = express_1.Router();
+confirmationRouter.get('/verify', 
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+async (req, res) => {
     const token = req.query.id;
     if (token && typeof token === 'string') {
         try {
@@ -27,3 +28,4 @@ exports.confirmationRouter.get('/verify', async (req, res) => {
         return res.sendStatus(403);
     }
 });
+exports.default = confirmationRouter;

@@ -26,7 +26,7 @@ exports.Vineyard = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-validator"));
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const vineyardSchemaFields = {
+const vineyardSchema = new mongoose_1.Schema({
     name: {
         type: String,
         required: true,
@@ -35,7 +35,7 @@ const vineyardSchemaFields = {
         type: String,
         enum: ['BIANCA', 'ROSSA'],
     },
-};
-const vineyardSchema = new mongoose_1.Schema(vineyardSchemaFields);
+});
+// @ts-ignore
 vineyardSchema.plugin(mongoose_unique_validator_1.default);
 exports.Vineyard = mongoose_1.default.model('Vineyard', vineyardSchema);

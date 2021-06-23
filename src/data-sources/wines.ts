@@ -1,38 +1,39 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
 import { MongoDataSource } from 'apollo-datasource-mongodb';
+import { LeanDocument, Types } from 'mongoose';
+
 import { Errors } from '../types';
-import { IWineDoc, WineGraphQl } from '../models/wine';
-import { UserGraphQl } from '../models/user';
+import { WineDocument, UserDocument } from '../interfaces/mongoose.gen';
 import { WineInput, WineInputUpdate } from '../generated/graphql';
 
 interface Context {
-  user: UserGraphQl;
-  createToken(user: UserGraphQl): string;
+  user: LeanDocument<UserDocument>;
+  createToken(user: LeanDocument<UserDocument>): string;
 }
 
 interface Response {
-  response: IWineDoc | WineGraphQl | null;
+  response: WineDocument | LeanDocument<WineDocument> | null;
   errors: Errors[];
 }
 
-export default class Wines extends MongoDataSource<IWineDoc, Context> {
+export default class Wines extends MongoDataSource<WineDocument, Context> {
   async getWineByName(
-    wineName: string | undefined
-  ): Promise<WineGraphQl | null> {
-    //return this.model.findById(ad.postedBy).lean().exec();
+    wineName: string | undefined,
+  ): Promise<LeanDocument<WineDocument> | null> {
+    // return this.model.findById(ad.postedBy).lean().exec();
     return this.model.findOne({ denominazioneVino: wineName }).lean().exec();
   }
-  async getWine(id: string): Promise<IWineDoc | null | undefined> {
+
+  async getWine(id: string): Promise<WineDocument | null | undefined> {
     return this.findOneById(id);
   }
-  async getWines(): Promise<WineGraphQl[]> {
+
+  async getWines(): Promise<LeanDocument<WineDocument>[]> {
     return this.model.find({}).lean().exec();
   }
 
   async createWine(wine: WineInput): Promise<Response> {
     const errors: Errors[] = [];
-    const createdWine = new this.model(wine);
+    const createdWine = new this.model({ _id: new Types.ObjectId(), ...wine });
     try {
       await createdWine.save();
     } catch (e) {
@@ -55,7 +56,7 @@ export default class Wines extends MongoDataSource<IWineDoc, Context> {
       new: true,
     });
     if (!updatedWine) {
-      errors.push({
+      errors.push({ 
         name: 'General error',
         text: 'Errors during the wine update',
       });

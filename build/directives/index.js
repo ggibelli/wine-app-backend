@@ -1,13 +1,14 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthorizedDirective = exports.AuthenticateDirective = exports.FormatDateDirective = void 0;
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable max-classes-per-file */
 const apollo_server_express_1 = require("apollo-server-express");
 const graphql_1 = require("graphql");
-const dateFormat_1 = require("../utils/dateFormat");
+const dateFormat_1 = __importDefault(require("../utils/dateFormat"));
 class FormatDateDirective extends apollo_server_express_1.SchemaDirectiveVisitor {
     visitFieldDefinition(field) {
         const { resolve = graphql_1.defaultFieldResolver } = field;
@@ -25,7 +26,7 @@ class FormatDateDirective extends apollo_server_express_1.SchemaDirectiveVisitor
             const date = await resolve.call(this, root, otherArgs, context, info);
             if (!date)
                 return;
-            return dateFormat_1.formatDate(date, format || defaultFormat);
+            return dateFormat_1.default(date, format || defaultFormat);
         };
         field.type = graphql_1.GraphQLString;
     }

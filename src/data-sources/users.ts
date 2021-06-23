@@ -1,28 +1,26 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { MongoDataSource } from 'apollo-datasource-mongodb';
-import { IUserDoc, UserGraphQl } from '../models/user';
 import isemail from 'isemail';
+import { CronJob } from 'cron';
+import { LeanDocument, Types } from 'mongoose';
+import { AdDocument, UserDocument } from '../interfaces/mongoose.gen';
 import isValidPassword from '../utils/passwordValidator';
 import isPivaValid from '../utils/pivaValidator';
 import { UserInput, UserInputUpdate } from '../generated/graphql';
 import { Errors } from '../types';
 import { PORT } from '../utils/config';
 import { sendMail } from '../utils/mailServer';
-import { CronJob } from 'cron';
 import { loggerError } from '../utils/logger';
-import { IAdDoc } from '../models/ad';
-import { getCoordinatesFromAddress } from '../utils/coordinatesExtractor';
+import getCoordinatesFromAddress from '../utils/coordinatesExtractor';
 
 interface Context {
-  user: UserGraphQl;
-  createToken(user: IUserDoc): string;
-  createTokenMail(user: IUserDoc): string;
+  user: LeanDocument<UserDocument>;
+  createToken(user: UserDocument): string;
+  createTokenMail(user: UserDocument): string;
 }
 
 export interface AuthResponse {
   response: {
-    user: IUserDoc | UserGraphQl;
+    user: UserDocument | LeanDocument<UserDocument>;
     token: string;
   } | null;
 
@@ -30,16 +28,16 @@ export interface AuthResponse {
 }
 
 export interface UserResponse {
-  response: UserGraphQl | null;
+  response: LeanDocument<UserDocument> | null;
   errors: Errors[];
 }
 
-export default class Users extends MongoDataSource<IUserDoc, Context> {
-  async getUser(userId: string): Promise<IUserDoc | null | undefined> {
+export default class Users extends MongoDataSource<UserDocument, Context> {
+  async getUser(userId: string): Promise<UserDocument | null | undefined> {
     return this.findOneById(userId);
   }
 
-  getUsers(): Promise<UserGraphQl[]> {
+  getUsers(): Promise<LeanDocument<UserDocument>[]> {
     return this.model.find({}).lean().exec();
   }
 
@@ -65,7 +63,12 @@ export default class Users extends MongoDataSource<IUserDoc, Context> {
     }
     const coordinates = await getCoordinatesFromAddress(user.address);
 
-    const newUser = new this.model({ ...user, coordinates });
+    const newUser = new this.model({
+      _id: new Types.ObjectId(),
+
+      ...user,
+      coordinates,
+    });
     if (errors.length > 0) {
       return {
         response: null,
@@ -179,15 +182,12 @@ export default class Users extends MongoDataSource<IUserDoc, Context> {
     };
   }
 
-  async saveAd(ad: IAdDoc) {
+  async saveAd(ad: AdDocument) {
     const errors: Errors[] = [];
     const user = await this.model.findById(this.context.user._id);
-
-    const isSaved =
-      user?.savedAds?.findIndex(
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        (adSaved) => adSaved._id.toString() === ad._id.toString()
-      ) !== -1;
+    const isSaved = user?.savedAds?.findIndex(
+      (adSaved) => adSaved.toString() === ad._id.toString(),
+    ) !== -1;
     if (isSaved) {
       ad.savedBy?.pull({ _id: user?._id });
 
@@ -224,7 +224,7 @@ export default class Users extends MongoDataSource<IUserDoc, Context> {
         errors,
       };
     }
-    const passValid = await user?.validatePassword(password);
+    const passValid = await user.validatePassword(password);
     if (!passValid) {
       errors.push({ name: 'UserInputError', text: 'Wrong credentials' });
       return {

@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server-express';
 
-export const typeDefs = gql`
+const typeDefs = gql`
   type Vineyard {
     _id: ID!
     name: String!
@@ -38,3 +38,5 @@ export const typeDefs = gql`
     deleteVineyard(id: ID!): VineyardPayload @authorized @authenticated
   }
 `;
+
+export default typeDefs;

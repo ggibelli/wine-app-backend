@@ -1,27 +1,14 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { IUserDoc } from './user';
-import { INegotiationDoc } from './negotiation';
-import { TypeAd, Rating } from '../types';
+import mongoose, { Schema } from 'mongoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 
-export interface IReview {
-  createdBy: IUserDoc['_id'];
-  negotiation: INegotiationDoc['_id'];
-  forUser: IUserDoc['_id'];
-  rating: Rating;
-  dateCreated: Date;
-  content: string;
-  type: TypeAd;
-}
-
-export interface ReviewGraphQl extends IReview {
-  _id: mongoose.Types.ObjectId | string;
-}
-
-export interface IReviewDoc extends IReview, Document {}
+import {
+  ReviewModel,
+  ReviewSchema,
+  ReviewDocument,
+} from '../interfaces/mongoose.gen';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const reviewSchemaFields: Record<keyof IReview, any> = {
+const reviewSchema: ReviewSchema = new Schema({
   createdBy: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -56,11 +43,13 @@ const reviewSchemaFields: Record<keyof IReview, any> = {
     type: String,
     enum: ['SELL', 'BUY'],
   },
-};
-
-const reviewSchema = new Schema(reviewSchemaFields);
+});
 
 reviewSchema.index({ createdBy: 1, negotiation: 1 }, { unique: true });
+// @ts-ignore
 reviewSchema.plugin(mongooseUniqueValidator);
 
-export const Review = mongoose.model<IReviewDoc>('Review', reviewSchema);
+export const Review: ReviewModel = mongoose.model<ReviewDocument, ReviewModel>(
+  'Review',
+  reviewSchema,
+);

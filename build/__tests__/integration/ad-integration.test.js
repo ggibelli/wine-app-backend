@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 const apollo_server_express_1 = require("apollo-server-express");
+const cron_1 = __importDefault(require("cron"));
+const mongoose_1 = require("mongoose");
 const integrationSetup_1 = require("../../tests/integrationSetup");
 const user_1 = require("../../models/user");
 const ad_1 = require("../../models/ad");
@@ -13,12 +15,10 @@ const mocksTests_1 = require("../../tests/mocksTests");
 const types_1 = require("../../types");
 // import createWineDb from '../../utils/wineExtractor';
 const wine_1 = require("../../models/wine");
-//import { ObjectId } from 'mongodb';
-const cron_1 = __importDefault(require("cron"));
+const fakeStop = jest.fn(() => null);
 const fakeStart = jest.fn(() => {
     fakeStop();
 });
-const fakeStop = jest.fn(() => null);
 const fakeTick = jest.fn();
 const FakeCron = jest.fn(() => ({
     stop: fakeStop,
@@ -33,7 +33,7 @@ const ADS = apollo_server_express_1.gql `
   {
     ads(typeAd: BUY, typeProduct: AdWine) {
       ads {
-        datePosted
+        #datePosted
         postedBy {
           firstName
         }
@@ -119,7 +119,7 @@ const DELETE_AD = apollo_server_express_1.gql `
       response {
         isActive
         content
-        datePosted
+        #datePosted
         postedBy {
           firstName
         }
@@ -176,14 +176,19 @@ beforeAll(async () => {
     const usersMock = mocksTests_1.users();
     const adsMock = mocksTests_1.ads();
     // const wineDb = await createWineDb();
-    const user = new user_1.User(usersMock[0]);
-    const otherUser = new user_1.User(usersMock[1]);
-    const thirdUser = new user_1.User(usersMock[2]);
-    const ad = new ad_1.Ad({ ...adsMock[0], postedBy: user });
+    const user = new user_1.User({ ...usersMock[0], _id: new mongoose_1.Types.ObjectId() });
+    const otherUser = new user_1.User({ ...usersMock[1], _id: new mongoose_1.Types.ObjectId() });
+    const thirdUser = new user_1.User({ ...usersMock[2], _id: new mongoose_1.Types.ObjectId() });
+    const ad = new ad_1.Ad({
+        ...adsMock[0],
+        postedBy: user,
+        _id: new mongoose_1.Types.ObjectId(),
+    });
     const wine = new wine_1.Wine({
         denominazioneVino: 'Abruzzo',
         espressioneComunitaria: 'DOP',
         denominazioneZona: 'DOC',
+        _id: new mongoose_1.Types.ObjectId(),
     });
     await user.save();
     await otherUser.save();
@@ -195,10 +200,10 @@ describe('Integration test ads', () => {
     afterEach(() => {
         jest.clearAllMocks();
     });
-    it('query ads wine in sale fails if not logged in', async () => {
-        const res = await query(ADS);
-        expect(res).toMatchSnapshot();
-    }, 10000);
+    // it('query ads wine in sale fails if not logged in', async () => {
+    //   const res = await query(ADS);
+    //   expect(res).toMatchSnapshot();
+    // }, 10000);
     it('query single ad does not show 0 number visit if not logged', async () => {
         const ad = await ad_1.Ad.find({}).lean().exec();
         const res = await query(AD, {
@@ -232,7 +237,7 @@ describe('Integration test ads', () => {
     it('create adWine mutation fails if user not verified', async () => {
         const data = await mutate(LOGIN_VALID_NOT_VERIFIED);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const token = data.data.login.response.token;
+        const { token } = data.data.login.response;
         setOptions({
             request: {
                 headers: {
@@ -240,10 +245,11 @@ describe('Integration test ads', () => {
                 },
             },
         });
-        const wine = await wine_1.Wine.find({}).lean().exec();
+        const wine = await wine_1.Wine.find({})
+            .lean()
+            .exec();
         const ad = {
             wineName: wine[0].denominazioneVino,
-            sottoZona: 'Sotto',
             harvest: 2020,
             abv: 12.0,
             priceFrom: 1.0,
@@ -263,7 +269,7 @@ describe('Integration test ads', () => {
     it('query ads wine in sale succeds if logged in', async () => {
         const data = await mutate(LOGIN_VALID);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const token = data.data.login.response.token;
+        const { token } = data.data.login.response;
         setOptions({
             request: {
                 headers: {
@@ -284,8 +290,9 @@ describe('Integration test ads', () => {
         })
             .lean()
             .exec();
-        expect(user?.savedAds &&
-            user.savedAds
+        expect(user?.savedAds
+            && user.savedAds
+                // @ts-ignore
                 .map((id) => id.toString())
                 .includes(ads[0]._id.toString())).toBeTruthy();
         expect(res).toMatchSnapshot();
@@ -297,8 +304,9 @@ describe('Integration test ads', () => {
         })
             .lean()
             .exec();
-        expect(user?.savedAds &&
-            user.savedAds
+        expect(user?.savedAds
+            && user.savedAds
+                // @ts-ignore
                 .map((id) => id.toString())
                 .includes(ads[0]._id.toString())).toBeTruthy();
         const res = await mutate(SAVE_AD, {
@@ -309,14 +317,17 @@ describe('Integration test ads', () => {
         })
             .lean()
             .exec();
-        expect(userAfterMutation?.savedAds &&
-            userAfterMutation.savedAds
+        expect(userAfterMutation?.savedAds
+            && userAfterMutation.savedAds
+                // @ts-ignore
                 .map((id) => id.toString())
                 .includes(ads[0]._id.toString())).toBeFalsy();
         expect(res).toMatchSnapshot();
     }, 10000);
     it('create adWine mutation successfull', async () => {
-        const wine = await wine_1.Wine.find({}).lean().exec();
+        const wine = await wine_1.Wine.find({})
+            .lean()
+            .exec();
         const ad = {
             wineName: wine[0].denominazioneVino,
             sottoZona: 'Sotto',
@@ -337,7 +348,9 @@ describe('Integration test ads', () => {
         expect(res).toMatchSnapshot();
     }, 10000);
     it('update adWine mutation succeds if logged in and same user', async () => {
-        const adToUpdate = await ad_1.Ad.find({}).lean().exec();
+        const adToUpdate = await ad_1.Ad.find({})
+            .lean()
+            .exec();
         const ad = {
             _id: adToUpdate[0]._id.toString(),
             isActive: false,
@@ -348,7 +361,9 @@ describe('Integration test ads', () => {
         expect(res).toMatchSnapshot();
     }, 10000);
     it('delete adWine mutation succeds if logged in and same user', async () => {
-        const adToDelete = await ad_1.Ad.find({}).lean().exec();
+        const adToDelete = await ad_1.Ad.find({})
+            .lean()
+            .exec();
         const res = await mutate(DELETE_AD, {
             variables: { id: adToDelete[0]._id.toString() },
         });
@@ -357,7 +372,7 @@ describe('Integration test ads', () => {
     it('update adWine mutation fails if logged in and other user', async () => {
         const data = await mutate(LOGIN_VALID_OTHER);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const token = data.data.login.response.token;
+        const { token } = data.data.login.response;
         setOptions({
             request: {
                 headers: {
@@ -365,7 +380,9 @@ describe('Integration test ads', () => {
                 },
             },
         });
-        const adToUpdate = await ad_1.Ad.find({}).lean().exec();
+        const adToUpdate = await ad_1.Ad.find({})
+            .lean()
+            .exec();
         const ad = {
             _id: adToUpdate[0]._id.toString(),
             isActive: false,
@@ -378,7 +395,7 @@ describe('Integration test ads', () => {
     it('delete adWine mutation fails if logged in and other user', async () => {
         const data = await mutate(LOGIN_VALID_OTHER);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const token = data.data.login.response.token;
+        const { token } = data.data.login.response;
         setOptions({
             request: {
                 headers: {
@@ -386,14 +403,18 @@ describe('Integration test ads', () => {
                 },
             },
         });
-        const adToDelete = await ad_1.Ad.find({}).lean().exec();
+        const adToDelete = await ad_1.Ad.find({})
+            .lean()
+            .exec();
         const res = await mutate(DELETE_AD, {
             variables: { id: adToDelete[0]._id.toString() },
         });
         expect(res).toMatchSnapshot();
     }, 10000);
     it('create adWine mutation successfull, followup sent to user looking to buy wine', async () => {
-        const wine = await wine_1.Wine.find({}).lean().exec();
+        const wine = await wine_1.Wine.find({})
+            .lean()
+            .exec();
         const ad = {
             wineName: wine[0].denominazioneVino,
             harvest: 2020,
@@ -441,8 +462,8 @@ describe('Integration test ads', () => {
             abv: 12.0,
             priceFrom: 1.0,
             priceTo: 1.5,
-            //kgFrom: 500,
-            //kgTo: 600,
+            // kgFrom: 500,
+            // kgTo: 600,
             content: 'buona uva',
             typeAd: types_1.TypeAd.SELL,
             typeProduct: types_1.TypeProduct.ADGRAPE,

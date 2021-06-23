@@ -8,10 +8,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 const apollo_server_express_1 = require("apollo-server-express");
+const supertest_1 = __importDefault(require("supertest"));
+const cron_1 = __importDefault(require("cron"));
+const mongoose_1 = require("mongoose");
 const integrationSetup_1 = require("../../tests/integrationSetup");
 const user_1 = require("../../models/user");
 const mocksTests_1 = require("../../tests/mocksTests");
-const supertest_1 = __importDefault(require("supertest"));
 const index_1 = require("../../index");
 const ad_1 = require("../../models/ad");
 const message_1 = require("../../models/message");
@@ -19,9 +21,8 @@ const negotiation_1 = require("../../models/negotiation");
 const review_1 = require("../../models/review");
 const wine_1 = require("../../models/wine");
 // import createWineDb from '../../utils/wineExtractor';
-const cron_1 = __importDefault(require("cron"));
-const fakeStart = jest.fn(() => fakeStop());
 const fakeStop = jest.fn(() => null);
+const fakeStart = jest.fn(() => fakeStop());
 const FakeCron = jest.fn(() => ({
     stop: fakeStop,
     start: fakeStart,
@@ -225,9 +226,8 @@ const USER = apollo_server_express_1.gql `
   }
 `;
 const indirizzo = {
-    via: 'asd asddasd',
-    CAP: '12345',
-    comune: 'aaaaa',
+    via: 'via roma 12',
+    comune: 'canelli',
 };
 beforeAll(async () => {
     await integrationSetup_1.connectToDb();
@@ -235,30 +235,41 @@ beforeAll(async () => {
     const usersMock = mocksTests_1.users();
     const adsMock = mocksTests_1.ads();
     // const wineDb = await createWineDb();
-    const user = new user_1.User(usersMock[0]);
-    const otherUser = new user_1.User(usersMock[1]);
-    const thirdUser = new user_1.User(usersMock[2]);
-    const ad = new ad_1.Ad({ ...adsMock[0], postedBy: user });
-    const otherAd = new ad_1.Ad({ ...adsMock[1], postedBy: otherUser });
+    const user = new user_1.User({ ...usersMock[0], _id: new mongoose_1.Types.ObjectId() });
+    const otherUser = new user_1.User({ ...usersMock[1], _id: new mongoose_1.Types.ObjectId() });
+    const thirdUser = new user_1.User({ ...usersMock[2], _id: new mongoose_1.Types.ObjectId() });
+    const ad = new ad_1.Ad({
+        ...adsMock[0],
+        postedBy: user,
+        _id: new mongoose_1.Types.ObjectId(),
+    });
+    const otherAd = new ad_1.Ad({
+        ...adsMock[1],
+        postedBy: otherUser,
+        _id: new mongoose_1.Types.ObjectId(),
+    });
     const negotiation = new negotiation_1.Negotiation({
         createdBy: user,
         ad: otherAd,
         forUserAd: otherAd.postedBy,
         type: otherAd.typeAd,
+        _id: new mongoose_1.Types.ObjectId(),
     });
     const otherNegotiation = new negotiation_1.Negotiation({
         createdBy: thirdUser,
-        ad: ad,
+        ad,
         forUserAd: ad.postedBy,
         type: ad.typeAd,
+        _id: new mongoose_1.Types.ObjectId(),
     });
     const review = new review_1.Review({
         createdBy: user,
-        negotiation: negotiation,
+        negotiation,
         forUser: negotiation.forUserAd,
         type: ad.typeAd,
         rating: 5,
         content: 'perfect',
+        _id: new mongoose_1.Types.ObjectId(),
     });
     const otherReview = new review_1.Review({
         createdBy: thirdUser,
@@ -267,23 +278,27 @@ beforeAll(async () => {
         type: ad.typeAd,
         rating: 2,
         content: 'very poor',
+        _id: new mongoose_1.Types.ObjectId(),
     });
     const wine = new wine_1.Wine({
         denominazioneVino: 'Abruzzo',
         espressioneComunitaria: 'DOP',
         denominazioneZona: 'DOC',
+        _id: new mongoose_1.Types.ObjectId(),
     });
     const message = new message_1.Message({
-        negotiation: negotiation,
+        negotiation,
         sentBy: negotiation.createdBy,
         sentTo: negotiation.forUserAd,
         content: 'ciao',
+        _id: new mongoose_1.Types.ObjectId(),
     });
     const otherMessage = new message_1.Message({
         negotiation: otherNegotiation,
         sentBy: otherNegotiation.createdBy,
         sentTo: otherNegotiation.forUserAd,
         content: 'ciao di nuovo',
+        _id: new mongoose_1.Types.ObjectId(),
     });
     user.savedAds?.addToSet(ad);
     otherUser.savedAds?.addToSet(otherAd);
@@ -303,14 +318,14 @@ beforeAll(async () => {
 describe('Integration test users', () => {
     it('valid login mutation returns token', async () => {
         const res = await query(LOGIN_VALID);
-        //expect(res).toMatchSnapshot();
+        // expect(res).toMatchSnapshot();
         expect(res.data.login.response.token).toBeDefined();
     });
     it('invalid login mutation returns errors', async () => {
         const res = await query(LOGIN_INVALID);
         expect(res).toMatchSnapshot();
-        //expect(res.data.login.response).toBeNull();
-        //expect(res.data.login.errors).toBeDefined();
+        // expect(res.data.login.response).toBeNull();
+        // expect(res.data.login.errors).toBeDefined();
     });
     it('create user mutation successfull and activation successfull', async () => {
         jest.setTimeout(30000);
@@ -325,10 +340,10 @@ describe('Integration test users', () => {
             hideContact: false,
         };
         const res = await mutate(CREATE_USER, {
-            variables: { auth: auth },
+            variables: { auth },
         });
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const token = res.data.createUser.response.token;
+        const { token } = res.data.createUser.response;
         await api.get(`/verify?id=${token}`).expect(200);
         expect(res.data.createUser.response.token).toBeDefined();
         expect(res.errors).toBeUndefined();
@@ -348,7 +363,7 @@ describe('Integration test users', () => {
     it('query me is successfull if logged in, shows parameter meant for user Giovanni', async () => {
         const data = await mutate(LOGIN_VALID);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const token = data.data.login.response.token;
+        const { token } = data.data.login.response;
         setOptions({
             request: {
                 headers: {
@@ -362,7 +377,7 @@ describe('Integration test users', () => {
     it('query single user is successfull if logged in, shows sensitive parameter meant for user in ctx', async () => {
         const data = await mutate(LOGIN_VALID);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const token = data.data.login.response.token;
+        const { token } = data.data.login.response;
         setOptions({
             request: {
                 headers: {
@@ -381,7 +396,7 @@ describe('Integration test users', () => {
     it('query single user is successfull if logged in, shows sensitive parameter meant for user in ctx and forbidden if not same user', async () => {
         const data = await mutate(LOGIN_VALID);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const token = data.data.login.response.token;
+        const { token } = data.data.login.response;
         setOptions({
             request: {
                 headers: {
@@ -400,7 +415,7 @@ describe('Integration test users', () => {
     it('query users is successfull if logged in, shows sensitive parameters only to user in ctx', async () => {
         const data = await mutate(LOGIN_VALID);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const token = data.data.login.response.token;
+        const { token } = data.data.login.response;
         setOptions({
             request: {
                 headers: {
@@ -414,7 +429,7 @@ describe('Integration test users', () => {
     it('query me is successfull if logged in, shows parameter meant for user Mariuccio', async () => {
         const data = await mutate(LOGIN_VALID_OTHER);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const token = data.data.login.response.token;
+        const { token } = data.data.login.response;
         setOptions({
             request: {
                 headers: {
@@ -459,11 +474,11 @@ describe('Integration test users', () => {
             hideContact: true,
         };
         const res = await mutate(CREATE_USER, {
-            variables: { auth: auth },
+            variables: { auth },
         });
         expect(res).toMatchSnapshot();
-        //expect(res.data.createUser.response).toBeNull();
-        //expect(res.data.createUser.errors).toHaveLength(3);
+        // expect(res.data.createUser.response).toBeNull();
+        // expect(res.data.createUser.errors).toHaveLength(3);
     });
 });
 afterAll(async () => {

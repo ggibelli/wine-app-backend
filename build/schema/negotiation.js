@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.typeDefs = void 0;
 const apollo_server_express_1 = require("apollo-server-express");
-exports.typeDefs = apollo_server_express_1.gql `
+const typeDefs = apollo_server_express_1.gql `
   input NegotiationInput {
     ad: ID!
     forUserAd: ID!
@@ -16,7 +15,7 @@ exports.typeDefs = apollo_server_express_1.gql `
     #ad: ID!
     #forUserAd: ID!
     #messages: [ID!]
-    isConcluded: Boolean
+    isConcluded: Boolean!
   }
 
   type Negotiation {
@@ -67,3 +66,4 @@ exports.typeDefs = apollo_server_express_1.gql `
     negotiationClosed: Ad! @authenticated
   }
 `;
+exports.default = typeDefs;

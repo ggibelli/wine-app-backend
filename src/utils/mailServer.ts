@@ -42,7 +42,7 @@ export const sendMail = async (mailBody: MailBody, recipients: string[]) => {
   } catch (e) {
     throw new Error(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      `MailError: ${e.message}, subj: ${mailBody.subject}, recipients: ${recipients}`
+      `MailError: ${e.message}, subj: ${mailBody.subject}, recipients: ${recipients}`,
     );
   }
 };

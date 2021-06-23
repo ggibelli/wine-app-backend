@@ -1,10 +1,10 @@
 "use strict";
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 Object.defineProperty(exports, "__esModule", { value: true });
 const apollo_datasource_mongodb_1 = require("apollo-datasource-mongodb");
+const mongoose_1 = require("mongoose");
 class Wines extends apollo_datasource_mongodb_1.MongoDataSource {
     async getWineByName(wineName) {
-        //return this.model.findById(ad.postedBy).lean().exec();
+        // return this.model.findById(ad.postedBy).lean().exec();
         return this.model.findOne({ denominazioneVino: wineName }).lean().exec();
     }
     async getWine(id) {
@@ -15,7 +15,7 @@ class Wines extends apollo_datasource_mongodb_1.MongoDataSource {
     }
     async createWine(wine) {
         const errors = [];
-        const createdWine = new this.model(wine);
+        const createdWine = new this.model({ _id: new mongoose_1.Types.ObjectId(), ...wine });
         try {
             await createdWine.save();
         }

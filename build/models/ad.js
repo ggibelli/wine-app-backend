@@ -18,17 +18,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Ad = void 0;
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 const mongoose_1 = __importStar(require("mongoose"));
 // import { Address } from '../types';
-const enumMongooseHelper_1 = require("../utils/enumMongooseHelper");
+const enumMongooseHelper_1 = __importDefault(require("../utils/enumMongooseHelper"));
 const types_1 = require("../types");
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const adSchemaFields = {
+const schema = new mongoose_1.Schema({
     postedBy: {
-        type: mongoose_1.Schema.Types.ObjectId,
+        type: 'ObjectId',
         ref: 'User',
         required: true,
     },
@@ -45,14 +47,14 @@ const adSchemaFields = {
     wineName: {
         type: String,
         minlength: 3,
-        required() {
-            return this.typeProduct === types_1.TypeProduct.ADWINE;
-        },
         index: true,
     },
     wine: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'Wine',
+        // required() {
+        //   return this.typeProduct === TypeProduct.ADWINE;
+        // },
     },
     sottoZona: {
         type: String,
@@ -63,21 +65,21 @@ const adSchemaFields = {
     },
     metodoProduttivo: {
         type: String,
-        enum: Object.values(enumMongooseHelper_1.METODOPRODUTTIVO),
+        enum: Object.values(enumMongooseHelper_1.default),
         required: true,
         default: 'CONVENZIONALE',
     },
     vineyardName: {
         type: String,
         minlength: 3,
-        required() {
-            return this.typeProduct === types_1.TypeProduct.ADGRAPE;
-        },
         index: true,
     },
     vineyard: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'Vineyard',
+        // required() {
+        //   return this.typeProduct === TypeProduct.ADGRAPE;
+        // },
     },
     abv: Number,
     harvest: {
@@ -94,27 +96,15 @@ const adSchemaFields = {
     },
     litersFrom: {
         type: Number,
-        required() {
-            return this.typeProduct === types_1.TypeProduct.ADWINE;
-        },
     },
     litersTo: {
         type: Number,
-        required() {
-            return this.typeProduct === types_1.TypeProduct.ADWINE;
-        },
     },
     kgFrom: {
         type: Number,
-        required() {
-            return this.typeProduct === types_1.TypeProduct.ADGRAPE;
-        },
     },
     kgTo: {
         type: Number,
-        required() {
-            return this.typeProduct === types_1.TypeProduct.ADGRAPE;
-        },
     },
     // address: {
     //   comune: {
@@ -166,7 +156,7 @@ const adSchemaFields = {
         // `Date.now()` returns the current unix timestamp as a number
         default: Date.now,
     },
-};
-const adSchema = new mongoose_1.Schema(adSchemaFields);
-adSchema.index({ typeProduct: 1, typeAd: 1, wineName: 1, vineyardName: 1 });
-exports.Ad = mongoose_1.default.model('Ad', adSchema);
+});
+// const adSchema = new Schema(adSchemaFields);
+schema.index({ wineName: 1, typeAd: 1 });
+exports.Ad = mongoose_1.default.model('Ad', schema);

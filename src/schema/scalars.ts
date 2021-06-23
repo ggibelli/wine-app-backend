@@ -1,5 +1,7 @@
 import { gql } from 'apollo-server-express';
 
-export const typeDefs = gql`
+const typeDefs = gql`
   scalar Date
 `;
+
+export default typeDefs;

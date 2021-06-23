@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.typeDefs = void 0;
 const apollo_server_express_1 = require("apollo-server-express");
-exports.typeDefs = apollo_server_express_1.gql `
+const typeDefs = apollo_server_express_1.gql `
   input WineInput {
     denominazioneVino: String!
     tipoVino: String
@@ -45,3 +44,4 @@ exports.typeDefs = apollo_server_express_1.gql `
     deleteWine(id: ID!): WinePayload @authorized @authenticated
   }
 `;
+exports.default = typeDefs;

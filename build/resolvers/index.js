@@ -1,13 +1,16 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = require("lodash");
-const user_1 = require("./user");
-const ad_1 = require("./ad");
-const message_1 = require("./message");
-const negotiation_1 = require("./negotiation");
-const wine_1 = require("./wine");
-const vineyard_1 = require("./vineyard");
-const review_1 = require("./review");
+const user_1 = __importDefault(require("./user"));
+const ad_1 = __importDefault(require("./ad"));
+const message_1 = __importDefault(require("./message"));
+const negotiation_1 = __importDefault(require("./negotiation"));
+const wine_1 = __importDefault(require("./wine"));
+const vineyard_1 = __importDefault(require("./vineyard"));
+const review_1 = __importDefault(require("./review"));
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const resolvers = lodash_1.merge(user_1.resolver, ad_1.resolver, message_1.resolver, review_1.resolver, negotiation_1.resolver, wine_1.resolver, vineyard_1.resolver);
+const resolvers = lodash_1.merge(user_1.default, ad_1.default, message_1.default, review_1.default, negotiation_1.default, wine_1.default, vineyard_1.default);
 exports.default = resolvers;

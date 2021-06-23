@@ -1,7 +1,7 @@
-import passwordValidator from 'password-validator';
+import PasswordValidator from 'password-validator';
 
 // Create a schema
-const schema = new passwordValidator();
+const schema = new PasswordValidator();
 
 // Add properties to it
 schema

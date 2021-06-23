@@ -18,7 +18,7 @@ interface MongoDataSource {
   vineyards: Vineyards;
 }
 
-export const resolver: StringIndexed<Resolvers> = {
+const resolver: StringIndexed<Resolvers> = {
   Query: {
     async vineyards(_, __, { dataSources }: { dataSources: MongoDataSource }) {
       return dataSources.vineyards.getVineyards();
@@ -26,7 +26,7 @@ export const resolver: StringIndexed<Resolvers> = {
     async vineyard(
       _,
       { id },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       return dataSources.vineyards.getVineyard(id);
     },
@@ -35,23 +35,25 @@ export const resolver: StringIndexed<Resolvers> = {
     async createVineyard(
       _,
       { vineyard }: { vineyard: VineyardInput },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       return dataSources.vineyards.createVineyard(vineyard);
     },
     async updateVineyard(
       _,
       { vineyard }: { vineyard: VineyardInputUpdate },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       return dataSources.vineyards.updateVineyard(vineyard);
     },
     async deleteVineyard(
       _,
       { id }: { id: string },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       return dataSources.vineyards.deleteVineyard(id);
     },
   },
 };
+
+export default resolver;

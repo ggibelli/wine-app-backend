@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server-express';
 
-export const typeDefs = gql`
+const typeDefs = gql`
   input ReviewInput {
     negotiation: ID!
     forUser: ID!
@@ -41,8 +41,11 @@ export const typeDefs = gql`
 
   extend type Query {
     review(id: ID!): Review @authenticated
-    reviews(offset: Int, orderBy: QueryOrderBy, limit: Int): ReviewResult
-      @authenticated
+    reviews(
+      offset: Int = 0
+      orderBy: QueryOrderBy = createdAt_DESC
+      limit: Int = 10
+    ): ReviewResult @authenticated
   }
 
   extend type Mutation {
@@ -55,3 +58,5 @@ export const typeDefs = gql`
     reviewCreated: Review! @authenticated
   }
 `;
+
+export default typeDefs;

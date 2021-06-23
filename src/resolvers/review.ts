@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
+import { PubSub, withFilter } from 'apollo-server-express';
+import { LeanDocument } from 'mongoose';
 import {
   QueryReviewsArgs,
   Resolvers,
@@ -10,9 +12,11 @@ import Reviews from '../data-sources/reviews';
 import Ads from '../data-sources/ads';
 import Messages from '../data-sources/messages';
 import Negotiations from '../data-sources/negotiations';
-import { PubSub, withFilter } from 'apollo-server-express';
-import { ReviewGraphQl } from '../models/review';
-import { UserGraphQl } from '../models/user';
+import {
+  IsPopulated,
+  ReviewDocument,
+  UserDocument,
+} from '../interfaces/mongoose.gen';
 
 const pubsub = new PubSub();
 
@@ -33,13 +37,13 @@ interface MongoDataSource {
   negotiations: Negotiations;
 }
 
-export const resolver: StringIndexed<Resolvers> = {
+const resolver: StringIndexed<Resolvers> = {
   Query: {
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     async reviews(
       _,
       args: QueryReviewsArgs,
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       return dataSources.reviews.getReviews(args);
     },
@@ -51,13 +55,13 @@ export const resolver: StringIndexed<Resolvers> = {
     async createReview(
       _,
       { review }: { review: ReviewInput },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       const reviewResponse = await dataSources.reviews.createReview(review);
       if (!reviewResponse.errors.length) {
         await dataSources.messages.messageAdmin(
           [review.forUser],
-          `Hanno scritto di te ${review.content}`
+          `Hanno scritto di te ${review.content}`,
         );
         await pubsub.publish(REVIEW_CREATED, {
           reviewCreated: reviewResponse.response,
@@ -69,14 +73,14 @@ export const resolver: StringIndexed<Resolvers> = {
     async updateReview(
       _,
       { review }: { review: ReviewInputUpdate },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       return dataSources.reviews.updateReview(review);
     },
     async deleteReview(
       _,
       { id }: { id: string },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       return dataSources.reviews.deleteReview(id);
     },
@@ -87,16 +91,21 @@ export const resolver: StringIndexed<Resolvers> = {
       subscribe: withFilter(
         () => pubsub.asyncIterator([REVIEW_CREATED]),
         (
-          payload: { reviewCreated: ReviewGraphQl },
+          payload: { reviewCreated: LeanDocument<ReviewDocument> },
           _,
-          { user }: { user: UserGraphQl }
+          { user }: { user: LeanDocument<UserDocument> },
         ) => {
+          if (IsPopulated(payload.reviewCreated.forUser)) {
+            return Boolean(
+          payload.reviewCreated.forUser._id.toHexString()
+              === user._id.toString(),
+        )
+          }
           return Boolean(
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            payload.reviewCreated.forUser._id.toString() ===
-              user._id.toHexString()
-          );
-        }
+          payload.reviewCreated.forUser.toHexString()
+              === user._id.toString(),
+        )
+      },
       ),
     },
   },
@@ -105,23 +114,38 @@ export const resolver: StringIndexed<Resolvers> = {
     async createdBy(
       review,
       _,
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
-      return dataSources.users.getUser(review.createdBy);
+      if (IsPopulated(review.createdBy)) {
+        return dataSources.users.getUser(review.createdBy._id.toHexString());
+      }
+      return dataSources.users.getUser(review.createdBy.toHexString());
     },
     async negotiation(
       review,
       _,
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
-      return dataSources.negotiations.getNegotiation(review.negotiation);
+      if (IsPopulated(review.negotiation)) {
+        return dataSources.negotiations.getNegotiation(
+          review.negotiation._id.toHexString(),
+        );
+      }
+      return dataSources.negotiations.getNegotiation(
+        review.negotiation.toHexString(),
+      );
     },
     async forUser(
       review,
       _,
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
-      return dataSources.users.getUser(review.forUser);
+      if (IsPopulated(review.forUser)) {
+        return dataSources.users.getUser(review.forUser._id.toHexString());
+      }
+      return dataSources.users.getUser(review.forUser.toHexString());
     },
   },
 };
+
+export default resolver;

@@ -2,6 +2,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 
+import { PubSub, withFilter } from 'apollo-server-express';
+import { LeanDocument } from 'mongoose';
 import Ads, { FollowUp } from '../data-sources/ads';
 import Users from '../data-sources/users';
 import Wines from '../data-sources/wines';
@@ -9,13 +11,15 @@ import Vineyards from '../data-sources/vineyards';
 import {
   AdInput,
   AdInputUpdate,
-  //NegotiationInputUpdate,
+  // NegotiationInputUpdate,
   Resolvers,
 } from '../generated/graphql';
 import Negotiations from '../data-sources/negotiations';
-import { PubSub, withFilter } from 'apollo-server-express';
-import { AdGraphQl } from '../models/ad';
-import { UserGraphQl } from '../models/user';
+import {
+  AdDocument,
+  IsPopulated,
+  UserDocument,
+} from '../interfaces/mongoose.gen';
 import { loggerError } from '../utils/logger';
 import Messages from '../data-sources/messages';
 
@@ -41,7 +45,7 @@ interface MongoDataSource {
 
 type StringIndexed<T> = T & StringIndexSignatureInterface;
 
-export const resolver: StringIndexed<Resolvers> = {
+const resolver: StringIndexed<Resolvers> = {
   Query: {
     async ads(_, args, { dataSources }: { dataSources: MongoDataSource }) {
       return dataSources.ads.getAds(args);
@@ -49,14 +53,17 @@ export const resolver: StringIndexed<Resolvers> = {
     async adsForUser(
       _,
       args,
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       return dataSources.ads.getAdsByUser(args);
     },
     async ad(
       _,
       { id },
-      { dataSources, user }: { dataSources: MongoDataSource; user: UserGraphQl }
+      {
+        dataSources,
+        user,
+      }: { dataSources: MongoDataSource; user: LeanDocument<UserDocument> },
     ) {
       const ad = await dataSources.ads.getAd(id);
       if (user) {
@@ -75,13 +82,13 @@ export const resolver: StringIndexed<Resolvers> = {
     async createAd(
       _,
       { input }: { input: AdInput },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       const adResponse = await dataSources.ads.createAd(input);
       if (!adResponse.errors.length) {
         await dataSources.messages.messageAdmin(
           adResponse.usersToNotify,
-          `Un annuncio per il vino: ${input.wineName} e stato creato`
+          `Un annuncio per il vino: ${input.wineName} e stato creato`,
         );
         await pubsub.publish(AD_POSTED, {
           adPostedFollowUp: adResponse.response,
@@ -93,19 +100,18 @@ export const resolver: StringIndexed<Resolvers> = {
     async updateAd(
       _,
       { input }: { input: AdInputUpdate },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       const adResponse = await dataSources.ads.updateAd(input);
       if (!adResponse.response?.isActive) {
-        const negotiations =
-          await dataSources.negotiations.getNegotiationsForAd(input._id);
+        const negotiations = await dataSources.negotiations.getNegotiationsForAd(input._id);
         const users = negotiations
           .filter((negotiation) => !negotiation.isConcluded)
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           .map((negotiation) => negotiation.createdBy.toString());
         await dataSources.messages.messageAdmin(
           users,
-          `Un annuncio per il vino: ${input.wineName} e stato creato`
+          `Un annuncio per il vino: ${input.wineName} e stato creato`,
         );
         await pubsub.publish(AD_REMOVED, {
           adRemoved: adResponse.response,
@@ -117,11 +123,11 @@ export const resolver: StringIndexed<Resolvers> = {
     async deleteAd(
       _,
       { id }: { id: string },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       const adResponse = await dataSources.ads.deleteAd(id);
       const negotiations = await dataSources.negotiations.getNegotiationsForAd(
-        id
+        id,
       );
       const users = negotiations
         .filter((negotiation) => !negotiation.isConcluded)
@@ -129,26 +135,28 @@ export const resolver: StringIndexed<Resolvers> = {
         .map((negotiation) => negotiation.createdBy.toString());
       await dataSources.messages.messageAdmin(
         users,
-        `L annuncio per il vino ${adResponse.response?.wineName} e stato rimosso`
-      );
+        `L annuncio per il vino ${adResponse.response?.wineName} e stato rimosso`,
+      ); 
       await pubsub.publish(AD_REMOVED, {
         adRemoved: adResponse.response,
         usersToNotify: users,
       });
-      try {
-        await dataSources.negotiations.deleteMany(adResponse.response?._id);
-      } catch (e) {
-        adResponse.errors.push({
-          name: 'DeleteManyError',
-          text: 'Error during the removal of the negotiations linked to this ad',
-        });
+      if (adResponse.response?._id) {
+        try {
+          await dataSources.negotiations.deleteMany(adResponse.response?._id);
+        } catch (e) {
+          adResponse.errors.push({
+            name: 'DeleteManyError',
+            text: 'Error during the removal of the negotiations linked to this ad',
+          });
+        }
       }
       return adResponse;
     },
     async saveAd(
       _,
       { id }: { id: string },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       const ad = await dataSources.ads.getAd(id);
       if (!ad) {
@@ -158,7 +166,7 @@ export const resolver: StringIndexed<Resolvers> = {
         };
       }
 
-      return await dataSources.users.saveAd(ad);
+      return dataSources.users.saveAd(ad);
     },
   },
 
@@ -168,14 +176,14 @@ export const resolver: StringIndexed<Resolvers> = {
         () => pubsub.asyncIterator([AD_POSTED]),
         (
           payload: {
-            adPostedFollowUp: AdGraphQl;
+            adPostedFollowUp: LeanDocument<AdDocument>;
             usersToNotify: Array<FollowUp['userId']>;
           },
           _,
-          { user }: { user: UserGraphQl; dataSources: MongoDataSource }
-        ) => {
-          return payload.usersToNotify.includes(user._id.toHexString());
-        }
+          {
+            user,
+          }: { user: LeanDocument<UserDocument>; dataSources: MongoDataSource },
+        ) => payload.usersToNotify.includes(user._id.toHexString()),
       ),
     },
     adRemoved: {
@@ -183,11 +191,13 @@ export const resolver: StringIndexed<Resolvers> = {
         () => pubsub.asyncIterator([AD_REMOVED]),
         (
           payload: {
-            adRemoved: AdGraphQl;
+            adRemoved: LeanDocument<AdDocument>;
             usersToNotify: string[];
           },
           _,
-          { user }: { user: UserGraphQl; dataSources: MongoDataSource }
+          {
+            user,
+          }: { user: LeanDocument<UserDocument>; dataSources: MongoDataSource },
         ) => {
           if (
             // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -195,9 +205,8 @@ export const resolver: StringIndexed<Resolvers> = {
           ) {
             return false;
           }
-
           return payload.usersToNotify.includes(user._id.toHexString());
-        }
+        },
       ),
     },
   },
@@ -207,16 +216,17 @@ export const resolver: StringIndexed<Resolvers> = {
       return ad.typeProduct;
     },
     async postedBy(ad, _, { dataSources }: { dataSources: MongoDataSource }) {
-      return dataSources.users.getUser(ad.postedBy);
+      if (!IsPopulated(ad.postedBy)) {
+        return dataSources.users.getUser(ad.postedBy.toHexString());
+      }
+      return dataSources.users.getUser(ad.postedBy._id.toHexString());
     },
     async activeNegotiations(
       ad,
       _,
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
-      return await dataSources.negotiations.negotiationsActive(
-        ad._id.toString()
-      );
+      return dataSources.negotiations.negotiationsActive(ad._id.toString());
     },
     numberViews(ad) {
       if (!ad.viewedBy) {
@@ -227,7 +237,7 @@ export const resolver: StringIndexed<Resolvers> = {
     async negotiations(
       ad,
       _,
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       return dataSources.negotiations.getNegotiationsForAd(ad._id);
     },
@@ -251,3 +261,5 @@ export const resolver: StringIndexed<Resolvers> = {
     },
   },
 };
+
+export default resolver;

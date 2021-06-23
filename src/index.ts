@@ -11,20 +11,21 @@ import {
 } from 'apollo-server-express';
 import mongoose from 'mongoose';
 import http from 'http';
+import path from 'path';
 import { MONGODB_URI, PORT } from './utils/config';
 import { loggerInfo, loggerError } from './utils/logger';
-import resolvers from './resolvers/';
-import { typeDefs as Ad } from './schema/ad';
-import { typeDefs as Directives } from './schema/directives';
-import { typeDefs as Message } from './schema/message';
-import { typeDefs as Negotiation } from './schema/negotiation';
-import { typeDefs as Review } from './schema/review';
-import { typeDefs as UserSchema } from './schema/user';
-import { typeDefs as Vineyard } from './schema/vineyard';
-import { typeDefs as Wine } from './schema/wine';
-import { typeDefs as Enum } from './schema/enum';
-import { typeDefs as Errors } from './schema/error';
-import { typeDefs as Scalars } from './schema/scalars';
+import resolvers from './resolvers';
+import Ad from './schema/ad';
+import Directives from './schema/directives';
+import Message from './schema/message';
+import Negotiation from './schema/negotiation';
+import Review from './schema/review';
+import UserSchema from './schema/user';
+import Vineyard from './schema/vineyard';
+import Wine from './schema/wine';
+import Enum from './schema/enum';
+import Errors from './schema/error';
+import Scalars from './schema/scalars';
 import dataSources from './data-sources';
 import {
   AuthenticateDirective,
@@ -32,11 +33,11 @@ import {
   FormatDateDirective,
 } from './directives';
 import { createToken, getUserFromToken, createTokenMail } from './utils/auth';
-import { confirmationRouter } from './controllers/accountConfirmation';
-import path from 'path';
+import confirmationRouter from './controllers/accountConfirmation';
 
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
+mongoose.set('autoIndex', false);
 
 export const mongooseConnection = (): void => {
   mongoose
@@ -77,10 +78,10 @@ export const schema = makeExecutableSchema({
 });
 
 function initializeSubscriptionDataSources(context: { dataSources: any }) {
-  const dataSources = context.dataSources;
-  if (dataSources) {
-    for (const instance in dataSources) {
-      dataSources[instance].initialize({ context, cache: undefined });
+  const conte = context;
+  if (conte.dataSources) {
+    for (const instance in conte.dataSources) {
+      conte.dataSources[instance].initialize({ context, cache: undefined });
     }
   }
 }
@@ -128,11 +129,9 @@ server.installSubscriptionHandlers(httpServer);
 
 const start = () => {
   mongooseConnection();
-  httpServer.listen(PORT, () =>
-    loggerInfo(
-      `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`
-    )
-  );
+  httpServer.listen(PORT, () => loggerInfo(
+    `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`,
+  ));
 };
 
 if (process.env.NODE_ENV !== 'test') {

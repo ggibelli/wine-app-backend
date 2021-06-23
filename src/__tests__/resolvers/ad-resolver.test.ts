@@ -1,15 +1,18 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-const publish = jest.fn();
-const filter = jest.fn();
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+  const mockPublish = jest.fn()
+
+import { Types } from 'mongoose';
+import resolvers from '../../resolvers';
+
+
 jest.mock('apollo-server-express', () => ({
   PubSub: jest.fn(() => ({
-    publish,
+    publish: mockPublish,
   })),
-  withFilter: filter,
+  withFilter: jest.fn(),
 }));
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import resolvers from '../../resolvers';
-import { ObjectId } from 'mongodb';
 
 const mockContext = {
   dataSources: {
@@ -40,7 +43,7 @@ const mockContext = {
       getWineByName: jest.fn(),
     },
   },
-  user: { id: 1, email: 'a@a.a' },
+  user: { _id: 1, email: 'a@a.a' },
 };
 const { getAds } = mockContext.dataSources.ads;
 const { getAd } = mockContext.dataSources.ads;
@@ -63,7 +66,7 @@ describe('Ad resolvers', () => {
   it('calls getAds from dataSource', async () => {
     getAds.mockReturnValueOnce([
       {
-        id: 1,
+        _id: 1,
         typeAd: 'SELL',
         typeProduct: 'AdWine',
         wineName: 'wine',
@@ -75,11 +78,11 @@ describe('Ad resolvers', () => {
     const res = await resolvers.Query?.ads(
       null,
       { typeAd: 'SELL', typeProduct: 'adWine' },
-      mockContext
+      mockContext,
     );
     expect(res).toEqual([
       {
-        id: 1,
+        _id: 1,
         typeAd: 'SELL',
         typeProduct: 'AdWine',
         wineName: 'wine',
@@ -91,7 +94,7 @@ describe('Ad resolvers', () => {
   it('calls getAd from dataSource', async () => {
     const save = jest.fn();
     getAd.mockReturnValueOnce({
-      id: 1,
+      _id: 1,
       typeAd: 'SELL',
       typeProduct: 'AdWine',
       wineName: 'wine',
@@ -100,9 +103,9 @@ describe('Ad resolvers', () => {
     });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const res = await resolvers.Query?.ad(null, { id: 1 }, mockContext);
+    const res = await resolvers.Query?.ad(null, { _id: 1 }, mockContext);
     expect(res).toEqual({
-      id: 1,
+      _id: 1,
       typeAd: 'SELL',
       typeProduct: 'AdWine',
       wineName: 'wine',
@@ -114,7 +117,7 @@ describe('Ad resolvers', () => {
   it('creates ad and calls subscription', async () => {
     createAd.mockReturnValueOnce({
       response: {
-        id: 1,
+        _id: 1,
         typeAd: 'SELL',
         typeProduct: 'AdWine',
         wineName: 'wine',
@@ -123,29 +126,29 @@ describe('Ad resolvers', () => {
       errors: [],
       usersToNotify: [1],
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.createAd(
       null,
       {
         input: {
-          id: 1,
+          _id: 1,
           typeAd: 'SELL',
           typeProduct: 'AdWine',
           wineName: 'wine',
           createdBy: 2,
         },
       },
-      mockContext
+      mockContext,
     );
     expect(messageAdmin).toHaveBeenCalledWith(
       [1],
-      'Un annuncio per il vino: wine e stato creato'
+      'Un annuncio per il vino: wine e stato creato',
     );
-    expect(publish).toHaveBeenCalledTimes(1);
-    expect(publish).toHaveBeenCalledWith('AD_POSTED', {
+    expect(mockPublish).toHaveBeenCalledTimes(1);
+    expect(mockPublish).toHaveBeenCalledWith('AD_POSTED', {
       adPostedFollowUp: {
         createdBy: 2,
-        id: 1,
+        _id: 1,
         typeAd: 'SELL',
         typeProduct: 'AdWine',
         wineName: 'wine',
@@ -155,7 +158,7 @@ describe('Ad resolvers', () => {
     expect(res).toEqual({
       errors: [],
       response: {
-        id: 1,
+        _id: 1,
         typeAd: 'SELL',
         typeProduct: 'AdWine',
         wineName: 'wine',
@@ -170,15 +173,15 @@ describe('Ad resolvers', () => {
       response: null,
       errors: [{ name: 'error', text: 'error' }],
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.createAd(
       null,
       {
         wrong: 'wrong',
       },
-      mockContext
+      mockContext,
     );
-    expect(publish).toHaveBeenCalledTimes(0);
+    expect(mockPublish).toHaveBeenCalledTimes(0);
     expect(res).toEqual({
       errors: [{ name: 'error', text: 'error' }],
       response: null,
@@ -188,7 +191,7 @@ describe('Ad resolvers', () => {
   it('update ad succeds and subscription called', async () => {
     updateAd.mockReturnValueOnce({
       response: {
-        id: 1,
+        _id: 1,
         typeAd: 'SELL',
         typeProduct: 'AdWine',
         wineName: 'wine',
@@ -199,12 +202,12 @@ describe('Ad resolvers', () => {
     });
     getNegotiationsForAd.mockReturnValueOnce([
       {
-        id: 3,
+        _id: 3,
         createdBy: 4,
       },
-      { id: 5, createdBy: 7 },
+      { _id: 5, createdBy: 7 },
     ]);
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.updateAd(
       null,
       {
@@ -217,17 +220,17 @@ describe('Ad resolvers', () => {
           isActive: false,
         },
       },
-      mockContext
+      mockContext,
     );
     expect(messageAdmin).toHaveBeenCalledWith(
       ['4', '7'],
-      'Un annuncio per il vino: wine e stato creato'
+      'Un annuncio per il vino: wine e stato creato',
     );
-    expect(publish).toHaveBeenCalledTimes(1);
-    expect(publish).toHaveBeenCalledWith('AD_REMOVED', {
+    expect(mockPublish).toHaveBeenCalledTimes(1);
+    expect(mockPublish).toHaveBeenCalledWith('AD_REMOVED', {
       adRemoved: {
         createdBy: 2,
-        id: 1,
+        _id: 1,
         isActive: false,
         typeAd: 'SELL',
         typeProduct: 'AdWine',
@@ -237,7 +240,7 @@ describe('Ad resolvers', () => {
     });
     expect(res).toEqual({
       response: {
-        id: 1,
+        _id: 1,
         typeAd: 'SELL',
         typeProduct: 'AdWine',
         wineName: 'wine',
@@ -251,7 +254,7 @@ describe('Ad resolvers', () => {
   it('update ad succeds but ad still active and subscription not called', async () => {
     updateAd.mockReturnValueOnce({
       response: {
-        id: 1,
+        _id: 1,
         typeAd: 'SELL',
         typeProduct: 'AdWine',
         wineName: 'other wine',
@@ -260,24 +263,24 @@ describe('Ad resolvers', () => {
       },
       errors: [],
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.updateAd(
       null,
       {
-        id: 1,
+        _id: 1,
         typeAd: 'SELL',
         typeProduct: 'AdWine',
         wineName: 'other wine',
         createdBy: 2,
         isActive: true,
       },
-      mockContext
+      mockContext,
     );
-    expect(publish).toHaveBeenCalledTimes(0);
+    expect(mockPublish).toHaveBeenCalledTimes(0);
 
     expect(res).toEqual({
       response: {
-        id: 1,
+        _id: 1,
         typeAd: 'SELL',
         typeProduct: 'AdWine',
         wineName: 'other wine',
@@ -291,7 +294,7 @@ describe('Ad resolvers', () => {
   it('delete ad succeeds and subscription is called', async () => {
     deleteAd.mockReturnValueOnce({
       response: {
-        id: 1,
+        _id: 1,
         typeAd: 'SELL',
         typeProduct: 'AdWine',
         wineName: 'wine',
@@ -302,29 +305,29 @@ describe('Ad resolvers', () => {
     });
     getNegotiationsForAd.mockReturnValueOnce([
       {
-        id: 3,
+        _id: 3,
         createdBy: 4,
       },
-      { id: 5, createdBy: 7 },
+      { _id: 5, createdBy: 7 },
     ]);
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.deleteAd(
       null,
       {
-        id: 1,
+        _id: 1,
       },
-      mockContext
+      mockContext,
     );
     expect(deleteMany).toHaveBeenCalledTimes(1);
     expect(messageAdmin).toHaveBeenCalledWith(
       ['4', '7'],
-      'L annuncio per il vino wine e stato rimosso'
+      'L annuncio per il vino wine e stato rimosso',
     );
-    expect(publish).toHaveBeenCalledTimes(1);
-    expect(publish).toHaveBeenCalledWith('AD_REMOVED', {
+    expect(mockPublish).toHaveBeenCalledTimes(1);
+    expect(mockPublish).toHaveBeenCalledWith('AD_REMOVED', {
       adRemoved: {
         createdBy: 2,
-        id: 1,
+        _id: 1,
         isActive: true,
         typeAd: 'SELL',
         typeProduct: 'AdWine',
@@ -334,7 +337,7 @@ describe('Ad resolvers', () => {
     });
     expect(res).toEqual({
       response: {
-        id: 1,
+        _id: 1,
         typeAd: 'SELL',
         typeProduct: 'AdWine',
         wineName: 'wine',
@@ -347,42 +350,42 @@ describe('Ad resolvers', () => {
 
   it('ad type shows its type', async () => {
     const res = await resolvers.Ad?.__resolveType(
-      //@ts-ignore
+      // @ts-ignore
       { typeProduct: 'AdWine' },
       null,
-      mockContext
+      mockContext,
     );
     expect(res).toEqual('AdWine');
   });
 
   it('ad postedby succeeds', async () => {
-    getUser.mockReturnValueOnce({ id: 1 });
-    //@ts-ignore
+    getUser.mockReturnValueOnce({ _id: 1 });
+    // @ts-ignore
     const res = await resolvers.Ad?.postedBy(
-      { postedBy: '123' },
+      { postedBy: new Types.ObjectId('5fdd925d9cc5800455e1855e') },
       null,
-      mockContext
+      mockContext,
     );
-    expect(res).toEqual({ id: 1 });
+    expect(res).toEqual({ _id: 1 });
   });
 
   it('ad activeNegotiation shows number negotiation ad', async () => {
     negotiationsActive.mockReturnValueOnce(2);
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Ad?.activeNegotiations(
       { _id: '123' },
       null,
-      mockContext
+      mockContext,
     );
     expect(res).toEqual(2);
   });
 
   it('ad numberViews shows number views ad', async () => {
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Ad?.numberViews(
       { postedBy: '123', viewedBy: [1, 2] },
       null,
-      mockContext
+      mockContext,
     );
     expect(res).toEqual(2);
   });
@@ -392,11 +395,11 @@ describe('Ad resolvers', () => {
       { _id: 3, createdBy: 4 },
       { _id: 5, createdBy: 7 },
     ]);
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Ad?.negotiations(
       { postedBy: '123' },
       null,
-      mockContext
+      mockContext,
     );
     expect(res).toEqual([
       { _id: 3, createdBy: 4 },
@@ -409,11 +412,11 @@ describe('Ad resolvers', () => {
       wineName: 'vino',
       abv: 6.5,
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.AdWine?.wine(
       { wineName: 'vino' },
       null,
-      mockContext
+      mockContext,
     );
     expect(res).toEqual({
       wineName: 'vino',
@@ -427,17 +430,17 @@ describe('Ad resolvers', () => {
       content: '11212121212',
     });
     getAd.mockReturnValueOnce({
-      _id: new ObjectId('5fdd925d9cc5800455e1855e'),
+      _id: new Types.ObjectId('5fdd925d9cc5800455e1855e'),
       typeAd: 'SELL',
       typeProduct: 'AdWine',
       wineName: 'wine',
       createdBy: 2,
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.saveAd(
       null,
-      { id: '602daa91cdc6630673a9fc0e' },
-      mockContext
+      { _id: '602daa91cdc6630673a9fc0e' },
+      mockContext,
     );
     expect(res).toEqual({
       _id: '602daa91cdc6630673a9fc0e',
@@ -450,11 +453,11 @@ describe('Ad resolvers', () => {
       vineyardName: 'vigna',
       vendmmia: 2020,
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.AdGrape?.vineyard(
       { vineyardName: 'vigna' },
       null,
-      mockContext
+      mockContext,
     );
     expect(res).toEqual({
       vineyardName: 'vigna',

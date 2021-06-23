@@ -3,24 +3,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { gql } from 'apollo-server-express';
+import cron from 'cron';
+import { LeanDocument, Types } from 'mongoose';
 import {
   testClient,
   connectToDb,
   dropTestDb,
   closeDbConnection,
 } from '../../tests/integrationSetup';
-//import { ObjectId } from 'mongodb';
+// import { ObjectId } from 'mongodb';
 import { User } from '../../models/user';
-import { Ad, AdGraphQl } from '../../models/ad';
 import { users, ads } from '../../tests/mocksTests';
 import { NegotiationInput } from '../../generated/graphql';
 
-import { Negotiation, NegotiationGraphQl } from '../../models/negotiation';
-//import { ObjectId } from 'mongodb';
-import cron from 'cron';
+import { Negotiation } from '../../models/negotiation';
+import { Ad } from '../../models/ad';
+import { AdDocument, NegotiationDocument } from '../../interfaces/mongoose.gen';
 
-const fakeStart = jest.fn(() => fakeStop());
 const fakeStop = jest.fn(() => null);
+const fakeStart = jest.fn(() => fakeStop());
 const FakeCron = jest.fn(() => ({
   stop: fakeStop,
   start: fakeStart,
@@ -239,23 +240,33 @@ beforeAll(async () => {
   await dropTestDb();
   const usersMock = users();
   const adsMock = ads();
-  const user = new User(usersMock[0]);
-  const otherUser = new User(usersMock[1]);
-  const thirdUser = new User(usersMock[2]);
-  const ad = new Ad({ ...adsMock[0], postedBy: user });
-  const otherAd = new Ad({ ...adsMock[1], postedBy: otherUser });
-  //const thirdAd = new Ad({ ...adsMock[2], postedBy: thirdUser });
+  const user = new User({ ...usersMock[0], _id: new Types.ObjectId() });
+  const otherUser = new User({ ...usersMock[1], _id: new Types.ObjectId() });
+  const thirdUser = new User({ ...usersMock[2], _id: new Types.ObjectId() });
+  const ad = new Ad({
+    ...adsMock[0],
+    postedBy: user,
+    _id: new Types.ObjectId(),
+  });
+  const otherAd = new Ad({
+    ...adsMock[1],
+    postedBy: otherUser,
+    _id: new Types.ObjectId(),
+  });
+  // const thirdAd = new Ad({ ...adsMock[2], postedBy: thirdUser });
   const negotiation = new Negotiation({
     createdBy: otherUser,
-    ad: ad,
+    ad,
     forUserAd: ad.postedBy,
     type: ad.typeAd,
+    _id: new Types.ObjectId(),
   });
   const otherNegotiation = new Negotiation({
     createdBy: thirdUser,
     ad: otherAd,
     forUserAd: otherAd.postedBy,
     type: otherAd.typeAd,
+    _id: new Types.ObjectId(),
   });
   await user.save();
   await otherUser.save();
@@ -276,7 +287,7 @@ describe('Integration test negotiations', () => {
   });
 
   it('query negotiationsWithUser fails if not logged in', async () => {
-    const ad: AdGraphQl[] = await Ad.find({}).lean().exec();
+    const ad: LeanDocument<AdDocument>[] = await Ad.find({}).lean().exec();
     const res = await query(NEGOTIATIONS_USER, {
       variables: { user: ad[0].postedBy.toString() },
     });
@@ -284,7 +295,7 @@ describe('Integration test negotiations', () => {
   });
 
   it('query negotiationsForAd fails if not logged in', async () => {
-    const ad: AdGraphQl[] = await Ad.find({}).lean().exec();
+    const ad: LeanDocument<AdDocument>[] = await Ad.find({}).lean().exec();
     const res = await query(NEGOTIATIONS_AD, {
       variables: { ad: ad[0]._id.toString() },
     });
@@ -292,9 +303,7 @@ describe('Integration test negotiations', () => {
   });
 
   it('query single negotiation fails if not logged', async () => {
-    const negotiation: NegotiationGraphQl[] = await Negotiation.find({})
-      .lean()
-      .exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
     const res = await query(NEGOTIATION, {
       variables: { id: negotiation[0]._id.toString() },
     });
@@ -302,14 +311,14 @@ describe('Integration test negotiations', () => {
   });
 
   it('create negotiation mutation fails if not logged in', async () => {
-    const ad: AdGraphQl[] = await Ad.find({}).lean().exec();
+    const ad: LeanDocument<AdDocument>[] = await Ad.find({}).lean().exec();
     const negotiation: NegotiationInput = {
       ad: ad[0]._id.toString(),
       forUserAd: ad[0].postedBy.toString(),
       type: ad[0].typeAd,
     };
     const res = await mutate(CREATE_NEGOTIATION, {
-      variables: { negotiation: negotiation },
+      variables: { negotiation },
     });
     expect(res).toMatchSnapshot();
   });
@@ -317,7 +326,7 @@ describe('Integration test negotiations', () => {
   it('create negotiation mutation fails if user not verified', async () => {
     const data: any = await mutate(LOGIN_VALID_NOT_VERIFIED);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const token: string = data.data.login.response.token;
+    const { token } = data.data.login.response;
     setOptions({
       request: {
         headers: {
@@ -325,7 +334,7 @@ describe('Integration test negotiations', () => {
         },
       },
     });
-    const ad: AdGraphQl[] = await Ad.find({}).lean().exec();
+    const ad: LeanDocument<AdDocument>[] = await Ad.find({}).lean().exec();
     const negotiation: NegotiationInput = {
       ad: ad[1]._id.toString(),
       forUserAd: ad[1].postedBy.toString(),
@@ -340,7 +349,7 @@ describe('Integration test negotiations', () => {
   it('create negotiation mutation successfull', async () => {
     const data: any = await mutate(LOGIN_VALID);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const token: string = data.data.login.response.token;
+    const { token } = data.data.login.response;
     setOptions({
       request: {
         headers: {
@@ -348,7 +357,7 @@ describe('Integration test negotiations', () => {
         },
       },
     });
-    const ad: AdGraphQl[] = await Ad.find({}).lean().exec();
+    const ad: LeanDocument<AdDocument>[] = await Ad.find({}).lean().exec();
     const negotiation: NegotiationInput = {
       ad: ad[1]._id.toString(),
       forUserAd: ad[1].postedBy.toString(),
@@ -365,7 +374,7 @@ describe('Integration test negotiations', () => {
   it('create negotiation mutation fails if is same ad and user', async () => {
     const data: any = await mutate(LOGIN_VALID);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const token: string = data.data.login.response.token;
+    const { token } = data.data.login.response;
     setOptions({
       request: {
         headers: {
@@ -373,7 +382,7 @@ describe('Integration test negotiations', () => {
         },
       },
     });
-    const ad: AdGraphQl[] = await Ad.find({}).lean().exec();
+    const ad: LeanDocument<AdDocument>[] = await Ad.find({}).lean().exec();
     const negotiation: NegotiationInput = {
       ad: ad[1]._id.toString(),
       forUserAd: ad[1].postedBy.toString(),
@@ -400,7 +409,7 @@ describe('Integration test negotiations', () => {
   });
 
   it('query negotiationsForAd succeds if logged in', async () => {
-    const ad: AdGraphQl[] = await Ad.find({}).lean().exec();
+    const ad: LeanDocument<AdDocument>[] = await Ad.find({}).lean().exec();
     const res = await query(NEGOTIATIONS_AD, {
       variables: { ad: ad[1]._id.toString() },
     });
@@ -408,9 +417,7 @@ describe('Integration test negotiations', () => {
   });
 
   it('query single negotiation succeds if logged', async () => {
-    const negotiation: NegotiationGraphQl[] = await Negotiation.find({})
-      .lean()
-      .exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
     const res = await query(NEGOTIATION, {
       variables: { id: negotiation[0]._id.toString() },
     });
@@ -419,30 +426,30 @@ describe('Integration test negotiations', () => {
 
   it('update negotiation mutation succeds if logged in and same user', async () => {
     const user = await User.findOne({ firstName: 'Giovanni' });
-    const negotiationToUpdate: NegotiationGraphQl | null =
-      await Negotiation.findOne({
-        createdBy: user,
-      })
-        .lean()
-        .exec();
+    if (!user) throw new Error();
+    const negotiationToUpdate: LeanDocument<NegotiationDocument> | null = await Negotiation.findOne({
+      createdBy: user,
+    })
+      .lean()
+      .exec();
     const negotiation = {
       _id: negotiationToUpdate?._id.toString(),
       isConcluded: true,
     };
     const res = await mutate(UPDATE_NEGOTIATION, {
-      variables: { negotiation: negotiation },
+      variables: { negotiation },
     });
     expect(res).toMatchSnapshot();
   });
 
   it('update negotiation mutation fails if logged in and not same user', async () => {
     const user = await User.findOne({ firstName: 'Luigetto' });
-    const negotiationToUpdate: NegotiationGraphQl | null =
-      await Negotiation.findOne({
-        createdBy: user,
-      })
-        .lean()
-        .exec();
+    if (!user) throw new Error();
+    const negotiationToUpdate: LeanDocument<NegotiationDocument> | null = await Negotiation.findOne({
+      createdBy: user,
+    })
+      .lean()
+      .exec();
     const negotiation = {
       _id: negotiationToUpdate?._id.toString(),
       isConcluded: true,
@@ -455,12 +462,12 @@ describe('Integration test negotiations', () => {
 
   it('delete negotiation mutation succeds if logged in and same user', async () => {
     const user = await User.findOne({ firstName: 'Giovanni' });
-    const negotiationToDelete: NegotiationGraphQl | null =
-      await Negotiation.findOne({
-        createdBy: user,
-      })
-        .lean()
-        .exec();
+    if (!user) throw new Error();
+    const negotiationToDelete: LeanDocument<NegotiationDocument> | null = await Negotiation.findOne({
+      createdBy: user,
+    })
+      .lean()
+      .exec();
     const res = await mutate(DELETE_NEGOTIATION, {
       variables: { id: negotiationToDelete?._id.toString() },
     });
@@ -469,12 +476,12 @@ describe('Integration test negotiations', () => {
 
   it('delete negotiation mutation fails if logged in and not same user', async () => {
     const user = await User.findOne({ firstName: 'Luigetto' });
-    const negotiationToDelete: NegotiationGraphQl | null =
-      await Negotiation.findOne({
-        createdBy: user,
-      })
-        .lean()
-        .exec();
+    if (!user) throw new Error();
+    const negotiationToDelete: LeanDocument<NegotiationDocument> | null = await Negotiation.findOne({
+      createdBy: user,
+    })
+      .lean()
+      .exec();
     const res = await mutate(DELETE_NEGOTIATION, {
       variables: { id: negotiationToDelete?._id.toString() },
     });
@@ -484,7 +491,7 @@ describe('Integration test negotiations', () => {
   it('query negotiations succeds if logged in and not admin, only user negotiation shown', async () => {
     const data: any = await mutate(LOGIN_VALID_OTHER);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const token: string = data.data.login.response.token;
+    const { token } = data.data.login.response;
     setOptions({
       request: {
         headers: {

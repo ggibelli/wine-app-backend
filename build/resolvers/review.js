@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resolver = void 0;
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 const apollo_server_express_1 = require("apollo-server-express");
+const mongoose_gen_1 = require("../interfaces/mongoose.gen");
 const pubsub = new apollo_server_express_1.PubSub();
 const REVIEW_CREATED = 'REVIEW_CREATED';
-exports.resolver = {
+const resolver = {
     Query: {
         // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
         async reviews(_, args, { dataSources }) {
@@ -35,22 +36,34 @@ exports.resolver = {
     Subscription: {
         reviewCreated: {
             subscribe: apollo_server_express_1.withFilter(() => pubsub.asyncIterator([REVIEW_CREATED]), (payload, _, { user }) => {
-                return Boolean(
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                payload.reviewCreated.forUser._id.toString() ===
-                    user._id.toHexString());
+                if (mongoose_gen_1.IsPopulated(payload.reviewCreated.forUser)) {
+                    return Boolean(payload.reviewCreated.forUser._id.toHexString()
+                        === user._id.toString());
+                }
+                return Boolean(payload.reviewCreated.forUser.toHexString()
+                    === user._id.toString());
             }),
         },
     },
     Review: {
         async createdBy(review, _, { dataSources }) {
-            return dataSources.users.getUser(review.createdBy);
+            if (mongoose_gen_1.IsPopulated(review.createdBy)) {
+                return dataSources.users.getUser(review.createdBy._id.toHexString());
+            }
+            return dataSources.users.getUser(review.createdBy.toHexString());
         },
         async negotiation(review, _, { dataSources }) {
-            return dataSources.negotiations.getNegotiation(review.negotiation);
+            if (mongoose_gen_1.IsPopulated(review.negotiation)) {
+                return dataSources.negotiations.getNegotiation(review.negotiation._id.toHexString());
+            }
+            return dataSources.negotiations.getNegotiation(review.negotiation.toHexString());
         },
         async forUser(review, _, { dataSources }) {
-            return dataSources.users.getUser(review.forUser);
+            if (mongoose_gen_1.IsPopulated(review.forUser)) {
+                return dataSources.users.getUser(review.forUser._id.toHexString());
+            }
+            return dataSources.users.getUser(review.forUser.toHexString());
         },
     },
 };
+exports.default = resolver;

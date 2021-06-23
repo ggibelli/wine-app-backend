@@ -17,7 +17,7 @@ const getUserFromToken = async (token) => {
     }
     try {
         const user = jsonwebtoken_1.default.verify(token, config_1.SECRET);
-        return user_1.User.findById(user._id).lean().exec();
+        return await user_1.User.findById(user._id).lean().exec();
     }
     catch (e) {
         return null;

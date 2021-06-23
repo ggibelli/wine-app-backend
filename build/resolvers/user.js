@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resolver = void 0;
 const apollo_server_express_1 = require("apollo-server-express");
-exports.resolver = {
+const resolver = {
     Query: {
         async users(_, __, { dataSources }) {
             return dataSources.users.getUsers();
@@ -32,28 +31,36 @@ exports.resolver = {
         async ads(user, _, { dataSources }) {
             return dataSources.ads.getAdsUserType(user._id.toString());
         },
-        async messages(root, _, { dataSources, user }) {
+        async messages(root, _, { dataSources, user, }) {
             if (root._id.toString() === user._id.toString()) {
                 return dataSources.messages.getMessages();
             }
             throw new apollo_server_express_1.ForbiddenError('You can only see your own messages');
         },
-        async negotiations(root, _, { dataSources, user }) {
+        async negotiations(root, _, { dataSources, user, }) {
             if (root._id.toString() === user._id.toString()) {
                 return dataSources.negotiations.getNegotiationsForUserType();
             }
             throw new apollo_server_express_1.ForbiddenError('You can only see your own negotiations');
         },
-        async savedAds(root, _, { dataSources, user }) {
-            if (root._id.toString() === user._id.toString()) {
+        async savedAds(root, _, { dataSources, user, }) {
+            if (root._id.toString() === user._id.toHexString()) {
                 if (user.savedAds?.length) {
-                    return dataSources.ads.findManyByIds(user.savedAds);
+                    const ids = user.savedAds.map((ids) => ids.toString());
+                    const savedAds = await dataSources.ads.findManyByIds(ids);
+                    if (!savedAds.length)
+                        return [];
+                    return (savedAds.sort((a, b) => {
+                        if (!b.datePosted || !a.datePosted)
+                            return 1;
+                        return b.datePosted - a.datePosted;
+                    }));
                 }
                 return [];
             }
             throw new apollo_server_express_1.ForbiddenError('You can only see your own saved ads');
         },
-        async reviews(root, _, { dataSources, user }) {
+        async reviews(root, _, { dataSources, user, }) {
             if (root._id.toString() === user._id.toString()) {
                 return dataSources.reviews.getReviewForUser();
             }
@@ -79,3 +86,4 @@ exports.resolver = {
         },
     },
 };
+exports.default = resolver;

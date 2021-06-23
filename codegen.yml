@@ -15,14 +15,12 @@ generates:
         TypeProduct: ../types#TypeProduct
         TypeAd: ../types#TypeAd
         MetodoProduttivo: ../types#MetodoProduttivo
-        Province: ../types#Province
-        Regioni: ../types#Regioni
         EspressioneComunitaria: ../types#EspressioneComunitaria
         DenomZona: ../types#DenomZona
         Menzione: ../types#Menzione
       mappers:
-        User: ../models/user#UserGraphQl
-        Ad: ../models/ad#AdGraphQl
+        User: ../models/user#IUserDoc
+        Ad: ../models/ad#IAdDoc
         Message: ../models/message#IMessageDoc
         Negotiation: ../models/negotiation#INegotiationDoc
         Review: ../models/review#IReviewDoc

@@ -1,14 +1,17 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-const publish = jest.fn();
-const filter = jest.fn();
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+const mockPublish = jest.fn();
+
+import { Types } from 'mongoose';
+import resolvers from '../../resolvers';
+
+
 jest.mock('apollo-server-express', () => ({
   PubSub: jest.fn(() => ({
-    publish,
+    publish: mockPublish,
   })),
-  withFilter: filter,
+  withFilter: jest.fn(),
 }));
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import resolvers from '../../resolvers';
 
 const mockContext = {
   dataSources: {
@@ -75,7 +78,7 @@ describe('Message resolvers', () => {
     const res = await resolvers.Query?.messagesToUser(
       null,
       { sentTo: '123' },
-      mockContext
+      mockContext,
     );
     expect(res).toEqual([
       {
@@ -103,7 +106,7 @@ describe('Message resolvers', () => {
     const res = await resolvers.Query?.messagesForNegotiation(
       null,
       { negotiation: '322' },
-      mockContext
+      mockContext,
     );
     expect(res).toEqual([
       {
@@ -153,7 +156,7 @@ describe('Message resolvers', () => {
     const res = await resolvers.Query?.message(
       null,
       { id: '123' },
-      mockContext
+      mockContext,
     );
     expect(res).toEqual({
       _id: '122',
@@ -182,16 +185,16 @@ describe('Message resolvers', () => {
       createdBy: '321',
       ad: '322',
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.createMessage(
       null,
       {
         message: { content: 'Ciao', sentTo: '123', negotiation: '322' },
       },
-      mockContext
+      mockContext,
     );
-    expect(publish).toHaveBeenCalledTimes(1);
-    expect(publish).toHaveBeenCalledWith('MESSAGE_SENT', {
+    expect(mockPublish).toHaveBeenCalledTimes(1);
+    expect(mockPublish).toHaveBeenCalledWith('MESSAGE_SENT', {
       messageSent: {
         _id: '122',
         content: 'Ciao',
@@ -220,15 +223,15 @@ describe('Message resolvers', () => {
       createdBy: '777',
       ad: '322',
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.createMessage(
       null,
       {
         message: { content: 'Ciao', sentTo: '123', negotiation: '322' },
       },
-      mockContext
+      mockContext,
     );
-    expect(publish).toHaveBeenCalledTimes(0);
+    expect(mockPublish).toHaveBeenCalledTimes(0);
     expect(createMessage).toHaveBeenCalledTimes(0);
     expect(res).toEqual({
       response: null,
@@ -253,15 +256,15 @@ describe('Message resolvers', () => {
       createdBy: '321',
       ad: '322',
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.createMessage(
       null,
       {
         message: { content: 'Ciao', sentTo: '123', negotiation: '322' },
       },
-      mockContext
+      mockContext,
     );
-    expect(publish).toHaveBeenCalledTimes(0);
+    expect(mockPublish).toHaveBeenCalledTimes(0);
 
     expect(res).toEqual({
       response: null,
@@ -271,22 +274,22 @@ describe('Message resolvers', () => {
 
   it('Message sentBy calls getUser', async () => {
     getUser.mockReturnValueOnce({ id: 1 });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Message?.sentBy(
-      { sentBy: '123' },
+      { sentBy: new Types.ObjectId('5fdd925d9cc5800455e1855e') },
       null,
-      mockContext
+      mockContext,
     );
     expect(res).toEqual({ id: 1 });
   });
 
   it('Message sentTo calls getUser', async () => {
     getUser.mockReturnValueOnce({ id: 1 });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Message?.sentTo(
-      { sentTo: '123' },
+      { sentTo: new Types.ObjectId('5fdd925d9cc5800455e1855e') },
       null,
-      mockContext
+      mockContext,
     );
     expect(res).toEqual({ id: 1 });
   });
@@ -299,11 +302,11 @@ describe('Message resolvers', () => {
       createdBy: '321',
       ad: '322',
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Message?.negotiation(
-      { negotiation: '123' },
+      { negotiation: new Types.ObjectId('5fdd925d9cc5800455e1855e') },
       null,
-      mockContext
+      mockContext,
     );
     expect(res).toEqual({
       _id: '122',

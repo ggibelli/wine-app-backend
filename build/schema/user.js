@@ -1,32 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.typeDefs = void 0;
 const apollo_server_express_1 = require("apollo-server-express");
-exports.typeDefs = apollo_server_express_1.gql `
-  type ProducedWines {
-    wine: Wine!
-    bottlesProduced: Int!
-    metodoProduttivo: MetodoProduttivo!
-  }
-
-  type OwnedVineyards {
-    vineyard: Vineyard!
-    tonsProduced: Int!
-    metodoProduttivo: MetodoProduttivo!
-  }
-
-  input ProducedWinesInput {
-    wine: ID!
-    bottlesProduced: Int
-    metodoProduttivo: MetodoProduttivo
-  }
-
-  input OwnedVineyardsInput {
-    vineyard: ID!
-    tonsProduced: Int
-    metodoProduttivo: MetodoProduttivo
-  }
-
+const typeDefs = apollo_server_express_1.gql `
   input UserInput {
     email: String!
     password: String!
@@ -42,8 +17,6 @@ exports.typeDefs = apollo_server_express_1.gql `
     #negotiations: [ID!]
     #reviews: [ID!]
     #adsRemaining: Int
-    producedWines: ProducedWinesInput
-    ownedVineyards: OwnedVineyardsInput
   }
 
   input UserInputUpdate {
@@ -58,8 +31,6 @@ exports.typeDefs = apollo_server_express_1.gql `
     isVerified: Boolean
     isPremium: Boolean
     hideContact: Boolean!
-    producedWines: ProducedWinesInput
-    ownedVineyards: OwnedVineyardsInput
   }
 
   type Coordinates {
@@ -87,8 +58,6 @@ exports.typeDefs = apollo_server_express_1.gql `
     reviews: [Review!]
     adsRemaining: Int @authorized
     dateCreated: Date! @date
-    producedWines: ProducedWines
-    ownedVineyards: OwnedVineyards
   }
 
   type AuthUser {
@@ -119,3 +88,4 @@ exports.typeDefs = apollo_server_express_1.gql `
     login(email: String!, password: String!): AuthUserPayload
   }
 `;
+exports.default = typeDefs;

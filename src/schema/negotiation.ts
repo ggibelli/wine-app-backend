@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server-express';
 
-export const typeDefs = gql`
+const typeDefs = gql`
   input NegotiationInput {
     ad: ID!
     forUserAd: ID!
@@ -14,7 +14,7 @@ export const typeDefs = gql`
     #ad: ID!
     #forUserAd: ID!
     #messages: [ID!]
-    isConcluded: Boolean
+    isConcluded: Boolean!
   }
 
   type Negotiation {
@@ -65,3 +65,5 @@ export const typeDefs = gql`
     negotiationClosed: Ad! @authenticated
   }
 `;
+
+export default typeDefs;

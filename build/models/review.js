@@ -26,7 +26,7 @@ exports.Review = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-validator"));
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const reviewSchemaFields = {
+const reviewSchema = new mongoose_1.Schema({
     createdBy: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'User',
@@ -61,8 +61,8 @@ const reviewSchemaFields = {
         type: String,
         enum: ['SELL', 'BUY'],
     },
-};
-const reviewSchema = new mongoose_1.Schema(reviewSchemaFields);
+});
 reviewSchema.index({ createdBy: 1, negotiation: 1 }, { unique: true });
+// @ts-ignore
 reviewSchema.plugin(mongoose_unique_validator_1.default);
 exports.Review = mongoose_1.default.model('Review', reviewSchema);

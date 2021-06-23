@@ -1,28 +1,29 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
 import { MongoDataSource } from 'apollo-datasource-mongodb';
+import { LeanDocument, Types } from 'mongoose';
 import { Errors } from '../types';
-import { IMessageDoc, MessageGraphQl } from '../models/message';
-import { UserGraphQl } from '../models/user';
+import { MessageDocument, UserDocument } from '../interfaces/mongoose.gen';
 import {
   MessageInput,
   QueryMessagesForNegotiationArgs,
 } from '../generated/graphql';
 import { loggerError } from '../utils/logger';
 import { ADMINISTRATOR_ID, NEGOTIATION_ADM } from '../utils/config';
+
 interface Context {
-  user: UserGraphQl;
-  createToken(user: UserGraphQl): string;
+  user: LeanDocument<UserDocument>;
+  createToken(user: LeanDocument<UserDocument>): string;
 }
 
 interface Response {
-  response: IMessageDoc | MessageGraphQl | null;
+  response: MessageDocument | LeanDocument<MessageDocument> | null;
   errors: Errors[];
 }
 
-export default class Messages extends MongoDataSource<IMessageDoc, Context> {
-  async getMessage(id: string): Promise<IMessageDoc | null | undefined> {
+export default class Messages extends MongoDataSource<
+MessageDocument,
+Context
+> {
+  async getMessage(id: string): Promise<MessageDocument | null | undefined> {
     const message = await this.findOneById(id);
     if (message) message.isViewed = true;
     try {
@@ -32,13 +33,12 @@ export default class Messages extends MongoDataSource<IMessageDoc, Context> {
     }
     return message;
   }
-  async getMessages(): Promise<MessageGraphQl[]> {
+
+  async getMessages(): Promise<LeanDocument<MessageDocument>[]> {
     const userCtx = this.context.user;
     if (userCtx.isAdmin) {
       return this.model.find({}).lean().exec();
     }
-    await this.collection.createIndex({ sentTo: 1 });
-    await this.collection.createIndex({ sentBy: 1 });
     return this.model
       .find({
         $or: [{ sentBy: userCtx._id }, { sentTo: userCtx._id }],
@@ -52,20 +52,18 @@ export default class Messages extends MongoDataSource<IMessageDoc, Context> {
     return this.model
       .find({
         sentBy: userCtx._id,
-        sentTo: sentTo,
+        sentTo,
       })
       .lean()
       .exec();
   }
 
   async getMessagesNegotiationType(negotiation: string) {
-    await this.collection.createIndex({ sentTo: 1 });
-    await this.collection.createIndex({ sentBy: 1 });
     const userCtx = this.context.user;
     const messages = await this.model
       .find({
         $or: [{ sentBy: userCtx._id }, { sentTo: userCtx._id }],
-        negotiation: negotiation,
+        negotiation,
       })
       .exec();
     return messages;
@@ -76,13 +74,11 @@ export default class Messages extends MongoDataSource<IMessageDoc, Context> {
     limit = 20,
     offset = 0,
   }: QueryMessagesForNegotiationArgs) {
-    await this.collection.createIndex({ sentTo: 1 });
-    await this.collection.createIndex({ sentBy: 1 });
     const userCtx = this.context.user;
     const messages = await this.model
       .find({
         $or: [{ sentBy: userCtx._id }, { sentTo: userCtx._id }],
-        negotiation: negotiation,
+        negotiation,
       })
       .sort({ _id: -1 })
       .skip(offset)
@@ -91,25 +87,30 @@ export default class Messages extends MongoDataSource<IMessageDoc, Context> {
     const pageCount = await this.model
       .find({
         $or: [{ sentBy: userCtx._id }, { sentTo: userCtx._id }],
-        negotiation: negotiation,
+        negotiation,
       })
       .countDocuments()
       .exec();
 
     const messagesToRead = messages.filter(
-      (message) =>
-        message.sentTo.toString() === this.context.user._id.toString() &&
-        !message.isViewed
+      (message) => message.sentTo.toString() === this.context.user._id.toString()
+        && !message.isViewed,
     );
     if (messagesToRead) {
-      for (const message of messagesToRead) {
-        message.isViewed = true;
-        try {
+      await Promise.all(
+        messagesToRead.map(async (message) => {
+          message.isViewed = true;
           await message.save();
-        } catch (e) {
-          loggerError(e);
-        }
-      }
+        }),
+      );
+      // for (const message of messagesToRead) {
+      //   message.isViewed = true;
+      //   try {
+      //     await message.save();
+      //   } catch (e) {
+      //     loggerError(e);
+      //   }
+      // }
     }
 
     return { messages, pageCount };
@@ -117,9 +118,10 @@ export default class Messages extends MongoDataSource<IMessageDoc, Context> {
 
   async createMessage(message: MessageInput): Promise<Response> {
     const errors: Errors[] = [];
-    const createdMessage: IMessageDoc = new this.model({
+    const createdMessage: MessageDocument = new this.model({
       ...message,
       sentBy: this.context.user,
+      _id: new Types.ObjectId(),
     });
     if (createdMessage.sentBy.toString() === createdMessage.sentTo.toString()) {
       errors.push({
@@ -149,12 +151,13 @@ export default class Messages extends MongoDataSource<IMessageDoc, Context> {
 
   async messageAdmin(
     recipients: string[] | undefined,
-    message: string
+    message: string,
   ): Promise<void> {
     if (!recipients) return;
     await Promise.all(
       recipients.map(async (recipient) => {
-        const createdMessage: IMessageDoc = new this.model({
+        const createdMessage: MessageDocument = new this.model({
+          _id: new Types.ObjectId(),
           sentTo: recipient,
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
           content: message,
@@ -167,7 +170,7 @@ export default class Messages extends MongoDataSource<IMessageDoc, Context> {
           loggerError(e);
         }
         // const message: IMessageDoc = new this.model({sentTo })
-      })
+      }),
     );
   }
 

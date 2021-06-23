@@ -1,21 +1,13 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
-
-import { Colore } from '../types';
-
-export interface IVineyard {
-  name: string;
-  colore?: Colore;
-}
-
-export interface IVineyardDoc extends IVineyard, Document {}
-
-export interface VineyardGraphQl extends IVineyard {
-  _id: mongoose.Types.ObjectId;
-}
+import {
+  VineyardDocument,
+  VineyardModel,
+  VineyardSchema,
+} from '../interfaces/mongoose.gen';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const vineyardSchemaFields: Record<keyof IVineyard, any> = {
+const vineyardSchema: VineyardSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -24,13 +16,11 @@ const vineyardSchemaFields: Record<keyof IVineyard, any> = {
     type: String,
     enum: ['BIANCA', 'ROSSA'],
   },
-};
-
-const vineyardSchema = new Schema(vineyardSchemaFields);
-
+});
+// @ts-ignore
 vineyardSchema.plugin(mongooseUniqueValidator);
 
-export const Vineyard = mongoose.model<IVineyardDoc>(
-  'Vineyard',
-  vineyardSchema
-);
+export const Vineyard: VineyardModel = mongoose.model<
+VineyardDocument,
+VineyardModel
+>('Vineyard', vineyardSchema);

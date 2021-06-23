@@ -13,27 +13,28 @@ const express_1 = __importDefault(require("express"));
 const apollo_server_express_1 = require("apollo-server-express");
 const mongoose_1 = __importDefault(require("mongoose"));
 const http_1 = __importDefault(require("http"));
+const path_1 = __importDefault(require("path"));
 const config_1 = require("./utils/config");
 const logger_1 = require("./utils/logger");
-const resolvers_1 = __importDefault(require("./resolvers/"));
-const ad_1 = require("./schema/ad");
-const directives_1 = require("./schema/directives");
-const message_1 = require("./schema/message");
-const negotiation_1 = require("./schema/negotiation");
-const review_1 = require("./schema/review");
-const user_1 = require("./schema/user");
-const vineyard_1 = require("./schema/vineyard");
-const wine_1 = require("./schema/wine");
-const enum_1 = require("./schema/enum");
-const error_1 = require("./schema/error");
-const scalars_1 = require("./schema/scalars");
+const resolvers_1 = __importDefault(require("./resolvers"));
+const ad_1 = __importDefault(require("./schema/ad"));
+const directives_1 = __importDefault(require("./schema/directives"));
+const message_1 = __importDefault(require("./schema/message"));
+const negotiation_1 = __importDefault(require("./schema/negotiation"));
+const review_1 = __importDefault(require("./schema/review"));
+const user_1 = __importDefault(require("./schema/user"));
+const vineyard_1 = __importDefault(require("./schema/vineyard"));
+const wine_1 = __importDefault(require("./schema/wine"));
+const enum_1 = __importDefault(require("./schema/enum"));
+const error_1 = __importDefault(require("./schema/error"));
+const scalars_1 = __importDefault(require("./schema/scalars"));
 const data_sources_1 = __importDefault(require("./data-sources"));
 const directives_2 = require("./directives");
 const auth_1 = require("./utils/auth");
-const accountConfirmation_1 = require("./controllers/accountConfirmation");
-const path_1 = __importDefault(require("path"));
+const accountConfirmation_1 = __importDefault(require("./controllers/accountConfirmation"));
 mongoose_1.default.set('useFindAndModify', false);
 mongoose_1.default.set('useCreateIndex', true);
+mongoose_1.default.set('autoIndex', false);
 const mongooseConnection = () => {
     mongoose_1.default
         .connect(config_1.MONGODB_URI, {
@@ -51,17 +52,17 @@ const mongooseConnection = () => {
 exports.mongooseConnection = mongooseConnection;
 exports.schema = apollo_server_express_1.makeExecutableSchema({
     typeDefs: [
-        ad_1.typeDefs,
-        directives_1.typeDefs,
-        message_1.typeDefs,
-        negotiation_1.typeDefs,
-        review_1.typeDefs,
-        user_1.typeDefs,
-        wine_1.typeDefs,
-        vineyard_1.typeDefs,
-        enum_1.typeDefs,
-        error_1.typeDefs,
-        scalars_1.typeDefs,
+        ad_1.default,
+        directives_1.default,
+        message_1.default,
+        negotiation_1.default,
+        review_1.default,
+        user_1.default,
+        wine_1.default,
+        vineyard_1.default,
+        enum_1.default,
+        error_1.default,
+        scalars_1.default,
     ],
     resolvers: resolvers_1.default,
     schemaDirectives: {
@@ -72,10 +73,10 @@ exports.schema = apollo_server_express_1.makeExecutableSchema({
     inheritResolversFromInterfaces: true,
 });
 function initializeSubscriptionDataSources(context) {
-    const dataSources = context.dataSources;
-    if (dataSources) {
-        for (const instance in dataSources) {
-            dataSources[instance].initialize({ context, cache: undefined });
+    const conte = context;
+    if (conte.dataSources) {
+        for (const instance in conte.dataSources) {
+            conte.dataSources[instance].initialize({ context, cache: undefined });
         }
     }
 }
@@ -110,7 +111,7 @@ const server = new apollo_server_express_1.ApolloServer({
     tracing: true,
 });
 exports.app = express_1.default();
-exports.app.use(accountConfirmation_1.confirmationRouter);
+exports.app.use(accountConfirmation_1.default);
 exports.app.use(express_1.default.static('public'));
 exports.app.get('*', (_req, res) => {
     res.sendFile(path_1.default.resolve('public', 'index.html'));

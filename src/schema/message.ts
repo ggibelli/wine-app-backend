@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server-express';
 
-export const typeDefs = gql`
+const typeDefs = gql`
   input MessageInput {
     content: String!
     sentTo: ID!
@@ -32,8 +32,8 @@ export const typeDefs = gql`
     messagesToUser(sentTo: ID!): [Message!] @authenticated
     messagesForNegotiation(
       negotiation: ID!
-      offset: Int
-      limit: Int
+      offset: Int = 0
+      limit: Int = 10
     ): MessageResult @authenticated
     messages: [Message!] @authenticated
   }
@@ -46,3 +46,5 @@ export const typeDefs = gql`
     messageSent: Message! @authenticated
   }
 `;
+
+export default typeDefs;

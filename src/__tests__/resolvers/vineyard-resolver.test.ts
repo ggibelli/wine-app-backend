@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-const publish = jest.fn();
-const filter = jest.fn();
-jest.mock('apollo-server-express', () => ({
-  PubSub: jest.fn(() => ({
-    publish,
-  })),
-  withFilter: filter,
-}));
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import resolvers from '../../resolvers';
+
+jest.mock('apollo-server-express', () => ({
+  PubSub: jest.fn(() => ({
+    publish: jest.fn(),
+  })),
+  withFilter: jest.fn(),
+}));
 
 const mockContext = {
   dataSources: {
@@ -62,7 +61,7 @@ describe('Review resolvers', () => {
     const res = await resolvers.Query?.vineyard(
       null,
       { id: '122' },
-      mockContext
+      mockContext,
     );
     expect(res).toEqual({
       _id: '122',
@@ -78,13 +77,13 @@ describe('Review resolvers', () => {
       },
       errors: [],
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.createVineyard(
       null,
       {
         vineyardName: 'Uva',
       },
-      mockContext
+      mockContext,
     );
 
     expect(res).toEqual({
@@ -104,14 +103,14 @@ describe('Review resolvers', () => {
       },
       errors: [],
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.updateVineyard(
       null,
       {
         _id: '122',
         vineyardName: 'Uvetta',
       },
-      mockContext
+      mockContext,
     );
 
     expect(res).toEqual({
@@ -131,13 +130,13 @@ describe('Review resolvers', () => {
       },
       errors: [],
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.deleteVineyard(
       null,
       {
         _id: '122',
       },
-      mockContext
+      mockContext,
     );
     expect(res).toEqual({
       errors: [],

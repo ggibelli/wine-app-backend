@@ -1,8 +1,7 @@
 "use strict";
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 Object.defineProperty(exports, "__esModule", { value: true });
 const apollo_datasource_mongodb_1 = require("apollo-datasource-mongodb");
+const mongoose_1 = require("mongoose");
 const logger_1 = require("../utils/logger");
 const config_1 = require("../utils/config");
 class Messages extends apollo_datasource_mongodb_1.MongoDataSource {
@@ -23,8 +22,6 @@ class Messages extends apollo_datasource_mongodb_1.MongoDataSource {
         if (userCtx.isAdmin) {
             return this.model.find({}).lean().exec();
         }
-        await this.collection.createIndex({ sentTo: 1 });
-        await this.collection.createIndex({ sentBy: 1 });
         return this.model
             .find({
             $or: [{ sentBy: userCtx._id }, { sentTo: userCtx._id }],
@@ -37,31 +34,27 @@ class Messages extends apollo_datasource_mongodb_1.MongoDataSource {
         return this.model
             .find({
             sentBy: userCtx._id,
-            sentTo: sentTo,
+            sentTo,
         })
             .lean()
             .exec();
     }
     async getMessagesNegotiationType(negotiation) {
-        await this.collection.createIndex({ sentTo: 1 });
-        await this.collection.createIndex({ sentBy: 1 });
         const userCtx = this.context.user;
         const messages = await this.model
             .find({
             $or: [{ sentBy: userCtx._id }, { sentTo: userCtx._id }],
-            negotiation: negotiation,
+            negotiation,
         })
             .exec();
         return messages;
     }
     async getMessagesForNegotiation({ negotiation, limit = 20, offset = 0, }) {
-        await this.collection.createIndex({ sentTo: 1 });
-        await this.collection.createIndex({ sentBy: 1 });
         const userCtx = this.context.user;
         const messages = await this.model
             .find({
             $or: [{ sentBy: userCtx._id }, { sentTo: userCtx._id }],
-            negotiation: negotiation,
+            negotiation,
         })
             .sort({ _id: -1 })
             .skip(offset)
@@ -70,22 +63,25 @@ class Messages extends apollo_datasource_mongodb_1.MongoDataSource {
         const pageCount = await this.model
             .find({
             $or: [{ sentBy: userCtx._id }, { sentTo: userCtx._id }],
-            negotiation: negotiation,
+            negotiation,
         })
             .countDocuments()
             .exec();
-        const messagesToRead = messages.filter((message) => message.sentTo.toString() === this.context.user._id.toString() &&
-            !message.isViewed);
+        const messagesToRead = messages.filter((message) => message.sentTo.toString() === this.context.user._id.toString()
+            && !message.isViewed);
         if (messagesToRead) {
-            for (const message of messagesToRead) {
+            await Promise.all(messagesToRead.map(async (message) => {
                 message.isViewed = true;
-                try {
-                    await message.save();
-                }
-                catch (e) {
-                    logger_1.loggerError(e);
-                }
-            }
+                await message.save();
+            }));
+            // for (const message of messagesToRead) {
+            //   message.isViewed = true;
+            //   try {
+            //     await message.save();
+            //   } catch (e) {
+            //     loggerError(e);
+            //   }
+            // }
         }
         return { messages, pageCount };
     }
@@ -94,6 +90,7 @@ class Messages extends apollo_datasource_mongodb_1.MongoDataSource {
         const createdMessage = new this.model({
             ...message,
             sentBy: this.context.user,
+            _id: new mongoose_1.Types.ObjectId(),
         });
         if (createdMessage.sentBy.toString() === createdMessage.sentTo.toString()) {
             errors.push({
@@ -126,6 +123,7 @@ class Messages extends apollo_datasource_mongodb_1.MongoDataSource {
             return;
         await Promise.all(recipients.map(async (recipient) => {
             const createdMessage = new this.model({
+                _id: new mongoose_1.Types.ObjectId(),
                 sentTo: recipient,
                 // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
                 content: message,

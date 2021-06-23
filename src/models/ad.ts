@@ -1,55 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 // import { Address } from '../types';
-import {
-  // Province,
-  // Regioni,
-  METODOPRODUTTIVO,
-} from '../utils/enumMongooseHelper';
-import { IUserDoc } from './user';
-import { IWineDoc } from './wine';
-import { TypeAd, TypeProduct, Menzione } from '../types';
-import { IVineyardDoc } from './vineyard';
-import { MetodoProduttivo } from '../types';
-import { Negotiation } from '../generated/graphql';
+import METODOPRODUTTIVO from '../utils/enumMongooseHelper';
+import { TypeAd, TypeProduct } from '../types';
 
-export interface IAd {
-  postedBy: IUserDoc['_id'];
-  wineName?: string;
-  wine?: IWineDoc['_id'];
-  sottoZona?: string;
-  menzione?: Menzione;
-  metodoProduttivo?: MetodoProduttivo;
-  vineyardName?: string;
-  vineyard?: IVineyardDoc['_id'];
-  harvest: number;
-  abv: number;
-  priceFrom: number; //se vendita priceFrom e priceTo settati a stesso numero
-  priceTo: number;
-  litersFrom?: number; //se vendite litersFrom e litersTo settati a stesso numero
-  litersTo?: number;
-  kgFrom?: number;
-  kgTo?: number;
-  content?: string | null | undefined;
-  // address: Address;
-  negotiations?: mongoose.Types.Array<Negotiation>; // trattative dell'annuncio, solo attive, solo graphql??
-  viewedBy?: mongoose.Types.Array<IUserDoc['_id']>;
-  savedBy?: mongoose.Types.Array<IUserDoc['_id']>;
-  typeAd: TypeAd;
-  typeProduct: TypeProduct;
-  needsFollowUp: boolean;
-  isActive: boolean;
-  datePosted: Date;
-}
+import { AdModel, AdSchema, AdDocument } from '../interfaces/mongoose.gen';
 
-export interface AdGraphQl extends IAd {
-  _id: mongoose.Types.ObjectId | string;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const adSchemaFields: Record<keyof IAd, any> = {
+const schema: AdSchema = new Schema({
   postedBy: {
-    type: Schema.Types.ObjectId,
+    type: 'ObjectId',
     ref: 'User',
     required: true,
   },
@@ -66,9 +25,7 @@ const adSchemaFields: Record<keyof IAd, any> = {
   wineName: {
     type: String,
     minlength: 3,
-    required() {
-      return this.typeProduct === TypeProduct.ADWINE;
-    },
+    
     index: true,
   },
   wine: {
@@ -94,9 +51,7 @@ const adSchemaFields: Record<keyof IAd, any> = {
   vineyardName: {
     type: String,
     minlength: 3,
-    required() {
-      return this.typeProduct === TypeProduct.ADGRAPE;
-    },
+    
     index: true,
   },
   vineyard: {
@@ -121,27 +76,19 @@ const adSchemaFields: Record<keyof IAd, any> = {
   },
   litersFrom: {
     type: Number,
-    required() {
-      return this.typeProduct === TypeProduct.ADWINE;
-    },
+    
   },
   litersTo: {
     type: Number,
-    required() {
-      return this.typeProduct === TypeProduct.ADWINE;
-    },
+    
   },
   kgFrom: {
     type: Number,
-    required() {
-      return this.typeProduct === TypeProduct.ADGRAPE;
-    },
+    
   },
   kgTo: {
     type: Number,
-    required() {
-      return this.typeProduct === TypeProduct.ADGRAPE;
-    },
+    
   },
   // address: {
   //   comune: {
@@ -193,12 +140,9 @@ const adSchemaFields: Record<keyof IAd, any> = {
     // `Date.now()` returns the current unix timestamp as a number
     default: Date.now,
   },
-};
+});
 
-export interface IAdDoc extends IAd, Document {}
+// const adSchema = new Schema(adSchemaFields);
+schema.index({ wineName: 1, typeAd: 1 });
 
-const adSchema = new Schema(adSchemaFields);
-
-adSchema.index({ typeProduct: 1, typeAd: 1, wineName: 1, vineyardName: 1 });
-
-export const Ad = mongoose.model<IAdDoc>('Ad', adSchema);
+export const Ad: AdModel = mongoose.model<AdDocument, AdModel>('Ad', schema);

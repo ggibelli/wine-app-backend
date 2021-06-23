@@ -1,29 +1,14 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { IUserDoc } from './user';
-import { IAdDoc } from './ad';
-import { IMessageDoc } from './message';
-import { TypeAd } from '../types';
+import mongoose, { Schema } from 'mongoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 
-export interface INegotiation {
-  createdBy: IUserDoc['_id'];
-  ad: IAdDoc['_id'];
-  forUserAd: IUserDoc['_id'];
-  messages?: mongoose.Types.Array<IMessageDoc['_id']> | null;
-  isConcluded: boolean;
-  dateCreated: Date;
-  dateConcluded?: Date | null;
-  type: TypeAd;
-}
-
-export interface NegotiationGraphQl extends INegotiation {
-  _id: mongoose.Types.ObjectId | string;
-}
-
-export interface INegotiationDoc extends INegotiation, Document {}
+import {
+  NegotiationDocument,
+  NegotiationModel,
+  NegotiationSchema,
+} from '../interfaces/mongoose.gen';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const negotiationSchemaFields: Record<keyof INegotiation, any> = {
+const negotiationSchema: NegotiationSchema = new Schema({
   createdBy: {
     type: Schema.Types.ObjectId,
     ref: 'User',
@@ -62,13 +47,12 @@ const negotiationSchemaFields: Record<keyof INegotiation, any> = {
   dateConcluded: {
     type: Date,
   },
-};
-
-const negotiationSchema = new Schema(negotiationSchemaFields);
+});
 
 negotiationSchema.index({ createdBy: 1, ad: 1 }, { unique: true });
+// @ts-ignore
 negotiationSchema.plugin(mongooseUniqueValidator);
-export const Negotiation = mongoose.model<INegotiationDoc>(
-  'Negotiation',
-  negotiationSchema
-);
+export const Negotiation: NegotiationModel = mongoose.model<
+NegotiationDocument,
+NegotiationModel
+>('Negotiation', negotiationSchema);

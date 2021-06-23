@@ -22,7 +22,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Message = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const messageSchemaFields = {
+const messageSchema = new mongoose_1.Schema({
     negotiation: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'Negotiation',
@@ -52,7 +52,6 @@ const messageSchemaFields = {
         type: Boolean,
         default: false,
     },
-};
-const messageSchema = new mongoose_1.Schema(messageSchemaFields);
-messageSchema.index({ negotiation: 1, sentTo: 1, sentFrom: 1 });
+});
+messageSchema.index({ negotiation: 1 });
 exports.Message = mongoose_1.default.model('Message', messageSchema);

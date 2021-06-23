@@ -4,16 +4,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-const publish = jest.fn();
-const filter = jest.fn();
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+const mockPublish = jest.fn();
+const mongoose_1 = require("mongoose");
+const resolvers_1 = __importDefault(require("../../resolvers"));
 jest.mock('apollo-server-express', () => ({
     PubSub: jest.fn(() => ({
-        publish,
+        publish: mockPublish,
     })),
-    withFilter: filter,
+    withFilter: jest.fn(),
 }));
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-const resolvers_1 = __importDefault(require("../../resolvers"));
 const mockContext = {
     dataSources: {
         ads: {
@@ -117,16 +117,16 @@ describe('Review resolvers', () => {
     it('createReview succeeds and calls datasource and subscription', async () => {
         createReview.mockReturnValueOnce({
             response: {
-                _id: '122',
+                _id: '507f1f77bcf86cd799439011',
                 rating: '3',
                 forUser: '123',
-                createdBy: '321',
+                createdBy: '507f1f77bcf86cd799439012',
                 negotiation: '322',
                 content: 'nice',
             },
             errors: [],
         });
-        //@ts-ignore
+        // @ts-ignore
         const res = await resolvers_1.default.Mutation?.createReview(null, {
             review: {
                 rating: '3',
@@ -136,13 +136,13 @@ describe('Review resolvers', () => {
             },
         }, mockContext);
         expect(messageAdmin).toHaveBeenCalledWith(['123'], 'Hanno scritto di te nice');
-        expect(publish).toHaveBeenCalledTimes(1);
-        expect(publish).toHaveBeenCalledWith('REVIEW_CREATED', {
+        expect(mockPublish).toHaveBeenCalledTimes(1);
+        expect(mockPublish).toHaveBeenCalledWith('REVIEW_CREATED', {
             reviewCreated: {
-                _id: '122',
+                _id: '507f1f77bcf86cd799439011',
                 rating: '3',
                 forUser: '123',
-                createdBy: '321',
+                createdBy: '507f1f77bcf86cd799439012',
                 negotiation: '322',
                 content: 'nice',
             },
@@ -150,10 +150,10 @@ describe('Review resolvers', () => {
         expect(res).toStrictEqual({
             errors: [],
             response: {
-                _id: '122',
+                _id: '507f1f77bcf86cd799439011',
                 rating: '3',
                 forUser: '123',
-                createdBy: '321',
+                createdBy: '507f1f77bcf86cd799439012',
                 negotiation: '322',
                 content: 'nice',
             },
@@ -164,13 +164,13 @@ describe('Review resolvers', () => {
             response: null,
             errors: [{ name: 'error', text: 'error' }],
         });
-        //@ts-ignore
+        // @ts-ignore
         const res = await resolvers_1.default.Mutation?.createReview(null, {
             rating: 'Good',
             forUser: '123',
             negotiation: '322',
         }, mockContext);
-        expect(publish).toHaveBeenCalledTimes(0);
+        expect(mockPublish).toHaveBeenCalledTimes(0);
         expect(res).toEqual({
             response: null,
             errors: [{ name: 'error', text: 'error' }],
@@ -188,7 +188,7 @@ describe('Review resolvers', () => {
             },
             errors: [],
         });
-        //@ts-ignore
+        // @ts-ignore
         const res = await resolvers_1.default.Mutation?.updateReview(null, {
             _id: '122',
             rating: 'Poor',
@@ -217,7 +217,7 @@ describe('Review resolvers', () => {
             },
             errors: [],
         });
-        //@ts-ignore
+        // @ts-ignore
         const res = await resolvers_1.default.Mutation?.deleteReview(null, {
             _id: '122',
         }, mockContext);
@@ -234,8 +234,8 @@ describe('Review resolvers', () => {
     });
     it('Review createdBy calls getUser', async () => {
         getUser.mockReturnValueOnce({ id: 1 });
-        //@ts-ignore
-        const res = await resolvers_1.default.Review?.createdBy({ createdBy: '123' }, null, mockContext);
+        // @ts-ignore
+        const res = await resolvers_1.default.Review?.createdBy({ createdBy: new mongoose_1.Types.ObjectId('507f1f77bcf86cd799439012') }, null, mockContext);
         expect(res).toEqual({ id: 1 });
     });
     it('Review negotiation calls getNegotiation', async () => {
@@ -246,8 +246,11 @@ describe('Review resolvers', () => {
             createdBy: '321',
             ad: '322',
         });
-        //@ts-ignore
-        const res = await resolvers_1.default.Review?.negotiation({ ad: '123' }, null, mockContext);
+        // @ts-ignore
+        const res = await resolvers_1.default.Review?.negotiation({
+            ad: '322',
+            negotiation: new mongoose_1.Types.ObjectId('507f1f77bcf86cd799439013'),
+        }, null, mockContext);
         expect(res).toEqual({
             _id: '122',
             typeAd: 'SELL',
@@ -258,8 +261,8 @@ describe('Review resolvers', () => {
     });
     it('Review forUser calls getUser', async () => {
         getUser.mockReturnValueOnce({ id: 1 });
-        //@ts-ignore
-        const res = await resolvers_1.default.Review?.forUser({ forUser: { _id: '123' } }, null, mockContext);
+        // @ts-ignore
+        const res = await resolvers_1.default.Review?.forUser({ forUser: new mongoose_1.Types.ObjectId('507f1f77bcf86cd799439011') }, null, mockContext);
         expect(res).toEqual({ id: 1 });
     });
 });

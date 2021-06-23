@@ -26,7 +26,8 @@ exports.Wine = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-validator"));
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const wineSchemaFields = {
+const wineSchema = new mongoose_1.Schema({
+    _id: { type: mongoose_1.Schema.Types.ObjectId },
     denominazioneVino: {
         type: String,
         required: true,
@@ -47,8 +48,8 @@ const wineSchemaFields = {
             type: String,
         },
     ],
-};
-const wineSchema = new mongoose_1.Schema(wineSchemaFields);
+});
 wineSchema.index({ denominazioneVino: 1 });
+// @ts-ignore
 wineSchema.plugin(mongoose_unique_validator_1.default);
 exports.Wine = mongoose_1.default.model('Wine', wineSchema);

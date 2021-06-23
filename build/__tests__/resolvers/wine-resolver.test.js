@@ -4,16 +4,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-const publish = jest.fn();
-const filter = jest.fn();
-jest.mock('apollo-server-express', () => ({
-    PubSub: jest.fn(() => ({
-        publish,
-    })),
-    withFilter: filter,
-}));
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 const resolvers_1 = __importDefault(require("../../resolvers"));
+jest.mock('apollo-server-express', () => ({
+    PubSub: jest.fn(() => ({
+        publish: jest.fn(),
+    })),
+    withFilter: jest.fn(),
+}));
 const mockContext = {
     dataSources: {
         wines: {
@@ -74,7 +72,7 @@ describe('Review resolvers', () => {
             },
             errors: [],
         });
-        //@ts-ignore
+        // @ts-ignore
         const res = await resolvers_1.default.Mutation?.createWine(null, {
             wineName: 'Uva',
         }, mockContext);
@@ -94,7 +92,7 @@ describe('Review resolvers', () => {
             },
             errors: [],
         });
-        //@ts-ignore
+        // @ts-ignore
         const res = await resolvers_1.default.Mutation?.updateWine(null, {
             _id: '122',
             wineName: 'Uvetta',
@@ -115,7 +113,7 @@ describe('Review resolvers', () => {
             },
             errors: [],
         });
-        //@ts-ignore
+        // @ts-ignore
         const res = await resolvers_1.default.Mutation?.deleteWine(null, {
             _id: '122',
         }, mockContext);

@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resolver = void 0;
-exports.resolver = {
+const resolver = {
     Query: {
         async wines(_, __, { dataSources }) {
             return dataSources.wines.getWines();
@@ -22,3 +21,4 @@ exports.resolver = {
         },
     },
 };
+exports.default = resolver;

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GEOAPI = exports.NEGOTIATION_ADM = exports.ADMINISTRATOR_ID = exports.BASE_URL = exports.MAIL_USER = exports.MAIL_PASSWORD = exports.SECRET = exports.MONGODB_URI = exports.PORT = void 0;
+/* eslint-disable import/no-mutable-exports */
 const dotenv_1 = require("dotenv");
 dotenv_1.config();
 exports.PORT = process.env.PORT;

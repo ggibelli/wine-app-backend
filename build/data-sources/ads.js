@@ -1,34 +1,35 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sortQueryHelper = void 0;
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 const apollo_datasource_mongodb_1 = require("apollo-datasource-mongodb");
-const types_1 = require("../types");
-const helpersTypeScript_1 = require("../utils/helpersTypeScript");
 const apollo_server_express_1 = require("apollo-server-express");
-const mailServer_1 = require("../utils/mailServer");
 const cron_1 = require("cron");
+const mongoose_1 = require("mongoose");
+const types_1 = require("../types");
+const helpersTypeScript_1 = __importDefault(require("../utils/helpersTypeScript"));
+const graphql_1 = require("../generated/graphql");
+const mailServer_1 = require("../utils/mailServer");
 const logger_1 = require("../utils/logger");
 const sortQueryHelper = (orderBy) => {
     let sortQuery;
     switch (orderBy) {
-        case types_1.QueryOrderBy.createdAt_ASC:
+        case graphql_1.QueryOrderBy.CreatedAtASC:
             sortQuery = { _id: 1 };
             break;
-        case types_1.QueryOrderBy.createdAt_DESC:
+        case graphql_1.QueryOrderBy.CreatedAtDESC:
             sortQuery = { _id: -1 };
             break;
-        case types_1.QueryOrderBy.price_ASC:
+        case graphql_1.QueryOrderBy.PriceASC:
             sortQuery = { priceFrom: 1 };
             break;
-        case types_1.QueryOrderBy.price_DESC:
+        case graphql_1.QueryOrderBy.priceDESC:
             sortQuery = { priceFrom: -1 };
             break;
         default:
-            helpersTypeScript_1.assertNever(orderBy);
+            helpersTypeScript_1.default(orderBy);
     }
     return sortQuery;
 };
@@ -103,60 +104,60 @@ const parseWineAd = (params, errors) => {
 };
 class Ads extends apollo_datasource_mongodb_1.MongoDataSource {
     async getAd(adId) {
-        //const user = this.context.user;
+        // const user = this.context.user;
         const ad = await this.findOneById(adId);
         // if (user) {
         //   ad?.viewedBy?.addToSet(user._id);
         //   await ad?.save();
         // }
-        //ad?.populate({ path: 'negotiations', select: 'createdBy' });
+        // ad?.populate({ path: 'negotiations', select: 'createdBy' });
         return ad;
     }
     async getAdsUserType(user) {
         return this.model.find({ postedBy: user }).lean().exec();
     }
-    async getAdsByUser({ user, limit = 10, offset = 0, orderBy = types_1.QueryOrderBy.createdAt_DESC, isActive, }) {
+    async getAdsByUser({ user, limit = 10, offset = 0, orderBy = graphql_1.QueryOrderBy.CreatedAtDESC, isActive, }) {
         const LIMIT_MAX = 100;
         if (limit < 1 || offset < 0 || limit > LIMIT_MAX) {
             throw new apollo_server_express_1.UserInputError(`${limit} must be greater than 1 and less than 100 ${offset} must be positive `);
         }
         const sortQuery = exports.sortQueryHelper(orderBy);
-        const pageCount = await this.model
+        let pageCount = await this.model
             .countDocuments({
             postedBy: user,
         })
             .exec();
         if (isActive === true) {
-            const pageCount = await this.model
+            pageCount = await this.model
                 .countDocuments({
                 postedBy: user,
                 isActive: true,
             })
                 .exec();
             return {
-                ads: (await this.model
+                ads: await this.model
                     .find({ postedBy: user, isActive: true })
                     .skip(offset)
                     .limit(limit)
                     .sort(sortQuery)
                     .lean()
-                    .exec()),
+                    .exec(),
                 pageCount,
             };
         }
         return {
-            ads: (await this.model
+            ads: await this.model
                 .find({ postedBy: user })
                 .skip(offset)
                 .limit(limit)
                 .sort(sortQuery)
                 .lean()
-                .exec()),
+                .exec(),
             pageCount,
         };
     }
     // un metodo solo con tipo prodotto e nome vino o nome vigna
-    async getAds({ limit = 10, offset = 0, orderBy = types_1.QueryOrderBy.createdAt_DESC, vineyardName, wineName, typeAd, typeProduct, }) {
+    async getAds({ limit = 10, offset = 0, orderBy = graphql_1.QueryOrderBy.CreatedAtDESC, vineyardName, wineName, typeAd, typeProduct, }) {
         const LIMIT_MAX = 100;
         if (limit < 1 || offset < 0 || limit > LIMIT_MAX) {
             throw new apollo_server_express_1.UserInputError(`${limit} must be greater than 1 and less than 100 ${offset} must be positive `);
@@ -165,75 +166,75 @@ class Ads extends apollo_datasource_mongodb_1.MongoDataSource {
         if (vineyardName) {
             const pageCount = await this.model
                 .countDocuments({
-                typeAd: typeAd,
-                vineyardName: vineyardName,
+                typeAd,
+                vineyardName,
                 isActive: true,
             })
                 .exec();
             return {
                 pageCount,
-                ads: (await this.model
+                ads: await this.model
                     .find({
-                    typeAd: typeAd,
-                    vineyardName: vineyardName,
+                    typeAd,
+                    vineyardName,
                     isActive: true,
                 })
                     .skip(offset)
                     .limit(limit)
                     .sort(sortQuery)
                     .lean()
-                    .exec()),
+                    .exec(),
             };
         }
-        else if (wineName) {
+        if (wineName) {
             const pageCount = await this.model
                 .countDocuments({
-                typeAd: typeAd,
-                wineName: wineName,
+                typeAd,
+                wineName,
                 isActive: true,
             })
                 .exec();
             return {
                 pageCount,
-                ads: (await this.model
+                ads: await this.model
                     .find({
-                    typeAd: typeAd,
-                    wineName: wineName,
+                    typeAd,
+                    wineName,
                     isActive: true,
                 })
                     .skip(offset)
                     .limit(limit)
                     .sort(sortQuery)
                     .lean()
-                    .exec()),
+                    .exec(),
             };
         }
         const pageCount = await this.model
             .countDocuments({
-            typeAd: typeAd,
-            typeProduct: typeProduct,
+            typeAd,
+            typeProduct,
             isActive: true,
         })
             .exec();
         return {
             pageCount,
-            ads: (await this.model
+            ads: await this.model
                 .find({
-                typeAd: typeAd,
-                typeProduct: typeProduct,
+                typeAd,
+                typeProduct,
                 isActive: true,
             })
                 .skip(offset)
                 .limit(limit)
                 .sort(sortQuery)
                 .lean()
-                .exec()),
+                .exec(),
         };
     }
     async createAd(ad) {
         const errors = [];
         // eslint-disable-next-line @typescript-eslint/await-thenable
-        const user = this.context.user;
+        const { user } = this.context;
         if (!user.isVerified) {
             errors.push({
                 name: 'AuthorizationError',
@@ -245,19 +246,16 @@ class Ads extends apollo_datasource_mongodb_1.MongoDataSource {
             };
         }
         const { _id } = this.context.user;
-        const { typeAd, typeProduct, content, 
-        // address,
-        harvest, abv, priceFrom, priceTo, needsFollowUp, ...restParams } = ad;
+        const { typeAd, typeProduct, content, harvest, abv, priceFrom, priceTo, needsFollowUp, ...restParams } = ad;
         let newAd = {
-            typeAd: typeAd,
-            typeProduct: typeProduct,
-            content: content,
-            // address: address,
-            harvest: harvest,
-            abv: abv,
-            priceFrom: priceFrom,
-            priceTo: priceTo,
-            needsFollowUp: needsFollowUp,
+            typeAd,
+            typeProduct,
+            content,
+            harvest,
+            abv,
+            priceFrom,
+            priceTo,
+            needsFollowUp,
         };
         switch (newAd.typeProduct) {
             case types_1.TypeProduct.ADGRAPE:
@@ -273,7 +271,7 @@ class Ads extends apollo_datasource_mongodb_1.MongoDataSource {
                 };
                 break;
             default:
-                helpersTypeScript_1.assertNever(newAd.typeProduct);
+                helpersTypeScript_1.default(newAd.typeProduct);
         }
         if (errors.length !== 0) {
             return {
@@ -281,24 +279,25 @@ class Ads extends apollo_datasource_mongodb_1.MongoDataSource {
                 errors,
             };
         }
-        const createdAd = new this.model({ ...newAd, postedBy: _id });
-        // If the Ad created was wine I look who wants a follow up about that wine and push the user id and mail into the array
+        const createdAd = new this.model({
+            _id: new mongoose_1.Types.ObjectId(),
+            ...newAd,
+            postedBy: _id,
+        });
         try {
             await createdAd.save();
         }
         catch (e) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             errors.push({ name: 'General Error', text: e.message });
             return {
                 response: null,
                 errors,
             };
-            //throw new UserInputError(e.message);
+            // throw new UserInputError(e.message);
         }
         let countDeliveryTries = 0;
         const followUpUsersToNotify = [];
         const SellOrBuy = createdAd.typeAd === types_1.TypeAd.SELL ? types_1.TypeAd.BUY : types_1.TypeAd.SELL;
-        await this.collection.createIndex({ needsFollowUp: 1 });
         const adsToFollow = await this.model
             .find({
             $or: [
@@ -312,24 +311,24 @@ class Ads extends apollo_datasource_mongodb_1.MongoDataSource {
             .populate('postedBy', { email: 1 })
             .lean()
             .exec();
-        adsToFollow.map((ad) => followUpUsersToNotify.push({
-            userId: ad.postedBy._id,
-            userMail: ad.postedBy.email,
-            adId: ad._id,
+        adsToFollow.map((a) => followUpUsersToNotify.push({
+            userId: a.postedBy._id.toHexString(),
+            userMail: a.postedBy.email,
+            adId: a._id.toHexString(),
         }));
         const mailBody = {
             subject: 'New Ad',
             body: {
-                intro: `Looks like there is a new ad that might interest you, here the link ${createdAd._id}`,
+                intro: `It looks like there is a new ad that might interest you, here's the link ${createdAd._id}`,
             },
         };
         const recipients = followUpUsersToNotify
             .filter((userFollowUp) => userFollowUp.userMail !== user.email)
-            .map((user) => user.userMail);
+            .map((u) => u.userMail);
         const uniqueRecipients = [...new Set(recipients)];
         const uniqueUsersToNotifiy = [
             ...new Set(followUpUsersToNotify
-                .map((user) => user.userId.toString())
+                .map((u) => u.userId.toString())
                 .filter((u) => u !== user._id.toString())),
         ];
         const jobMail = new cron_1.CronJob('*/3 * * * *', () => {
@@ -357,7 +356,7 @@ class Ads extends apollo_datasource_mongodb_1.MongoDataSource {
     }
     async updateAd(ad) {
         const errors = [];
-        const user = this.context.user;
+        const { user } = this.context;
         const updatedAd = await this.model
             .findOneAndUpdate({ _id: ad._id, postedBy: user._id }, ad, {
             new: true,
@@ -382,7 +381,7 @@ class Ads extends apollo_datasource_mongodb_1.MongoDataSource {
     }
     async deleteAd(id) {
         const errors = [];
-        const user = this.context.user;
+        const { user } = this.context;
         const removedAd = await this.model
             .findOneAndDelete({
             _id: id,

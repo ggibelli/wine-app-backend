@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { createTestClient } from 'apollo-server-integration-testing';
 import { ApolloServer } from 'apollo-server-express';
 import mongoose from 'mongoose';

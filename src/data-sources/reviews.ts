@@ -1,43 +1,42 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-
 import { MongoDataSource } from 'apollo-datasource-mongodb';
+import { CronJob } from 'cron';
+import { UserInputError } from 'apollo-server-express';
+import { LeanDocument, Types } from 'mongoose';
+
 import { Errors, QueryOrderBy } from '../types';
-import { IReviewDoc, ReviewGraphQl } from '../models/review';
-import { UserGraphQl } from '../models/user';
+import {
+  PopulatedDocument,
+  ReviewDocument,
+  UserDocument,
+} from '../interfaces/mongoose.gen';
 import {
   QueryReviewsArgs,
-  Review,
   ReviewInput,
   ReviewInputUpdate,
   ReviewResult,
   UserReviewsArgs,
 } from '../generated/graphql';
 import { sendMail } from '../utils/mailServer';
-import { CronJob } from 'cron';
 import { loggerError } from '../utils/logger';
-import { UserInputError } from 'apollo-server-express';
 import { sortQueryHelper } from './ads';
 
 interface Context {
-  user: UserGraphQl;
-  createToken(user: UserGraphQl): string;
+  user: LeanDocument<UserDocument>;
+  createToken(user: LeanDocument<UserDocument>): string;
 }
 
 interface Response {
-  response: IReviewDoc | ReviewGraphQl | null;
+  response: ReviewDocument | LeanDocument<ReviewDocument> | null;
   errors: Errors[];
 }
 
-export default class Reviews extends MongoDataSource<IReviewDoc, Context> {
-  async getReview(id: string): Promise<IReviewDoc | null | undefined> {
+export default class Reviews extends MongoDataSource<ReviewDocument, Context> {
+  async getReview(id: string): Promise<ReviewDocument | null | undefined> {
     return this.findOneById(id);
   }
 
-  async getReviewForUser(): Promise<ReviewGraphQl[]> {
+  async getReviewForUser(): Promise<LeanDocument<ReviewDocument>[]> {
     const userCtx = this.context.user;
-    await this.collection.createIndex({ createdBy: 1 });
-    await this.collection.createIndex({ forUser: 1 });
     return this.model
       .find({
         $or: [{ createdBy: userCtx._id }, { forUser: userCtx._id }],
@@ -46,8 +45,9 @@ export default class Reviews extends MongoDataSource<IReviewDoc, Context> {
       .exec();
   }
 
-  async getReviewForNegotiation(id: string): Promise<ReviewGraphQl[]> {
-    await this.collection.createIndex({ negotiation: 1 });
+  async getReviewForNegotiation(
+    id: string,
+  ): Promise<LeanDocument<ReviewDocument>[]> {
     return this.model
       .find({
         negotiation: id,
@@ -59,38 +59,36 @@ export default class Reviews extends MongoDataSource<IReviewDoc, Context> {
   async getReviews({
     limit = 10,
     offset = 0,
-    orderBy = QueryOrderBy.createdAt_DESC,
+    orderBy = QueryOrderBy.CreatedAtDESC,
   }: UserReviewsArgs | QueryReviewsArgs): Promise<ReviewResult> {
     const userCtx = this.context.user;
     const LIMIT_MAX = 100;
     if (limit < 1 || offset < 0 || limit > LIMIT_MAX) {
       throw new UserInputError(
-        `${limit} must be greater than 1 and less than 100 ${offset} must be positive `
+        `${limit} must be greater than 1 and less than 100 ${offset} must be positive `,
       );
     }
     const sortQuery = sortQueryHelper(orderBy);
     if (userCtx.isAdmin) {
       const pageCount = await this.model.countDocuments().exec();
       return {
-        reviews: (this.model
+        reviews: await this.model
           .find({})
           .sort(sortQuery)
           .skip(offset)
           .limit(limit)
           .lean()
-          .exec() as unknown) as Review[],
+          .exec(),
         pageCount,
       };
     }
-    await this.collection.createIndex({ createdBy: 1 });
-    await this.collection.createIndex({ forUser: 1 });
     const pageCount = await this.model
       .countDocuments({
         $or: [{ createdBy: userCtx._id }, { forUser: userCtx._id }],
       })
       .exec();
     return {
-      reviews: (this.model
+      reviews: await this.model
         .find({
           $or: [{ createdBy: userCtx._id }, { forUser: userCtx._id }],
         })
@@ -98,7 +96,7 @@ export default class Reviews extends MongoDataSource<IReviewDoc, Context> {
         .skip(offset)
         .limit(limit)
         .lean()
-        .exec() as unknown) as Review[],
+        .exec(),
       pageCount,
     };
   }
@@ -107,12 +105,14 @@ export default class Reviews extends MongoDataSource<IReviewDoc, Context> {
     const userCtx = this.context.user;
     const errors: Errors[] = [];
     const createdReview = new this.model({
+      _id: new Types.ObjectId(),
+
       ...review,
       createdBy: userCtx,
     });
     if (
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      createdReview.forUser.toString() == userCtx._id.toHexString()
+      createdReview.forUser.toString() === userCtx._id.toHexString()
     ) {
       errors.push({
         name: 'General Error',
@@ -143,6 +143,9 @@ export default class Reviews extends MongoDataSource<IReviewDoc, Context> {
     let countDeliveryTries = 0;
     const jobMail = new CronJob('*/1 * * * *', () => {
       const recipient: string[] = [];
+      function safePush(r: PopulatedDocument<ReviewDocument, 'forUser'>) {
+        recipient.push(r.forUser.email);
+      }
       if (countDeliveryTries >= 2) {
         jobMail.stop();
         return;
@@ -150,9 +153,7 @@ export default class Reviews extends MongoDataSource<IReviewDoc, Context> {
       createdReview
         .populate({ path: 'forUser', select: 'email' })
         .execPopulate()
-        .then((review) => {
-          recipient.push(review.forUser.email);
-        })
+        .then((r) => safePush(r as PopulatedDocument<ReviewDocument, 'forUser'>))
         .catch((e) => {
           loggerError(e);
         });
@@ -177,11 +178,11 @@ export default class Reviews extends MongoDataSource<IReviewDoc, Context> {
 
     const errors: Errors[] = [];
     const updatedReview = await this.model.findOneAndUpdate(
-      { createdBy: userCtx, _id: review._id },
+      { createdBy: userCtx._id.toHexString(), _id: review._id },
       review,
       {
         new: true,
-      }
+      },
     );
     if (!updatedReview) {
       errors.push({
@@ -204,7 +205,7 @@ export default class Reviews extends MongoDataSource<IReviewDoc, Context> {
 
     const errors: Errors[] = [];
     const deletedReview = await this.model
-      .findOneAndDelete({ _id: reviewId, createdBy: userCtx })
+      .findOneAndDelete({ _id: reviewId, createdBy: userCtx._id.toHexString() })
       .lean()
       .exec();
     if (!deletedReview) {

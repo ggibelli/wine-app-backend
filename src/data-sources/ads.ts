@@ -1,24 +1,19 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { MongoDataSource } from 'apollo-datasource-mongodb';
-import { AdGraphQl, IAdDoc } from '../models/ad';
-import { QueryOrderBy, TypeProduct, Errors, TypeAd } from '../types';
-
-import { assertNever } from '../utils/helpersTypeScript';
+import { UserInputError } from 'apollo-server-express';
+import { CronJob } from 'cron';
+import { LeanDocument, Types } from 'mongoose';
+import { TypeProduct, Errors, TypeAd } from '../types';
+import assertNever from '../utils/helpersTypeScript';
+import { AdDocument, UserDocument } from '../interfaces/mongoose.gen';
 import {
-  Ad,
   AdInput,
   AdInputUpdate,
   AdsResult,
   QueryAdsArgs,
   QueryAdsForUserArgs,
+  QueryOrderBy,
 } from '../generated/graphql';
-import { UserInputError } from 'apollo-server-express';
-import { UserGraphQl } from '../models/user';
 import { sendMail } from '../utils/mailServer';
-import { CronJob } from 'cron';
 import { loggerError } from '../utils/logger';
 
 export interface FollowUp {
@@ -34,20 +29,20 @@ interface GrapeAdParams {
 }
 
 type RestParams = Omit<
-  AdInput,
-  | 'typeAd'
-  | 'typeProduct'
-  | 'content'
-  | 'address'
-  | 'harvest'
-  | 'abv'
-  | 'priceFrom'
-  | 'priceTo'
+AdInput,
+| 'typeAd'
+| 'typeProduct'
+| 'content'
+| 'address'
+| 'harvest'
+| 'abv'
+| 'priceFrom'
+| 'priceTo'
 >;
 
 export interface AdResponse {
   usersToNotify?: Array<FollowUp['userId']>;
-  response: IAdDoc | AdGraphQl | null;
+  response: AdDocument | LeanDocument<AdDocument> | null;
   errors: Errors[];
 }
 
@@ -57,30 +52,24 @@ interface WineAdParams {
   litersTo: number;
 }
 
-export interface QueryAdsArgsPag extends QueryAdsArgs {
-  limit: number;
-  offset: number;
-  orderBy: QueryOrderBy;
-}
-
 interface Context {
-  user: UserGraphQl;
-  createToken(user: UserGraphQl): string;
+  user: LeanDocument<UserDocument>;
+  createToken(user: LeanDocument<UserDocument>): string;
 }
 
 export const sortQueryHelper = (orderBy: QueryOrderBy) => {
   let sortQuery;
   switch (orderBy) {
-    case QueryOrderBy.createdAt_ASC:
+    case QueryOrderBy.CreatedAtASC:
       sortQuery = { _id: 1 };
       break;
-    case QueryOrderBy.createdAt_DESC:
+    case QueryOrderBy.CreatedAtDESC:
       sortQuery = { _id: -1 };
       break;
-    case QueryOrderBy.price_ASC:
+    case QueryOrderBy.PriceASC:
       sortQuery = { priceFrom: 1 };
       break;
-    case QueryOrderBy.price_DESC:
+    case QueryOrderBy.priceDESC:
       sortQuery = { priceFrom: -1 };
       break;
     default:
@@ -159,19 +148,19 @@ const parseWineAd = (params: RestParams, errors: Errors[]): WineAdParams => {
   } as WineAdParams;
 };
 
-export default class Ads extends MongoDataSource<IAdDoc, Context> {
-  async getAd(adId: string): Promise<IAdDoc | null | undefined> {
-    //const user = this.context.user;
+export default class Ads extends MongoDataSource<AdDocument, Context> {
+  async getAd(adId: string): Promise<AdDocument | null | undefined> {
+    // const user = this.context.user;
     const ad = await this.findOneById(adId);
     // if (user) {
     //   ad?.viewedBy?.addToSet(user._id);
     //   await ad?.save();
     // }
-    //ad?.populate({ path: 'negotiations', select: 'createdBy' });
+    // ad?.populate({ path: 'negotiations', select: 'createdBy' });
     return ad;
   }
 
-  async getAdsUserType(user: string): Promise<AdGraphQl[]> {
+  async getAdsUserType(user: string): Promise<LeanDocument<AdDocument>[]> {
     return this.model.find({ postedBy: user }).lean().exec();
   }
 
@@ -179,47 +168,47 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
     user,
     limit = 10,
     offset = 0,
-    orderBy = QueryOrderBy.createdAt_DESC,
+    orderBy = QueryOrderBy.CreatedAtDESC,
     isActive,
   }: QueryAdsForUserArgs): Promise<AdsResult> {
     const LIMIT_MAX = 100;
     if (limit < 1 || offset < 0 || limit > LIMIT_MAX) {
       throw new UserInputError(
-        `${limit} must be greater than 1 and less than 100 ${offset} must be positive `
+        `${limit} must be greater than 1 and less than 100 ${offset} must be positive `,
       );
     }
     const sortQuery = sortQueryHelper(orderBy);
-    const pageCount = await this.model
+    let pageCount = await this.model
       .countDocuments({
         postedBy: user,
       })
       .exec();
     if (isActive === true) {
-      const pageCount = await this.model
+      pageCount = await this.model
         .countDocuments({
           postedBy: user,
           isActive: true,
         })
         .exec();
       return {
-        ads: (await this.model
+        ads: await this.model
           .find({ postedBy: user, isActive: true })
           .skip(offset)
           .limit(limit)
           .sort(sortQuery)
           .lean()
-          .exec()) as unknown as Ad[],
+          .exec(),
         pageCount,
       };
     }
     return {
-      ads: (await this.model
+      ads: await this.model
         .find({ postedBy: user })
         .skip(offset)
         .limit(limit)
         .sort(sortQuery)
         .lean()
-        .exec()) as unknown as Ad[],
+        .exec(),
       pageCount,
     };
   }
@@ -228,7 +217,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
   async getAds({
     limit = 10,
     offset = 0,
-    orderBy = QueryOrderBy.createdAt_DESC,
+    orderBy = QueryOrderBy.CreatedAtDESC,
     vineyardName,
     wineName,
     typeAd,
@@ -237,85 +226,86 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
     const LIMIT_MAX = 100;
     if (limit < 1 || offset < 0 || limit > LIMIT_MAX) {
       throw new UserInputError(
-        `${limit} must be greater than 1 and less than 100 ${offset} must be positive `
+        `${limit} must be greater than 1 and less than 100 ${offset} must be positive `,
       );
     }
     const sortQuery = sortQueryHelper(orderBy);
     if (vineyardName) {
       const pageCount = await this.model
         .countDocuments({
-          typeAd: typeAd,
-          vineyardName: vineyardName,
+          typeAd,
+          vineyardName,
           isActive: true,
         })
         .exec();
       return {
         pageCount,
 
-        ads: (await this.model
+        ads: await this.model
           .find({
-            typeAd: typeAd,
-            vineyardName: vineyardName,
+            typeAd,
+            vineyardName,
             isActive: true,
           })
           .skip(offset)
           .limit(limit)
           .sort(sortQuery)
           .lean()
-          .exec()) as unknown as Ad[],
+          .exec(),
       };
-    } else if (wineName) {
+    }
+    if (wineName) {
       const pageCount = await this.model
         .countDocuments({
-          typeAd: typeAd,
-          wineName: wineName,
+          typeAd,
+          wineName,
           isActive: true,
         })
         .exec();
       return {
         pageCount,
 
-        ads: (await this.model
+        ads: await this.model
           .find({
-            typeAd: typeAd,
-            wineName: wineName,
+            typeAd,
+            wineName,
             isActive: true,
           })
           .skip(offset)
           .limit(limit)
           .sort(sortQuery)
           .lean()
-          .exec()) as unknown as Ad[],
+          .exec(),
       };
     }
     const pageCount = await this.model
       .countDocuments({
-        typeAd: typeAd,
-        typeProduct: typeProduct,
+        typeAd,
+        typeProduct,
         isActive: true,
       })
       .exec();
     return {
       pageCount,
 
-      ads: (await this.model
+      ads: await this.model
         .find({
-          typeAd: typeAd,
-          typeProduct: typeProduct,
+          typeAd,
+          typeProduct,
           isActive: true,
         })
         .skip(offset)
         .limit(limit)
         .sort(sortQuery)
         .lean()
-        .exec()) as unknown as Ad[],
+        .exec(),
     };
   }
 
   async createAd(ad: AdInput): Promise<AdResponse> {
     const errors: Errors[] = [];
     // eslint-disable-next-line @typescript-eslint/await-thenable
-    const user = this.context.user;
+    const { user } = this.context;
     if (!user.isVerified) {
       errors.push({
         name: 'AuthorizationError',
@@ -331,7 +321,6 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
       typeAd,
       typeProduct,
       content,
-      // address,
       harvest,
       abv,
       priceFrom,
@@ -340,15 +329,14 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
       ...restParams
     } = ad;
     let newAd = {
-      typeAd: typeAd,
-      typeProduct: typeProduct,
-      content: content,
-      // address: address,
-      harvest: harvest,
-      abv: abv,
-      priceFrom: priceFrom,
-      priceTo: priceTo,
-      needsFollowUp: needsFollowUp,
+      typeAd,
+      typeProduct,
+      content,
+      harvest,
+      abv,
+      priceFrom,
+      priceTo,
+      needsFollowUp,
     };
 
     switch (newAd.typeProduct) {
@@ -373,27 +361,25 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
         errors,
       };
     }
-
-    const createdAd = new this.model({ ...newAd, postedBy: _id });
-
-    // If the Ad created was wine I look who wants a follow up about that wine and push the user id and mail into the array
+    const createdAd = new this.model({
+      _id: new Types.ObjectId(),
+      ...newAd,
+      postedBy: _id,
+    });
 
     try {
       await createdAd.save();
     } catch (e) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       errors.push({ name: 'General Error', text: e.message });
       return {
         response: null,
         errors,
       };
-      //throw new UserInputError(e.message);
+      // throw new UserInputError(e.message);
     }
     let countDeliveryTries = 0;
     const followUpUsersToNotify: FollowUp[] = [];
-    const SellOrBuy =
-      createdAd.typeAd === TypeAd.SELL ? TypeAd.BUY : TypeAd.SELL;
-    await this.collection.createIndex({ needsFollowUp: 1 });
+    const SellOrBuy = createdAd.typeAd === TypeAd.SELL ? TypeAd.BUY : TypeAd.SELL;
     const adsToFollow = await this.model
       .find({
         $or: [
@@ -407,28 +393,26 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
       .populate('postedBy', { email: 1 })
       .lean()
       .exec();
-    adsToFollow.map((ad) =>
-      followUpUsersToNotify.push({
-        userId: ad.postedBy._id,
-        userMail: ad.postedBy.email,
-        adId: ad._id,
-      })
-    );
+    adsToFollow.map((a) => followUpUsersToNotify.push({
+      userId: a.postedBy._id.toHexString(),
+      userMail: a.postedBy.email,
+      adId: a._id.toHexString(),
+    }));
     const mailBody = {
       subject: 'New Ad',
       body: {
-        intro: `Looks like there is a new ad that might interest you, here the link ${createdAd._id}`,
+        intro: `It looks like there is a new ad that might interest you, here's the link ${createdAd._id}`,
       },
     };
     const recipients = followUpUsersToNotify
       .filter((userFollowUp) => userFollowUp.userMail !== user.email)
-      .map((user) => user.userMail);
+      .map((u) => u.userMail);
     const uniqueRecipients = [...new Set(recipients)];
     const uniqueUsersToNotifiy = [
       ...new Set(
         followUpUsersToNotify
-          .map((user) => user.userId.toString())
-          .filter((u) => u !== user._id.toString())
+          .map((u) => u.userId.toString())
+          .filter((u) => u !== user._id.toString()),
       ),
     ];
     const jobMail = new CronJob('*/3 * * * *', () => {
@@ -457,7 +441,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
 
   async updateAd(ad: AdInputUpdate): Promise<AdResponse> {
     const errors: Errors[] = [];
-    const user = this.context.user;
+    const { user } = this.context;
     const updatedAd = await this.model
 
       .findOneAndUpdate({ _id: ad._id, postedBy: user._id }, ad, {
@@ -484,7 +468,7 @@ export default class Ads extends MongoDataSource<IAdDoc, Context> {
 
   async deleteAd(id: string): Promise<AdResponse> {
     const errors: Errors[] = [];
-    const user = this.context.user;
+    const { user } = this.context;
     const removedAd = await this.model
       .findOneAndDelete({
         _id: id,

@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.typeDefs = void 0;
 const apollo_server_express_1 = require("apollo-server-express");
-exports.typeDefs = apollo_server_express_1.gql `
+const typeDefs = apollo_server_express_1.gql `
   input ReviewInput {
     negotiation: ID!
     forUser: ID!
@@ -43,8 +42,11 @@ exports.typeDefs = apollo_server_express_1.gql `
 
   extend type Query {
     review(id: ID!): Review @authenticated
-    reviews(offset: Int, orderBy: QueryOrderBy, limit: Int): ReviewResult
-      @authenticated
+    reviews(
+      offset: Int = 0
+      orderBy: QueryOrderBy = createdAt_DESC
+      limit: Int = 10
+    ): ReviewResult @authenticated
   }
 
   extend type Mutation {
@@ -57,3 +59,4 @@ exports.typeDefs = apollo_server_express_1.gql `
     reviewCreated: Review! @authenticated
   }
 `;
+exports.default = typeDefs;

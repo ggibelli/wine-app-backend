@@ -14,7 +14,7 @@ interface MongoDataSource {
   wines: Wines;
 }
 
-export const resolver: StringIndexed<Resolvers> = {
+const resolver: StringIndexed<Resolvers> = {
   Query: {
     async wines(_, __, { dataSources }: { dataSources: MongoDataSource }) {
       return dataSources.wines.getWines();
@@ -27,7 +27,7 @@ export const resolver: StringIndexed<Resolvers> = {
     async createWine(
       _,
       { wine }: { wine: WineInput },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       return dataSources.wines.createWine(wine);
     },
@@ -35,16 +35,18 @@ export const resolver: StringIndexed<Resolvers> = {
     async updateWine(
       _,
       { wine }: { wine: WineInputUpdate },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       return dataSources.wines.updateWine(wine);
     },
     async deleteWine(
       _,
       { id }: { id: string },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       return dataSources.wines.deleteWine(id);
     },
   },
 };
+
+export default resolver;

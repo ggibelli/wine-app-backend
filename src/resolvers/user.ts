@@ -1,15 +1,13 @@
+import { ForbiddenError } from 'apollo-server-express';
+import { LeanDocument } from 'mongoose';
 import { Resolvers, UserInput, UserInputUpdate } from '../generated/graphql';
-import { UserGraphQl } from '../models/user';
 import Users, { AuthResponse, UserResponse } from '../data-sources/users';
 import Ads from '../data-sources/ads';
 import Messages from '../data-sources/messages';
 import Negotiations from '../data-sources/negotiations';
-import { ForbiddenError } from 'apollo-server-express';
 import Reviews from '../data-sources/reviews';
-import { AdGraphQl, IAdDoc } from '../models/ad';
-import { MessageGraphQl } from '../models/message';
-import { NegotiationGraphQl } from '../models/negotiation';
-import { ReviewGraphQl } from '../models/review';
+
+import { UserDocument, AdDocument } from '../interfaces/mongoose.gen';
 
 interface StringIndexSignatureInterface {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,29 +19,33 @@ type StringIndexed<T> = T & StringIndexSignatureInterface;
 interface MongoDataSource {
   users: Users;
   ads: Ads;
-  messages: Messages;
+  messages: Messages; 
   negotiations: Negotiations;
   reviews: Reviews;
   // wines: Wines;
 }
 
-export const resolver: StringIndexed<Resolvers> = {
+const resolver: StringIndexed<Resolvers> = {
   Query: {
     async users(
       _,
       __,
-      { dataSources }: { dataSources: MongoDataSource }
-    ): Promise<UserGraphQl[]> {
+      { dataSources }: { dataSources: MongoDataSource },
+    ): Promise<LeanDocument<UserDocument>[]> {
       return dataSources.users.getUsers();
     },
     async user(
       _,
       { id }: { id: string },
-      { dataSources }: { dataSources: MongoDataSource }
-    ): Promise<UserGraphQl | undefined | null> {
+      { dataSources }: { dataSources: MongoDataSource },
+    ): Promise<LeanDocument<UserDocument> | undefined | null> {
       return dataSources.users.getUser(id);
     },
-    me(_, __, { user }: { user: UserGraphQl }): UserGraphQl {
+    me(
+      _,
+      __,
+      { user }: { user: LeanDocument<UserDocument> },
+    ): LeanDocument<UserDocument> {
       return user;
     },
   },
@@ -51,86 +53,99 @@ export const resolver: StringIndexed<Resolvers> = {
     async createUser(
       _,
       { user }: { user: UserInput },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ): Promise<AuthResponse> {
       return dataSources.users.createUser(user);
     },
     async updateUser(
       _,
       { user }: { user: UserInputUpdate },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ): Promise<UserResponse> {
       return dataSources.users.updateUser(user);
     },
     async deleteUser(
       _,
       { id }: { id: string },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ): Promise<UserResponse> {
       return dataSources.users.deleteUser(id);
     },
     async login(
       _,
       { email, password }: { email: string; password: string },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ): Promise<AuthResponse> {
       return dataSources.users.login(email, password);
     },
   },
   User: {
-    async ads(
-      user: UserGraphQl,
-      _,
-      { dataSources }: { dataSources: MongoDataSource }
-    ): Promise<AdGraphQl[]> {
+    async ads(user, _, { dataSources }: { dataSources: MongoDataSource }) {
       return dataSources.ads.getAdsUserType(user._id.toString());
     },
     async messages(
-      root: UserGraphQl,
+      root,
       _,
-      { dataSources, user }: { dataSources: MongoDataSource; user: UserGraphQl }
-    ): Promise<MessageGraphQl[]> {
+      {
+        dataSources,
+        user,
+      }: { dataSources: MongoDataSource; user: LeanDocument<UserDocument> },
+    ) {
       if (root._id.toString() === user._id.toString()) {
         return dataSources.messages.getMessages();
       }
       throw new ForbiddenError('You can only see your own messages');
     },
     async negotiations(
-      root: UserGraphQl,
+      root,
       _,
-      { dataSources, user }: { dataSources: MongoDataSource; user: UserGraphQl }
-    ): Promise<NegotiationGraphQl[]> {
+      {
+        dataSources,
+        user,
+      }: { dataSources: MongoDataSource; user: LeanDocument<UserDocument> },
+    ) {
       if (root._id.toString() === user._id.toString()) {
         return dataSources.negotiations.getNegotiationsForUserType();
       }
       throw new ForbiddenError('You can only see your own negotiations');
     },
+    
     async savedAds(
-      root: UserGraphQl,
+      root,
       _,
-      { dataSources, user }: { dataSources: MongoDataSource; user: UserGraphQl }
-    ): Promise<IAdDoc[]> {
-      if (root._id.toString() === user._id.toString()) {
+      {
+        dataSources,
+        user,
+      }: { dataSources: MongoDataSource; user: LeanDocument<UserDocument> },
+    ) {
+      if (root._id.toString() === user._id.toHexString()) {
         if (user.savedAds?.length) {
-          return dataSources.ads.findManyByIds(user.savedAds) as Promise<
-            IAdDoc[]
-          >;
+          const ids = user.savedAds.map((ids) => ids.toString());
+          const savedAds = await dataSources.ads.findManyByIds(ids) as LeanDocument<AdDocument>[];
+          if (!savedAds.length) return [];
+          
+          return (savedAds.sort((a, b) => {
+            if (!b.datePosted || !a.datePosted) return 1
+            return b.datePosted - a.datePosted}));
         }
         return [];
       }
       throw new ForbiddenError('You can only see your own saved ads');
     },
     async reviews(
-      root: UserGraphQl,
+      root,
       _,
-      { dataSources, user }: { dataSources: MongoDataSource; user: UserGraphQl }
-    ): Promise<ReviewGraphQl[]> {
+      {
+        dataSources,
+        user,
+      }: { dataSources: MongoDataSource; user: LeanDocument<UserDocument> },
+    ) {
       if (root._id.toString() === user._id.toString()) {
         return dataSources.reviews.getReviewForUser();
       }
       throw new ForbiddenError('You can only see your own negotiations');
     },
-    email(root: UserGraphQl, _, { user }: { user: UserGraphQl }): string {
+    email(root, _, { user }: { user: LeanDocument<UserDocument> }) {
       if (root._id.toString() === user._id.toString()) {
         return root.email;
       }
@@ -139,7 +154,7 @@ export const resolver: StringIndexed<Resolvers> = {
       }
       return 'The user prefers to hide the email';
     },
-    phoneNumber(root: UserGraphQl, _, { user }: { user: UserGraphQl }): string {
+    phoneNumber(root, _, { user }: { user: LeanDocument<UserDocument> }) {
       if (root._id.toString() === user._id.toString()) {
         return root.phoneNumber;
       }
@@ -148,6 +163,7 @@ export const resolver: StringIndexed<Resolvers> = {
       }
       return 'The user prefers to hide the phone number';
     },
-    // aggiungo logica per mostrare solo negotiation e certi dati solo se sono i miei
   },
 };
+
+export default resolver;

@@ -1,8 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.typeDefs = void 0;
 const apollo_server_express_1 = require("apollo-server-express");
-exports.typeDefs = apollo_server_express_1.gql `
+const typeDefs = apollo_server_express_1.gql `
   input MessageInput {
     content: String!
     sentTo: ID!
@@ -34,8 +33,8 @@ exports.typeDefs = apollo_server_express_1.gql `
     messagesToUser(sentTo: ID!): [Message!] @authenticated
     messagesForNegotiation(
       negotiation: ID!
-      offset: Int
-      limit: Int
+      offset: Int = 0
+      limit: Int = 10
     ): MessageResult @authenticated
     messages: [Message!] @authenticated
   }
@@ -48,3 +47,4 @@ exports.typeDefs = apollo_server_express_1.gql `
     messageSent: Message! @authenticated
   }
 `;
+exports.default = typeDefs;

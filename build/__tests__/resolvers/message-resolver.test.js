@@ -4,16 +4,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-const publish = jest.fn();
-const filter = jest.fn();
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+const mockPublish = jest.fn();
+const mongoose_1 = require("mongoose");
+const resolvers_1 = __importDefault(require("../../resolvers"));
 jest.mock('apollo-server-express', () => ({
     PubSub: jest.fn(() => ({
-        publish,
+        publish: mockPublish,
     })),
-    withFilter: filter,
+    withFilter: jest.fn(),
 }));
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-const resolvers_1 = __importDefault(require("../../resolvers"));
 const mockContext = {
     dataSources: {
         ads: {
@@ -169,12 +169,12 @@ describe('Message resolvers', () => {
             createdBy: '321',
             ad: '322',
         });
-        //@ts-ignore
+        // @ts-ignore
         const res = await resolvers_1.default.Mutation?.createMessage(null, {
             message: { content: 'Ciao', sentTo: '123', negotiation: '322' },
         }, mockContext);
-        expect(publish).toHaveBeenCalledTimes(1);
-        expect(publish).toHaveBeenCalledWith('MESSAGE_SENT', {
+        expect(mockPublish).toHaveBeenCalledTimes(1);
+        expect(mockPublish).toHaveBeenCalledWith('MESSAGE_SENT', {
             messageSent: {
                 _id: '122',
                 content: 'Ciao',
@@ -202,11 +202,11 @@ describe('Message resolvers', () => {
             createdBy: '777',
             ad: '322',
         });
-        //@ts-ignore
+        // @ts-ignore
         const res = await resolvers_1.default.Mutation?.createMessage(null, {
             message: { content: 'Ciao', sentTo: '123', negotiation: '322' },
         }, mockContext);
-        expect(publish).toHaveBeenCalledTimes(0);
+        expect(mockPublish).toHaveBeenCalledTimes(0);
         expect(createMessage).toHaveBeenCalledTimes(0);
         expect(res).toEqual({
             response: null,
@@ -230,11 +230,11 @@ describe('Message resolvers', () => {
             createdBy: '321',
             ad: '322',
         });
-        //@ts-ignore
+        // @ts-ignore
         const res = await resolvers_1.default.Mutation?.createMessage(null, {
             message: { content: 'Ciao', sentTo: '123', negotiation: '322' },
         }, mockContext);
-        expect(publish).toHaveBeenCalledTimes(0);
+        expect(mockPublish).toHaveBeenCalledTimes(0);
         expect(res).toEqual({
             response: null,
             errors: [{ name: 'error', text: 'error' }],
@@ -242,14 +242,14 @@ describe('Message resolvers', () => {
     });
     it('Message sentBy calls getUser', async () => {
         getUser.mockReturnValueOnce({ id: 1 });
-        //@ts-ignore
-        const res = await resolvers_1.default.Message?.sentBy({ sentBy: '123' }, null, mockContext);
+        // @ts-ignore
+        const res = await resolvers_1.default.Message?.sentBy({ sentBy: new mongoose_1.Types.ObjectId('5fdd925d9cc5800455e1855e') }, null, mockContext);
         expect(res).toEqual({ id: 1 });
     });
     it('Message sentTo calls getUser', async () => {
         getUser.mockReturnValueOnce({ id: 1 });
-        //@ts-ignore
-        const res = await resolvers_1.default.Message?.sentTo({ sentTo: '123' }, null, mockContext);
+        // @ts-ignore
+        const res = await resolvers_1.default.Message?.sentTo({ sentTo: new mongoose_1.Types.ObjectId('5fdd925d9cc5800455e1855e') }, null, mockContext);
         expect(res).toEqual({ id: 1 });
     });
     it('Message negotiation calls getNegotiation', async () => {
@@ -260,8 +260,8 @@ describe('Message resolvers', () => {
             createdBy: '321',
             ad: '322',
         });
-        //@ts-ignore
-        const res = await resolvers_1.default.Message?.negotiation({ negotiation: '123' }, null, mockContext);
+        // @ts-ignore
+        const res = await resolvers_1.default.Message?.negotiation({ negotiation: new mongoose_1.Types.ObjectId('5fdd925d9cc5800455e1855e') }, null, mockContext);
         expect(res).toEqual({
             _id: '122',
             typeAd: 'SELL',

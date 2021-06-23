@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server-express';
 
-export const typeDefs = gql`
+const typeDefs = gql`
   input WineInput {
     denominazioneVino: String!
     tipoVino: String
@@ -43,3 +43,5 @@ export const typeDefs = gql`
     deleteWine(id: ID!): WinePayload @authorized @authenticated
   }
 `;
+
+export default typeDefs;

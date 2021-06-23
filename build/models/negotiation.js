@@ -26,7 +26,7 @@ exports.Negotiation = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-validator"));
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const negotiationSchemaFields = {
+const negotiationSchema = new mongoose_1.Schema({
     createdBy: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'User',
@@ -65,8 +65,8 @@ const negotiationSchemaFields = {
     dateConcluded: {
         type: Date,
     },
-};
-const negotiationSchema = new mongoose_1.Schema(negotiationSchemaFields);
+});
 negotiationSchema.index({ createdBy: 1, ad: 1 }, { unique: true });
+// @ts-ignore
 negotiationSchema.plugin(mongoose_unique_validator_1.default);
 exports.Negotiation = mongoose_1.default.model('Negotiation', negotiationSchema);

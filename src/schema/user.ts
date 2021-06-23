@@ -1,30 +1,6 @@
 import { gql } from 'apollo-server-express';
 
-export const typeDefs = gql`
-  type ProducedWines {
-    wine: Wine!
-    bottlesProduced: Int!
-    metodoProduttivo: MetodoProduttivo!
-  }
-
-  type OwnedVineyards {
-    vineyard: Vineyard!
-    tonsProduced: Int!
-    metodoProduttivo: MetodoProduttivo!
-  }
-
-  input ProducedWinesInput {
-    wine: ID!
-    bottlesProduced: Int
-    metodoProduttivo: MetodoProduttivo
-  }
-
-  input OwnedVineyardsInput {
-    vineyard: ID!
-    tonsProduced: Int
-    metodoProduttivo: MetodoProduttivo
-  }
-
+const typeDefs = gql`
   input UserInput {
     email: String!
     password: String!
@@ -40,8 +16,6 @@ export const typeDefs = gql`
     #negotiations: [ID!]
     #reviews: [ID!]
     #adsRemaining: Int
-    producedWines: ProducedWinesInput
-    ownedVineyards: OwnedVineyardsInput
   }
 
   input UserInputUpdate {
@@ -56,8 +30,6 @@ export const typeDefs = gql`
     isVerified: Boolean
     isPremium: Boolean
     hideContact: Boolean!
-    producedWines: ProducedWinesInput
-    ownedVineyards: OwnedVineyardsInput
   }
 
   type Coordinates {
@@ -85,8 +57,6 @@ export const typeDefs = gql`
     reviews: [Review!]
     adsRemaining: Int @authorized
     dateCreated: Date! @date
-    producedWines: ProducedWines
-    ownedVineyards: OwnedVineyards
   }
 
   type AuthUser {
@@ -117,3 +87,5 @@ export const typeDefs = gql`
     login(email: String!, password: String!): AuthUserPayload
   }
 `;
+
+export default typeDefs;

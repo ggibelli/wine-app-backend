@@ -3,17 +3,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 const apollo_datasource_mongodb_1 = require("apollo-datasource-mongodb");
 const isemail_1 = __importDefault(require("isemail"));
+const cron_1 = require("cron");
+const mongoose_1 = require("mongoose");
 const passwordValidator_1 = __importDefault(require("../utils/passwordValidator"));
 const pivaValidator_1 = __importDefault(require("../utils/pivaValidator"));
 const config_1 = require("../utils/config");
 const mailServer_1 = require("../utils/mailServer");
-const cron_1 = require("cron");
 const logger_1 = require("../utils/logger");
-const coordinatesExtractor_1 = require("../utils/coordinatesExtractor");
+const coordinatesExtractor_1 = __importDefault(require("../utils/coordinatesExtractor"));
 class Users extends apollo_datasource_mongodb_1.MongoDataSource {
     async getUser(userId) {
         return this.findOneById(userId);
@@ -41,8 +40,12 @@ class Users extends apollo_datasource_mongodb_1.MongoDataSource {
                 text: 'The PIVA provided is not valid',
             });
         }
-        const coordinates = await coordinatesExtractor_1.getCoordinatesFromAddress(user.address);
-        const newUser = new this.model({ ...user, coordinates });
+        const coordinates = await coordinatesExtractor_1.default(user.address);
+        const newUser = new this.model({
+            _id: new mongoose_1.Types.ObjectId(),
+            ...user,
+            coordinates,
+        });
         if (errors.length > 0) {
             return {
                 response: null,
@@ -157,9 +160,7 @@ class Users extends apollo_datasource_mongodb_1.MongoDataSource {
     async saveAd(ad) {
         const errors = [];
         const user = await this.model.findById(this.context.user._id);
-        const isSaved = 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        user?.savedAds?.findIndex((adSaved) => adSaved._id.toString() === ad._id.toString()) !== -1;
+        const isSaved = user?.savedAds?.findIndex((adSaved) => adSaved.toString() === ad._id.toString()) !== -1;
         if (isSaved) {
             ad.savedBy?.pull({ _id: user?._id });
             user?.savedAds?.pull({ _id: ad._id });
@@ -194,7 +195,7 @@ class Users extends apollo_datasource_mongodb_1.MongoDataSource {
                 errors,
             };
         }
-        const passValid = await user?.validatePassword(password);
+        const passValid = await user.validatePassword(password);
         if (!passValid) {
             errors.push({ name: 'UserInputError', text: 'Wrong credentials' });
             return {

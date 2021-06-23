@@ -1,14 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable max-classes-per-file */
 import {
   SchemaDirectiveVisitor,
   AuthenticationError,
   ForbiddenError,
 } from 'apollo-server-express';
 import { defaultFieldResolver, GraphQLField, GraphQLString } from 'graphql';
-import { formatDate } from '../utils/dateFormat';
+import formatDate from '../utils/dateFormat';
 
 export class FormatDateDirective extends SchemaDirectiveVisitor {
   visitFieldDefinition(field: GraphQLField<any, any>) {
@@ -28,9 +26,15 @@ export class FormatDateDirective extends SchemaDirectiveVisitor {
       root,
       { format, ...otherArgs },
       context,
-      info
+      info,
     ) {
-      const date = await resolve.call(this, root, otherArgs, context, info);
+      const date: Date = await resolve.call(
+        this,
+        root,
+        otherArgs,
+        context,
+        info,
+      );
       if (!date) return;
       return formatDate(date, format || defaultFormat);
     };

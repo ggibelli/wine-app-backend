@@ -1,24 +1,9 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import { IUserDoc } from './user';
-import { INegotiationDoc } from './negotiation';
+import mongoose, { Schema } from 'mongoose';
 
-export interface IMessage {
-  negotiation: INegotiationDoc['_id'];
-  content: string;
-  sentBy: IUserDoc['_id'];
-  sentTo: IUserDoc['_id'];
-  dateSent: Date;
-  isViewed: boolean;
-}
-
-export interface MessageGraphQl extends IMessage {
-  _id: mongoose.Types.ObjectId;
-}
-
-export interface IMessageDoc extends IMessage, Document {}
+import { MessageDocument, MessageModel, MessageSchema } from '../interfaces/mongoose.gen';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const messageSchemaFields: Record<keyof IMessage, any> = {
+const messageSchema: MessageSchema = new Schema({
   negotiation: {
     type: Schema.Types.ObjectId,
     ref: 'Negotiation',
@@ -48,10 +33,11 @@ const messageSchemaFields: Record<keyof IMessage, any> = {
     type: Boolean,
     default: false,
   },
-};
+});
 
-const messageSchema = new Schema(messageSchemaFields);
+messageSchema.index({ negotiation: 1 });
 
-messageSchema.index({ negotiation: 1, sentTo: 1, sentFrom: 1 });
-
-export const Message = mongoose.model<IMessageDoc>('Message', messageSchema);
+export const Message: MessageModel = mongoose.model<
+MessageDocument,
+MessageModel
+>('Message', messageSchema);

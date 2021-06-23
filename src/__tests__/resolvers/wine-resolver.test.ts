@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-const publish = jest.fn();
-const filter = jest.fn();
-jest.mock('apollo-server-express', () => ({
-  PubSub: jest.fn(() => ({
-    publish,
-  })),
-  withFilter: filter,
-}));
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import resolvers from '../../resolvers';
+
+jest.mock('apollo-server-express', () => ({
+  PubSub: jest.fn(() => ({
+    publish: jest.fn(),
+  })),
+  withFilter: jest.fn(),
+}));
 
 const mockContext = {
   dataSources: {
@@ -74,13 +73,13 @@ describe('Review resolvers', () => {
       },
       errors: [],
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.createWine(
       null,
       {
         wineName: 'Uva',
       },
-      mockContext
+      mockContext,
     );
     expect(res).toEqual({
       errors: [],
@@ -99,14 +98,14 @@ describe('Review resolvers', () => {
       },
       errors: [],
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.updateWine(
       null,
       {
         _id: '122',
         wineName: 'Uvetta',
       },
-      mockContext
+      mockContext,
     );
     expect(res).toEqual({
       errors: [],
@@ -125,13 +124,13 @@ describe('Review resolvers', () => {
       },
       errors: [],
     });
-    //@ts-ignore
+    // @ts-ignore
     const res = await resolvers.Mutation?.deleteWine(
       null,
       {
         _id: '122',
       },
-      mockContext
+      mockContext,
     );
     expect(res).toEqual({
       errors: [],

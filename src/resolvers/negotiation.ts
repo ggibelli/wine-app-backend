@@ -2,23 +2,27 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
+import { PubSub, withFilter } from 'apollo-server-express';
+import { LeanDocument } from 'mongoose';
 import {
   Resolvers,
   NegotiationInput,
   NegotiationInputUpdate,
-  //NegotiationInputUpdate,
+  // NegotiationInputUpdate,
 } from '../generated/graphql';
 import Users from '../data-sources/users';
 import Negotiations from '../data-sources/negotiations';
 import Ads from '../data-sources/ads';
 import Messages from '../data-sources/messages';
-import { PubSub, withFilter } from 'apollo-server-express';
-import { NegotiationGraphQl } from '../models/negotiation';
-import { UserGraphQl } from '../models/user';
-import { AdGraphQl } from '../models/ad';
+import {
+  AdDocument,
+  IsPopulated,
+  NegotiationDocument,
+  UserDocument,
+} from '../interfaces/mongoose.gen';
 import { loggerError } from '../utils/logger';
 import Reviews from '../data-sources/reviews';
-// import { AdGraphQl } from '../models/ad';
+// import { LeanDocument<IAdDoc> } from '../models/ad';
 
 const pubsub = new PubSub();
 
@@ -40,33 +44,33 @@ interface MongoDataSource {
   reviews: Reviews;
 }
 
-export const resolver: StringIndexed<Resolvers> = {
+const resolver: StringIndexed<Resolvers> = {
   Query: {
     async negotiationsWithUser(
       _,
       { forUserAd },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       return dataSources.negotiations.getNegotiationsForUser(forUserAd);
     },
     async negotiationsForAd(
       _,
       { ad },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       return dataSources.negotiations.getNegotiationsForAd(ad);
     },
     async negotiations(
       _,
       args,
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       return dataSources.negotiations.getNegotiations(args);
     },
     async negotiation(
       _,
       { id },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
       return dataSources.negotiations.getNegotiation(id);
     },
@@ -76,29 +80,30 @@ export const resolver: StringIndexed<Resolvers> = {
     async createNegotiation(
       _,
       { negotiation }: { negotiation: NegotiationInput },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
-      const negotiationResponse =
-        await dataSources.negotiations.createNegotiation(negotiation);
+      const negotiationResponse = await dataSources.negotiations.createNegotiation(negotiation);
       if (!negotiationResponse.errors.length) {
         await dataSources.messages.messageAdmin(
           [negotiation.forUserAd],
-          `Trattativa creata per il tuo annuncio ${negotiation.ad}`
+          `Trattativa creata per il tuo annuncio ${negotiation.ad}`,
         );
 
         await pubsub.publish(NEGOTIATION_CREATED, {
           negotiationCreated: negotiationResponse.response,
         });
       }
-      try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        await dataSources.messages.createMessage({
-          negotiation: negotiationResponse.response?._id as string,
-          sentTo: negotiation.forUserAd,
-          content: 'negoziazione aperta',
-        });
-      } catch (e) {
-        loggerError(e);
+      if (negotiationResponse.response?._id) {
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          await dataSources.messages.createMessage({
+            negotiation: negotiationResponse.response?._id.toHexString(),
+            sentTo: negotiation.forUserAd,
+            content: 'negoziazione aperta',
+          });
+        } catch (e) {
+          loggerError(e);
+        }
       }
       return negotiationResponse;
     },
@@ -106,14 +111,23 @@ export const resolver: StringIndexed<Resolvers> = {
     async updateNegotiation(
       _,
       { negotiation }: { negotiation: NegotiationInputUpdate },
-      { dataSources, user }: { dataSources: MongoDataSource; user: UserGraphQl }
+      {
+        dataSources,
+        user,
+      }: { dataSources: MongoDataSource; user: LeanDocument<UserDocument> },
     ) {
-      const updatedNegotiationResponse =
-        await dataSources.negotiations.updateNegotiation(negotiation);
+      const updatedNegotiationResponse = await dataSources.negotiations.updateNegotiation(negotiation);
       if (updatedNegotiationResponse.response?.isConcluded) {
-        const ad = await dataSources.ads.getAd(
-          updatedNegotiationResponse.response.ad
-        );
+        let ad;
+        if (IsPopulated(updatedNegotiationResponse.response.ad)) {
+          ad = await dataSources.ads.getAd(
+            updatedNegotiationResponse.response.ad._id.toHexString(),
+          );
+        } else {
+          ad = await dataSources.ads.getAd(
+            updatedNegotiationResponse.response.ad.toHexString(),
+          );
+        }
         if (!ad) {
           return {
             response: null,
@@ -126,15 +140,14 @@ export const resolver: StringIndexed<Resolvers> = {
         try {
           await ad.save();
         } catch (e) {
-          console.log(e);
+          loggerError(e);
 
           return {
             response: null,
             errors: [{ name: 'General Error', text: 'Error updating the ad' }],
           };
         }
-        const negotiations =
-          await dataSources.negotiations.getNegotiationsForAd(ad._id);
+        const negotiations = await dataSources.negotiations.getNegotiationsForAd(ad._id);
 
         const usersToNotifySet: Set<string> = new Set();
 
@@ -143,17 +156,16 @@ export const resolver: StringIndexed<Resolvers> = {
           usersToNotifySet.add(neg.createdBy.toString());
         });
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const userToNotify: string =
-          updatedNegotiationResponse.response.createdBy.toString() ===
-          user._id.toString()
-            ? updatedNegotiationResponse.response.forUserAd.toString()
-            : updatedNegotiationResponse.response.createdBy.toString();
+        const userToNotify: string = updatedNegotiationResponse.response.createdBy.toString()
+          === user._id.toString()
+          ? updatedNegotiationResponse.response.forUserAd.toString()
+          : updatedNegotiationResponse.response.createdBy.toString();
         const usersToNotify: string[] = Array.from(usersToNotifySet).filter(
-          (u) => u !== user._id.toString()
+          (u) => u !== user._id.toString(),
         );
         await dataSources.messages.messageAdmin(
           usersToNotify,
-          `L'annuncio ${ad.wineName} non e piu disponibile`
+          `L'annuncio ${ad.wineName} non e piu disponibile`,
         );
         await pubsub.publish(NEGOTIATION_CLOSED, {
           negotiationClosed: ad,
@@ -168,14 +180,13 @@ export const resolver: StringIndexed<Resolvers> = {
     async deleteNegotiation(
       _,
       { id }: { id: string },
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
-      const deletedNegotiation =
-        await dataSources.negotiations.deleteNegotiation(id);
+      const deletedNegotiation = await dataSources.negotiations.deleteNegotiation(id);
       if (!deletedNegotiation.errors.length) {
         const deletedMessages = await dataSources.messages.deleteMessages(id);
         deletedMessages
-          ? deletedNegotiation.errors.push(deletedMessages)
+          ? deletedNegotiation?.errors.push(deletedMessages)
           : null;
       }
       return deletedNegotiation;
@@ -187,16 +198,21 @@ export const resolver: StringIndexed<Resolvers> = {
       subscribe: withFilter(
         () => pubsub.asyncIterator([NEGOTIATION_CREATED]),
         (
-          payload: { negotiationCreated: NegotiationGraphQl },
+          payload: { negotiationCreated: LeanDocument<NegotiationDocument> },
           _,
-          { user }: { user: UserGraphQl }
+          { user }: { user: LeanDocument<UserDocument> },
         ) => {
+          if (IsPopulated(payload.negotiationCreated.forUserAd)) {
+            return Boolean(
+          payload.negotiationCreated.forUserAd._id.toHexString()
+              === user._id.toHexString(),
+        )
+          }
           return Boolean(
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            payload.negotiationCreated.forUserAd._id.toString() ===
-              user._id.toHexString()
-          );
-        }
+          payload.negotiationCreated.forUserAd.toHexString()
+              === user._id.toHexString(),
+        )
+          }
       ),
     },
     negotiationClosed: {
@@ -204,17 +220,19 @@ export const resolver: StringIndexed<Resolvers> = {
         () => pubsub.asyncIterator([NEGOTIATION_CLOSED]),
         (
           payload: {
-            negotiationClosed: AdGraphQl;
+            negotiationClosed: LeanDocument<AdDocument>;
             userToNotify: string;
             userToNotNotify: string;
             usersToNotify: string[];
           },
           _,
-          { user }: { user: UserGraphQl; dataSources: MongoDataSource }
+          {
+            user,
+          }: { user: LeanDocument<UserDocument>; dataSources: MongoDataSource },
         ) => {
           if (user._id.toHexString() === payload.userToNotNotify) return false;
           return payload.userToNotify === user._id.toString();
-        }
+        },
       ),
     },
   },
@@ -223,38 +241,57 @@ export const resolver: StringIndexed<Resolvers> = {
     async createdBy(
       negotiation,
       _,
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
-      return dataSources.users.getUser(negotiation.createdBy);
+      if (IsPopulated(negotiation.createdBy)) {
+        return dataSources.users.getUser(
+          negotiation.createdBy._id.toHexString(),
+        );
+      }
+      return dataSources.users.getUser(negotiation.createdBy.toHexString());
     },
     async ad(
       negotiation,
       _,
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
-      return dataSources.ads.getAd(negotiation.ad);
+      if (IsPopulated(negotiation.ad)) {
+        return dataSources.ads.getAd(negotiation.ad._id.toHexString());
+      }
+      return dataSources.ads.getAd(negotiation.ad.toHexString());
     },
     async forUserAd(
       negotiation,
       _,
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
-      return dataSources.users.getUser(negotiation.forUserAd._id);
+      if (IsPopulated(negotiation.forUserAd)) {
+        return dataSources.users.getUser(
+          negotiation.forUserAd._id.toHexString(),
+        );
+      }
+      return dataSources.users.getUser(negotiation.forUserAd.toHexString());
     },
     async messages(
       negotiation,
       _,
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
-      return dataSources.messages.getMessagesNegotiationType(negotiation._id);
+      return dataSources.messages.getMessagesNegotiationType(
+        negotiation._id.toHexString(),
+      );
     },
 
     async review(
       negotiation,
       _,
-      { dataSources }: { dataSources: MongoDataSource }
+      { dataSources }: { dataSources: MongoDataSource },
     ) {
-      return dataSources.reviews.getReviewForNegotiation(negotiation._id);
+      return dataSources.reviews.getReviewForNegotiation(
+        negotiation._id.toHexString(),
+      );
     },
   },
 };
+
+export default resolver;

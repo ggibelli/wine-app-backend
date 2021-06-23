@@ -3,13 +3,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resolver = void 0;
 const apollo_server_express_1 = require("apollo-server-express");
+const mongoose_gen_1 = require("../interfaces/mongoose.gen");
 const logger_1 = require("../utils/logger");
 const pubsub = new apollo_server_express_1.PubSub();
 const AD_POSTED = 'AD_POSTED';
 const AD_REMOVED = 'AD_REMOVED';
-exports.resolver = {
+const resolver = {
     Query: {
         async ads(_, args, { dataSources }) {
             return dataSources.ads.getAds(args);
@@ -17,7 +17,7 @@ exports.resolver = {
         async adsForUser(_, args, { dataSources }) {
             return dataSources.ads.getAdsByUser(args);
         },
-        async ad(_, { id }, { dataSources, user }) {
+        async ad(_, { id }, { dataSources, user, }) {
             const ad = await dataSources.ads.getAd(id);
             if (user) {
                 ad?.viewedBy?.addToSet(user._id);
@@ -71,14 +71,16 @@ exports.resolver = {
                 adRemoved: adResponse.response,
                 usersToNotify: users,
             });
-            try {
-                await dataSources.negotiations.deleteMany(adResponse.response?._id);
-            }
-            catch (e) {
-                adResponse.errors.push({
-                    name: 'DeleteManyError',
-                    text: 'Error during the removal of the negotiations linked to this ad',
-                });
+            if (adResponse.response?._id) {
+                try {
+                    await dataSources.negotiations.deleteMany(adResponse.response?._id);
+                }
+                catch (e) {
+                    adResponse.errors.push({
+                        name: 'DeleteManyError',
+                        text: 'Error during the removal of the negotiations linked to this ad',
+                    });
+                }
             }
             return adResponse;
         },
@@ -90,17 +92,15 @@ exports.resolver = {
                     errors: [{ text: 'Ad not found', name: 'General error' }],
                 };
             }
-            return await dataSources.users.saveAd(ad);
+            return dataSources.users.saveAd(ad);
         },
     },
     Subscription: {
         adPostedFollowUp: {
-            subscribe: apollo_server_express_1.withFilter(() => pubsub.asyncIterator([AD_POSTED]), (payload, _, { user }) => {
-                return payload.usersToNotify.includes(user._id.toHexString());
-            }),
+            subscribe: apollo_server_express_1.withFilter(() => pubsub.asyncIterator([AD_POSTED]), (payload, _, { user, }) => payload.usersToNotify.includes(user._id.toHexString())),
         },
         adRemoved: {
-            subscribe: apollo_server_express_1.withFilter(() => pubsub.asyncIterator([AD_REMOVED]), (payload, _, { user }) => {
+            subscribe: apollo_server_express_1.withFilter(() => pubsub.asyncIterator([AD_REMOVED]), (payload, _, { user, }) => {
                 if (
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                 payload.adRemoved.postedBy.toString() === user._id.toHexString()) {
@@ -115,10 +115,13 @@ exports.resolver = {
             return ad.typeProduct;
         },
         async postedBy(ad, _, { dataSources }) {
-            return dataSources.users.getUser(ad.postedBy);
+            if (!mongoose_gen_1.IsPopulated(ad.postedBy)) {
+                return dataSources.users.getUser(ad.postedBy.toHexString());
+            }
+            return dataSources.users.getUser(ad.postedBy._id.toHexString());
         },
         async activeNegotiations(ad, _, { dataSources }) {
-            return await dataSources.negotiations.negotiationsActive(ad._id.toString());
+            return dataSources.negotiations.negotiationsActive(ad._id.toString());
         },
         numberViews(ad) {
             if (!ad.viewedBy) {
@@ -147,3 +150,4 @@ exports.resolver = {
         },
     },
 };
+exports.default = resolver;
