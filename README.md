@@ -8,6 +8,9 @@ The app sends a notification and a mail when a new wine is posted that matches t
 
 This app is written in NodeJs using TypeScript, and I decided to use mongoDB as a database.
 This is my first project using GraphQL over REST and I used ApolloServer.
+I used cronjob to send the email to don't let the server hanging for a better user experience, it retries 2 times.
+The mongoose typing was done manually but I changed it to mongoose-tsgen, the graphQL typing was done with graphql-codegen.
+There is pagination support for the client's infinite scroll.
 
 ## Features
 
@@ -16,8 +19,11 @@ This is my first project using GraphQL over REST and I used ApolloServer.
 - Users can open/close Negotiations
 - Users can review other Users
 - Users can send real time messages
+- Users can save Ads
 - Automatic mail and notification after certain actions (ie. when opening or closing a negotiation)
 - Admin can add or remove wines (work in progress)
+- Mail and notification sent when someone likes your ad
+- Geolocalisation to sort ads result (work in progress, now is sort by time or price)
 
 ## What is missing
 
