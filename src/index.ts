@@ -11,7 +11,7 @@ import {
 } from 'apollo-server-express';
 import mongoose from 'mongoose';
 import http from 'http';
-import path from 'path';
+// import path from 'path';
 import { MONGODB_URI, PORT } from './utils/config';
 import { loggerInfo, loggerError } from './utils/logger';
 import resolvers from './resolvers';
@@ -78,10 +78,10 @@ export const schema = makeExecutableSchema({
 });
 
 function initializeSubscriptionDataSources(context: { dataSources: any }) {
-  const conte = context;
-  if (conte.dataSources) {
-    for (const instance in conte.dataSources) {
-      conte.dataSources[instance].initialize({ context, cache: undefined });
+  const ctx = context;
+  if (ctx.dataSources) {
+    for (const instance in ctx.dataSources) {
+      ctx.dataSources[instance].initialize({ context, cache: undefined });
     }
   }
 }
@@ -118,10 +118,10 @@ const server = new ApolloServer({
 
 export const app = express();
 app.use(confirmationRouter);
-app.use(express.static('public'));
-app.get('*', (_req, res) => {
-  res.sendFile(path.resolve('public', 'index.html'));
-});
+// app.use(express.static('public'));
+// app.get('*', (_req, res) => {
+//   res.sendFile(path.resolve('public', 'index.html'));
+// });
 server.applyMiddleware({ app, path: '/graphql' });
 
 const httpServer = http.createServer(app);
@@ -129,9 +129,11 @@ server.installSubscriptionHandlers(httpServer);
 
 const start = () => {
   mongooseConnection();
-  httpServer.listen(PORT, () => loggerInfo(
-    `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`,
-  ));
+  httpServer.listen(PORT, () =>
+    loggerInfo(
+      `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`,
+    ),
+  );
 };
 
 if (process.env.NODE_ENV !== 'test') {
