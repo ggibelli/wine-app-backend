@@ -441,7 +441,11 @@ describe('Ad resolvers', () => {
       { _id: '602daa91cdc6630673a9fc0e' },
       mockContext,
     );
-    // aggiungere test messaggio mandato
+    expect(messageAdmin).toHaveBeenCalledTimes(1);
+    expect(messageAdmin).toHaveBeenCalledWith(
+      ['5fdd925d9cc5800455e1855f'],
+      'Una cantina ha salvato il tuo annuncio per il vino: wine',
+    );
     expect(mockPublish).toHaveBeenCalledTimes(1);
     expect(mockPublish).toHaveBeenCalledWith('AD_SAVED', {
       adSaved: {

@@ -119,10 +119,11 @@ const resolver: StringIndexed<Resolvers> = {
           payload: { messageSent: LeanDocument<MessageDocument> },
           _,
           { user }: { user: LeanDocument<UserDocument> },
-        ) =>
-          Boolean(
+        ) => {
+          return Boolean(
             payload.messageSent.sentTo.toString() === user._id.toString(),
-          ),
+          );
+        },
       ),
     },
   },
@@ -154,13 +155,11 @@ const resolver: StringIndexed<Resolvers> = {
       { dataSources }: { dataSources: MongoDataSource },
     ) {
       if (IsPopulated(message.negotiation)) {
-        
         return dataSources.negotiations.getNegotiation(
           message.negotiation._id.toHexString(),
         );
       }
-     
-      
+
       return dataSources.negotiations.getNegotiation(
         message.negotiation.toHexString(),
       );
