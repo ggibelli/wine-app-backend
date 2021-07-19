@@ -462,6 +462,36 @@ describe('Ad resolvers', () => {
     });
   });
 
+  it('if ad already saved subscription not called, message not sent', async () => {
+    saveAd.mockReturnValueOnce({
+      _id: '602daa91cdc6630673a9fc0e',
+      content: '11212121212',
+      isSaved: true,
+    });
+    getAd.mockReturnValueOnce({
+      _id: '5fdd925d9cc5800455e1855e',
+      typeAd: 'SELL',
+      typeProduct: 'AdWine',
+      wineName: 'wine',
+      postedBy: '5fdd925d9cc5800455e1855f',
+    });
+    // @ts-ignore
+    const res = await resolvers.Mutation?.saveAd(
+      null,
+      { _id: '602daa91cdc6630673a9fc0e' },
+      mockContext,
+    );
+    expect(messageAdmin).toHaveBeenCalledTimes(0);
+
+    expect(mockPublish).toHaveBeenCalledTimes(0);
+
+    expect(res).toEqual({
+      _id: '602daa91cdc6630673a9fc0e',
+      content: '11212121212',
+      isSaved: true,
+    });
+  });
+
   it('AdGrape wine shows vineyard ad', async () => {
     getVineyardByName.mockReturnValueOnce({
       vineyardName: 'vigna',

@@ -303,7 +303,8 @@ describe('Integration test negotiations', () => {
   });
 
   it('query single negotiation fails if not logged', async () => {
-    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] =
+      await Negotiation.find({}).lean().exec();
     const res = await query(NEGOTIATION, {
       variables: { id: negotiation[0]._id.toString() },
     });
@@ -417,7 +418,8 @@ describe('Integration test negotiations', () => {
   });
 
   it('query single negotiation succeds if logged', async () => {
-    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] =
+      await Negotiation.find({}).lean().exec();
     const res = await query(NEGOTIATION, {
       variables: { id: negotiation[0]._id.toString() },
     });
@@ -427,11 +429,12 @@ describe('Integration test negotiations', () => {
   it('update negotiation mutation succeds if logged in and same user', async () => {
     const user = await User.findOne({ firstName: 'Giovanni' });
     if (!user) throw new Error();
-    const negotiationToUpdate: LeanDocument<NegotiationDocument> | null = await Negotiation.findOne({
-      createdBy: user,
-    })
-      .lean()
-      .exec();
+    const negotiationToUpdate: LeanDocument<NegotiationDocument> | null =
+      await Negotiation.findOne({
+        createdBy: user,
+      })
+        .lean()
+        .exec();
     const negotiation = {
       _id: negotiationToUpdate?._id.toString(),
       isConcluded: true,
@@ -445,11 +448,12 @@ describe('Integration test negotiations', () => {
   it('update negotiation mutation fails if logged in and not same user', async () => {
     const user = await User.findOne({ firstName: 'Luigetto' });
     if (!user) throw new Error();
-    const negotiationToUpdate: LeanDocument<NegotiationDocument> | null = await Negotiation.findOne({
-      createdBy: user,
-    })
-      .lean()
-      .exec();
+    const negotiationToUpdate: LeanDocument<NegotiationDocument> | null =
+      await Negotiation.findOne({
+        createdBy: user,
+      })
+        .lean()
+        .exec();
     const negotiation = {
       _id: negotiationToUpdate?._id.toString(),
       isConcluded: true,
@@ -463,11 +467,12 @@ describe('Integration test negotiations', () => {
   it('delete negotiation mutation succeds if logged in and same user', async () => {
     const user = await User.findOne({ firstName: 'Giovanni' });
     if (!user) throw new Error();
-    const negotiationToDelete: LeanDocument<NegotiationDocument> | null = await Negotiation.findOne({
-      createdBy: user,
-    })
-      .lean()
-      .exec();
+    const negotiationToDelete: LeanDocument<NegotiationDocument> | null =
+      await Negotiation.findOne({
+        createdBy: user,
+      })
+        .lean()
+        .exec();
     const res = await mutate(DELETE_NEGOTIATION, {
       variables: { id: negotiationToDelete?._id.toString() },
     });
@@ -477,11 +482,12 @@ describe('Integration test negotiations', () => {
   it('delete negotiation mutation fails if logged in and not same user', async () => {
     const user = await User.findOne({ firstName: 'Luigetto' });
     if (!user) throw new Error();
-    const negotiationToDelete: LeanDocument<NegotiationDocument> | null = await Negotiation.findOne({
-      createdBy: user,
-    })
-      .lean()
-      .exec();
+    const negotiationToDelete: LeanDocument<NegotiationDocument> | null =
+      await Negotiation.findOne({
+        createdBy: user,
+      })
+        .lean()
+        .exec();
     const res = await mutate(DELETE_NEGOTIATION, {
       variables: { id: negotiationToDelete?._id.toString() },
     });

@@ -11,7 +11,7 @@ import {
 } from 'apollo-server-express';
 import mongoose from 'mongoose';
 import http from 'http';
-// import path from 'path';
+import path from 'path';
 import { MONGODB_URI, PORT } from './utils/config';
 import { loggerInfo, loggerError } from './utils/logger';
 import resolvers from './resolvers';
@@ -118,10 +118,10 @@ const server = new ApolloServer({
 
 export const app = express();
 app.use(confirmationRouter);
-// app.use(express.static('public'));
-// app.get('*', (_req, res) => {
-//   res.sendFile(path.resolve('public', 'index.html'));
-// });
+app.use(express.static('public'));
+app.get('*', (_req, res) => {
+  res.sendFile(path.resolve('public', 'index.html'));
+});
 server.applyMiddleware({ app, path: '/graphql' });
 
 const httpServer = http.createServer(app);

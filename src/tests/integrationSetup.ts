@@ -11,25 +11,33 @@ import { schema } from '../index';
 import dataSources from '../data-sources';
 
 export const connectToDb = async () => {
-  await mongoose
-    .connect(MONGODB_URI, {
+  try {
+    await mongoose.connect(MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
-    })
-    .catch((error) => console.error(error));
+    });
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 export const dropTestDb = async () => {
   if (process.env.NODE_ENV === 'test') {
-    await mongoose.connection.db
-      .dropDatabase()
-      .catch((error) => console.error(error));
+    try {
+      await mongoose.connection.db.dropDatabase();
+    } catch (e) {
+      console.error(e);
+    }
   }
 };
 
 export const closeDbConnection = async () => {
-  await mongoose.connection.close().catch((error) => console.error(error));
+  try {
+    await mongoose.connection.close();
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 interface HeadersExt extends Headers {

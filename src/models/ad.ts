@@ -25,7 +25,6 @@ const schema: AdSchema = new Schema({
   wineName: {
     type: String,
     minlength: 3,
-    
     index: true,
   },
   wine: {
@@ -51,7 +50,6 @@ const schema: AdSchema = new Schema({
   vineyardName: {
     type: String,
     minlength: 3,
-    
     index: true,
   },
   vineyard: {
@@ -76,19 +74,15 @@ const schema: AdSchema = new Schema({
   },
   litersFrom: {
     type: Number,
-    
   },
   litersTo: {
     type: Number,
-    
   },
   kgFrom: {
     type: Number,
-    
   },
   kgTo: {
     type: Number,
-    
   },
   // address: {
   //   comune: {

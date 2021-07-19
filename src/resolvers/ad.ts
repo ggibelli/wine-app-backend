@@ -158,7 +158,10 @@ const resolver: StringIndexed<Resolvers> = {
     async saveAd(
       _,
       { id }: { id: string },
-      { dataSources }: { dataSources: MongoDataSource },
+      {
+        dataSources,
+        user,
+      }: { dataSources: MongoDataSource; user: LeanDocument<UserDocument> },
     ) {
       const ad = await dataSources.ads.getAd(id);
       if (!ad) {
@@ -167,15 +170,18 @@ const resolver: StringIndexed<Resolvers> = {
           errors: [{ text: 'Ad not found', name: 'General error' }],
         };
       }
+      const savedAd = await dataSources.users.saveAd(ad);
       // Aggiungere logica annuncio salvato e rimosso
-      await pubsub.publish(AD_SAVED, {
-        adSaved: ad,
-      });
-      await dataSources.messages.messageAdmin(
-        [ad.postedBy.toString()],
-        `Una cantina ha salvato il tuo annuncio per il vino: ${ad.wineName}`,
-      );
-      return dataSources.users.saveAd(ad);
+      if (!savedAd.isSaved && user._id.toString() !== ad.postedBy.toString()) {
+        await pubsub.publish(AD_SAVED, {
+          adSaved: ad,
+        });
+        await dataSources.messages.messageAdmin(
+          [ad.postedBy.toString()],
+          `Una cantina ha salvato il tuo annuncio per il vino: ${ad.wineName}`,
+        );
+      }
+      return savedAd;
     },
   },
 
@@ -228,14 +234,7 @@ const resolver: StringIndexed<Resolvers> = {
           {
             user,
           }: { user: LeanDocument<UserDocument>; dataSources: MongoDataSource },
-        ) => {
-          console.log('yo');
-          console.log(
-            payload.adSaved.postedBy.toString(),
-            user._id.toHexString(),
-          );
-          return payload.adSaved.postedBy.toString() === user._id.toHexString();
-        },
+        ) => payload.adSaved.postedBy.toString() === user._id.toHexString(),
       ),
     },
   },
