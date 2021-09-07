@@ -152,14 +152,14 @@ const typeDefs = gql`
       typeProduct: TypeProduct!
       wineName: String
       vineyardName: String
-      offset: Int = 0
-      orderBy: QueryOrderBy = createdAt_DESC
-      limit: Int = 10
+      offset: Int
+      orderBy: QueryOrderBy
+      limit: Int
     ): AdsResult
     adsForUser(
-      offset: Int = 0
-      orderBy: QueryOrderBy = createdAt_DESC
-      limit: Int = 10
+      offset: Int
+      orderBy: QueryOrderBy
+      limit: Int
       isActive: Boolean
       user: ID!
     ): AdsResult
@@ -174,6 +174,7 @@ const typeDefs = gql`
   type Subscription {
     adPostedFollowUp: Ad! @authenticated
     adRemoved: Ad! @authenticated
+    adSaved: Ad! @authenticated
   }
 `;
 

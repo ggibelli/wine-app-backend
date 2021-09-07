@@ -19,7 +19,7 @@ import { users, ads } from '../../tests/mocksTests';
 import { ReviewInput, TypeAd } from '../../generated/graphql';
 import { Negotiation } from '../../models/negotiation';
 import {
-  ReviewDocument, 
+  ReviewDocument,
   NegotiationDocument,
 } from '../../interfaces/mongoose.gen';
 
@@ -253,7 +253,8 @@ describe('Integration test reviews', () => {
   });
 
   it('create review mutation fails if not logged in', async () => {
-    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] =
+      await Negotiation.find({}).lean().exec();
     const review: ReviewInput = {
       negotiation: negotiation[0]._id.toString(),
       forUser: negotiation[0].forUserAd.toString(),
@@ -278,7 +279,8 @@ describe('Integration test reviews', () => {
         },
       },
     });
-    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] =
+      await Negotiation.find({}).lean().exec();
     const review: ReviewInput = {
       negotiation: negotiation[1]._id.toString(),
       forUser: negotiation[1].forUserAd.toString(),
@@ -295,7 +297,8 @@ describe('Integration test reviews', () => {
   });
 
   it('create review mutation fails if same negotiation and user', async () => {
-    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] =
+      await Negotiation.find({}).lean().exec();
     const review: ReviewInput = {
       negotiation: negotiation[1]._id.toString(),
       forUser: negotiation[1].forUserAd.toString(),
@@ -311,7 +314,8 @@ describe('Integration test reviews', () => {
   });
 
   it('create review mutation fails if is for own user', async () => {
-    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] =
+      await Negotiation.find({}).lean().exec();
     const review: ReviewInput = {
       negotiation: negotiation[0]._id.toString(),
       forUser: negotiation[0].forUserAd.toString(),
@@ -343,11 +347,12 @@ describe('Integration test reviews', () => {
   it('update review mutation succeds if logged in and same user', async () => {
     const user = await User.findOne({ firstName: 'Giovanni' });
     if (!user) throw new Error();
-    const reviewToUpdate: LeanDocument<ReviewDocument> | null = await Review.findOne({
-      createdBy: user,
-    })
-      .lean()
-      .exec();
+    const reviewToUpdate: LeanDocument<ReviewDocument> | null =
+      await Review.findOne({
+        createdBy: user,
+      })
+        .lean()
+        .exec();
     const review = {
       _id: reviewToUpdate?._id.toString(),
       content: 'cambiato',
@@ -362,11 +367,12 @@ describe('Integration test reviews', () => {
     const user = await User.findOne({ firstName: 'Mariuccio' });
     if (!user) throw new Error();
 
-    const reviewToUpdate: LeanDocument<ReviewDocument> | null = await Review.findOne({
-      createdBy: user,
-    })
-      .lean()
-      .exec();
+    const reviewToUpdate: LeanDocument<ReviewDocument> | null =
+      await Review.findOne({
+        createdBy: user,
+      })
+        .lean()
+        .exec();
     const review = {
       _id: reviewToUpdate?._id.toString(),
       content: 'non cambiato',
@@ -381,11 +387,12 @@ describe('Integration test reviews', () => {
     const user = await User.findOne({ firstName: 'Giovanni' });
     if (!user) throw new Error();
 
-    const reviewToDelete: LeanDocument<ReviewDocument> | null = await Review.findOne({
-      createdBy: user,
-    })
-      .lean()
-      .exec();
+    const reviewToDelete: LeanDocument<ReviewDocument> | null =
+      await Review.findOne({
+        createdBy: user,
+      })
+        .lean()
+        .exec();
     const res = await mutate(DELETE_REVIEW, {
       variables: { id: reviewToDelete?._id.toString() },
     });
@@ -396,11 +403,12 @@ describe('Integration test reviews', () => {
     const user = await User.findOne({ firstName: 'Mariuccio' });
     if (!user) throw new Error();
 
-    const reviewToDelete: LeanDocument<ReviewDocument> | null = await Review.findOne({
-      createdBy: user,
-    })
-      .lean()
-      .exec();
+    const reviewToDelete: LeanDocument<ReviewDocument> | null =
+      await Review.findOne({
+        createdBy: user,
+      })
+        .lean()
+        .exec();
     const res = await mutate(DELETE_REVIEW, {
       variables: { id: reviewToDelete?._id.toString() },
     });

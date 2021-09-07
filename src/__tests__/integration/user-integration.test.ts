@@ -6,7 +6,6 @@ import { gql } from 'apollo-server-express';
 import supertest from 'supertest';
 import cron from 'cron';
 import { Types } from 'mongoose';
-
 import {
   testClient,
   connectToDb,
@@ -333,7 +332,6 @@ beforeAll(async () => {
   await review.save();
   await otherReview.save();
   await wine.save();
-
   await user.save();
 });
 

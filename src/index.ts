@@ -78,10 +78,10 @@ export const schema = makeExecutableSchema({
 });
 
 function initializeSubscriptionDataSources(context: { dataSources: any }) {
-  const conte = context;
-  if (conte.dataSources) {
-    for (const instance in conte.dataSources) {
-      conte.dataSources[instance].initialize({ context, cache: undefined });
+  const ctx = context;
+  if (ctx.dataSources) {
+    for (const instance in ctx.dataSources) {
+      ctx.dataSources[instance].initialize({ context, cache: undefined });
     }
   }
 }
@@ -129,9 +129,11 @@ server.installSubscriptionHandlers(httpServer);
 
 const start = () => {
   mongooseConnection();
-  httpServer.listen(PORT, () => loggerInfo(
-    `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`,
-  ));
+  httpServer.listen(PORT, () =>
+    loggerInfo(
+      `🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`,
+    ),
+  );
 };
 
 if (process.env.NODE_ENV !== 'test') {

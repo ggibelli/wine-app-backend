@@ -205,7 +205,8 @@ describe('Integration test messages', () => {
   });
 
   it('query messagesToUser fails if not logged in', async () => {
-    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] =
+      await Negotiation.find({}).lean().exec();
     const res = await query(MESSAGES_USER, {
       variables: { user: negotiation[0].forUserAd.toString() },
     });
@@ -213,7 +214,8 @@ describe('Integration test messages', () => {
   });
 
   it('query messageForNegotiation fails if not logged in', async () => {
-    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] =
+      await Negotiation.find({}).lean().exec();
     const res = await query(MESSAGES_NEGOTIATION, {
       variables: { negotiation: negotiation[0]._id.toString() },
     });
@@ -231,7 +233,8 @@ describe('Integration test messages', () => {
   });
 
   it('create message mutation fails if not logged in', async () => {
-    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] =
+      await Negotiation.find({}).lean().exec();
     const message: MessageInput = {
       negotiation: negotiation[0]._id.toString(),
       sentTo: negotiation[0].forUserAd.toString(),
@@ -254,7 +257,8 @@ describe('Integration test messages', () => {
         },
       },
     });
-    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] =
+      await Negotiation.find({}).lean().exec();
     const message: MessageInput = {
       negotiation: negotiation[0]._id.toString(),
       sentTo: negotiation[0].forUserAd.toString(),
@@ -267,7 +271,8 @@ describe('Integration test messages', () => {
   });
 
   it('create message mutation fails if user does not own the negotiation', async () => {
-    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] =
+      await Negotiation.find({}).lean().exec();
     const message: MessageInput = {
       negotiation: negotiation[1]._id.toString(),
       sentTo: negotiation[1].forUserAd.toString(),
@@ -282,7 +287,8 @@ describe('Integration test messages', () => {
   it('create message mutation fails if recipient same as sender', async () => {
     const user = await User.findOne({ firstName: 'Giovanni' }).lean().exec();
     if (!user) throw new Error();
-    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] =
+      await Negotiation.find({}).lean().exec();
     const message: MessageInput = {
       negotiation: negotiation[0]._id.toString(),
       sentTo: user._id.toString(),
@@ -308,7 +314,8 @@ describe('Integration test messages', () => {
   });
 
   it('query messagesForNegotiation succeds if logged in', async () => {
-    const negotiation: LeanDocument<NegotiationDocument>[] = await Negotiation.find({}).lean().exec();
+    const negotiation: LeanDocument<NegotiationDocument>[] =
+      await Negotiation.find({}).lean().exec();
     const res = await query(MESSAGES_NEGOTIATION, {
       variables: { negotiation: negotiation[0]._id.toString() },
     });

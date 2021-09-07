@@ -185,9 +185,10 @@ export default class Users extends MongoDataSource<UserDocument, Context> {
   async saveAd(ad: AdDocument) {
     const errors: Errors[] = [];
     const user = await this.model.findById(this.context.user._id);
-    const isSaved = user?.savedAds?.findIndex(
-      (adSaved) => adSaved.toString() === ad._id.toString(),
-    ) !== -1;
+    const isSaved =
+      user?.savedAds?.findIndex(
+        (adSaved) => adSaved.toString() === ad._id.toString(),
+      ) !== -1;
     if (isSaved) {
       ad.savedBy?.pull({ _id: user?._id });
 
@@ -209,6 +210,7 @@ export default class Users extends MongoDataSource<UserDocument, Context> {
       });
     }
     return {
+      isSaved,
       response: ad,
       errors,
     };

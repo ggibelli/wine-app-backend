@@ -27,6 +27,7 @@ const pubsub = new PubSub();
 
 const AD_POSTED = 'AD_POSTED';
 const AD_REMOVED = 'AD_REMOVED';
+const AD_SAVED = 'AD_SAVED';
 // const NEGOTIATION_CLOSED = 'NEGOTIATION_CLOSED';
 
 interface StringIndexSignatureInterface {
@@ -104,7 +105,8 @@ const resolver: StringIndexed<Resolvers> = {
     ) {
       const adResponse = await dataSources.ads.updateAd(input);
       if (!adResponse.response?.isActive) {
-        const negotiations = await dataSources.negotiations.getNegotiationsForAd(input._id);
+        const negotiations =
+          await dataSources.negotiations.getNegotiationsForAd(input._id);
         const users = negotiations
           .filter((negotiation) => !negotiation.isConcluded)
           // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -136,7 +138,7 @@ const resolver: StringIndexed<Resolvers> = {
       await dataSources.messages.messageAdmin(
         users,
         `L annuncio per il vino ${adResponse.response?.wineName} e stato rimosso`,
-      ); 
+      );
       await pubsub.publish(AD_REMOVED, {
         adRemoved: adResponse.response,
         usersToNotify: users,
@@ -156,7 +158,10 @@ const resolver: StringIndexed<Resolvers> = {
     async saveAd(
       _,
       { id }: { id: string },
-      { dataSources }: { dataSources: MongoDataSource },
+      {
+        dataSources,
+        user,
+      }: { dataSources: MongoDataSource; user: LeanDocument<UserDocument> },
     ) {
       const ad = await dataSources.ads.getAd(id);
       if (!ad) {
@@ -165,8 +170,18 @@ const resolver: StringIndexed<Resolvers> = {
           errors: [{ text: 'Ad not found', name: 'General error' }],
         };
       }
-
-      return dataSources.users.saveAd(ad);
+      const savedAd = await dataSources.users.saveAd(ad);
+      // Aggiungere logica annuncio salvato e rimosso
+      if (!savedAd.isSaved && user._id.toString() !== ad.postedBy.toString()) {
+        await pubsub.publish(AD_SAVED, {
+          adSaved: ad,
+        });
+        await dataSources.messages.messageAdmin(
+          [ad.postedBy.toString()],
+          `Una cantina ha salvato il tuo annuncio per il vino: ${ad.wineName}`,
+        );
+      }
+      return savedAd;
     },
   },
 
@@ -200,13 +215,26 @@ const resolver: StringIndexed<Resolvers> = {
           }: { user: LeanDocument<UserDocument>; dataSources: MongoDataSource },
         ) => {
           if (
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
             payload.adRemoved.postedBy.toString() === user._id.toHexString()
           ) {
             return false;
           }
           return payload.usersToNotify.includes(user._id.toHexString());
         },
+      ),
+    },
+    adSaved: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator([AD_SAVED]),
+        (
+          payload: {
+            adSaved: LeanDocument<AdDocument>;
+          },
+          _,
+          {
+            user,
+          }: { user: LeanDocument<UserDocument>; dataSources: MongoDataSource },
+        ) => payload.adSaved.postedBy.toString() === user._id.toHexString(),
       ),
     },
   },

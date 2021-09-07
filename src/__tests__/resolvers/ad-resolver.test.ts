@@ -1,11 +1,10 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-  const mockPublish = jest.fn()
+const mockPublish = jest.fn();
 
 import { Types } from 'mongoose';
 import resolvers from '../../resolvers';
-
 
 jest.mock('apollo-server-express', () => ({
   PubSub: jest.fn(() => ({
@@ -424,17 +423,17 @@ describe('Ad resolvers', () => {
     });
   });
 
-  it('saveAd calls datasource and returns right data', async () => {
+  it('saveAd calls datasource and returns right data, subscription called, message sent', async () => {
     saveAd.mockReturnValueOnce({
       _id: '602daa91cdc6630673a9fc0e',
       content: '11212121212',
     });
     getAd.mockReturnValueOnce({
-      _id: new Types.ObjectId('5fdd925d9cc5800455e1855e'),
+      _id: '5fdd925d9cc5800455e1855e',
       typeAd: 'SELL',
       typeProduct: 'AdWine',
       wineName: 'wine',
-      createdBy: 2,
+      postedBy: '5fdd925d9cc5800455e1855f',
     });
     // @ts-ignore
     const res = await resolvers.Mutation?.saveAd(
@@ -442,9 +441,54 @@ describe('Ad resolvers', () => {
       { _id: '602daa91cdc6630673a9fc0e' },
       mockContext,
     );
+    expect(messageAdmin).toHaveBeenCalledTimes(1);
+    expect(messageAdmin).toHaveBeenCalledWith(
+      ['5fdd925d9cc5800455e1855f'],
+      'Una cantina ha salvato il tuo annuncio per il vino: wine',
+    );
+    expect(mockPublish).toHaveBeenCalledTimes(1);
+    expect(mockPublish).toHaveBeenCalledWith('AD_SAVED', {
+      adSaved: {
+        postedBy: '5fdd925d9cc5800455e1855f',
+        _id: '5fdd925d9cc5800455e1855e',
+        typeAd: 'SELL',
+        typeProduct: 'AdWine',
+        wineName: 'wine',
+      },
+    });
     expect(res).toEqual({
       _id: '602daa91cdc6630673a9fc0e',
       content: '11212121212',
+    });
+  });
+
+  it('if ad already saved subscription not called, message not sent', async () => {
+    saveAd.mockReturnValueOnce({
+      _id: '602daa91cdc6630673a9fc0e',
+      content: '11212121212',
+      isSaved: true,
+    });
+    getAd.mockReturnValueOnce({
+      _id: '5fdd925d9cc5800455e1855e',
+      typeAd: 'SELL',
+      typeProduct: 'AdWine',
+      wineName: 'wine',
+      postedBy: '5fdd925d9cc5800455e1855f',
+    });
+    // @ts-ignore
+    const res = await resolvers.Mutation?.saveAd(
+      null,
+      { _id: '602daa91cdc6630673a9fc0e' },
+      mockContext,
+    );
+    expect(messageAdmin).toHaveBeenCalledTimes(0);
+
+    expect(mockPublish).toHaveBeenCalledTimes(0);
+
+    expect(res).toEqual({
+      _id: '602daa91cdc6630673a9fc0e',
+      content: '11212121212',
+      isSaved: true,
     });
   });
 

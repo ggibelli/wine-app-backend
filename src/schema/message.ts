@@ -32,10 +32,12 @@ const typeDefs = gql`
     messagesToUser(sentTo: ID!): [Message!] @authenticated
     messagesForNegotiation(
       negotiation: ID!
-      offset: Int = 0
-      limit: Int = 10
+      offset: Int
+      limit: Int
     ): MessageResult @authenticated
-    messages: [Message!] @authenticated
+    # add types, datasources, resolver, tests and frontend
+    messages(offset: Int, orderBy: QueryOrderBy, limit: Int): [Message!]
+      @authenticated
   }
 
   extend type Mutation {

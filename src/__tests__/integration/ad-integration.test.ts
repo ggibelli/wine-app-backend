@@ -233,7 +233,7 @@ describe('Integration test ads', () => {
       variables: { id: ad[0]._id.toString() },
     });
     expect(res).toMatchSnapshot();
-  }, 10000);
+  });
 
   it('create adGrape mutation it fails if not logged in', async () => {
     const ad: AdInput = {
@@ -319,8 +319,8 @@ describe('Integration test ads', () => {
       .lean()
       .exec();
     expect(
-      user?.savedAds
-        && user.savedAds
+      user?.savedAds &&
+        user.savedAds
           // @ts-ignore
           .map((id: Types.ObjectId) => id.toString())
           .includes(ads[0]._id.toString()),
@@ -337,8 +337,8 @@ describe('Integration test ads', () => {
       .exec();
 
     expect(
-      user?.savedAds
-        && user.savedAds
+      user?.savedAds &&
+        user.savedAds
           // @ts-ignore
           .map((id: Types.ObjectId) => id.toString())
           .includes(ads[0]._id.toString()),
@@ -346,14 +346,15 @@ describe('Integration test ads', () => {
     const res = await mutate(SAVE_AD, {
       variables: { id: ads[0]._id.toString() },
     });
-    const userAfterMutation: DocumentDefinition<UserDocument> | null = await User.findOne({
-      email: 'gio@prova.it',
-    })
-      .lean()
-      .exec();
+    const userAfterMutation: DocumentDefinition<UserDocument> | null =
+      await User.findOne({
+        email: 'gio@prova.it',
+      })
+        .lean()
+        .exec();
     expect(
-      userAfterMutation?.savedAds
-        && userAfterMutation.savedAds
+      userAfterMutation?.savedAds &&
+        userAfterMutation.savedAds
           // @ts-ignore
           .map((id: Types.ObjectId) => id.toString())
           .includes(ads[0]._id.toString()),
