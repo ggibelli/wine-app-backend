@@ -1,16 +1,20 @@
 # Wine trading app server
 
-App that connects wineries in need to sell or buy bulk wine, choosing between more than 4000 Italian wines.
+The app connects wineries in need to sell or buy bulk wine, choosing between more than 4000 Italian wines.
 The user can post an ad, and if there is already a wine listed that matches the parameters, the user can send a message to the seller/buyer.
+The ads, messages, negotiations and reviews can be filtered, sorted and there is pagination.
+When a user signs up I save their geographic coordinates using a third party API to provide another way to sort data.
 The app sends a notification and a mail when a new wine is posted that matches the user's active ad, users can chat in real-time, leave reviews and manage active negotiations and posted ads.
 
 ## Technology used
 
-This app is written in NodeJs using TypeScript, and I decided to use mongoDB as a database.
+This app is written in NodeJs using TypeScript, and I decided to use mongoDB/mongoose as a database.
+I'm using a datasource layer between the models and the resolvers, apollo-datasource-mongodb, in order to have the freedom to change the DB in the future and don't touch the resolvers, it's also helpful for the n+1 problem.
 This is my first project using GraphQL over REST and I used ApolloServer.
-I used cronjob to send the email to don't let the server hanging for a better user experience, it retries 2 times.
-The mongoose typing was done manually but I changed it to mongoose-tsgen, the graphQL typing was done with graphql-codegen.
-There is pagination support for the client's infinite scroll.
+I used a cronjob to send emails to don't let the server hang for a better user experience, it retries 2 times.
+The mongoose typing was done manually but I changed it to mongoose-tsgen, the graphQL typing is done with graphql-codegen.
+There is offset pagination support for performance and for the client to implement infinite scroll.
+The app is tested using jest and apollo-server-testing.
 
 ## Features
 
@@ -34,7 +38,7 @@ The CI/CD pipeline is also missing.
 
 In the project directory, you can run:
 
-### `npm dev`
+### `npm run dev`
 
 Runs the app in the development mode.<br />
 Open [http://localhost:4000/graphql](http://localhost:4000/graphql) to open the graphQL playground.

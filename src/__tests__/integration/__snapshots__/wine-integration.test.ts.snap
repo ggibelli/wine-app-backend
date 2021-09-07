@@ -156,31 +156,6 @@ Object {
 }
 `;
 
-exports[`Integration test wines update wine mutation fails if logged in and not admin 2`] = `
-Object {
-  "data": Object {
-    "updateWine": null,
-  },
-  "errors": Array [
-    Object {
-      "extensions": Object {
-        "code": "FORBIDDEN",
-      },
-      "locations": Array [
-        Object {
-          "column": 3,
-          "line": 2,
-        },
-      ],
-      "message": "You need to be Admin to continue",
-      "path": Array [
-        "updateWine",
-      ],
-    },
-  ],
-}
-`;
-
 exports[`Integration test wines update wine mutation succeds if logged in and admin 1`] = `
 Object {
   "data": Object {
